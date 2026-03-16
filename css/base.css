@@ -1,0 +1,37 @@
+/* css/base.css */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #0D1117;
+    --surface: #161C26;
+    --surface2: #1C2535;
+    --border: rgba(255, 255, 255, 0.08);
+    --text: #E8EDF5;
+    --muted: #7B8FA6;
+    --teal: #10D4A0;
+    --amber: #F59E0B;
+    --red: #F87171;
+    --blue: #60A5FA;
+    --radius: 12px;
+    --font: 'Plus Jakarta Sans', sans-serif;
+    --mono: 'DM Mono', monospace;
+}
+
+body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}

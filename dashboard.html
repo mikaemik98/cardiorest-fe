@@ -1,11 +1,119 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>CardioRest – Yhteenveto</title>
+
+    <!-- Google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Globaalit tyylit -->
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/components.css">
+
+    <!-- Sivukohtainen tyyli -->
+    <link rel="stylesheet" href="/css/pages/dashboard.css">
 </head>
+
 <body>
-    
+
+    <!-- Sidebar (sama kaikilla sivuilla) -->
+    <nav class="sidebar" id="sidebar"></nav>
+
+    <main class="main">
+        <header class="topbar">
+            <!-- Hamburger mobiilille -->
+            <button class="hamburger" id="hamburger" aria-label="Avaa valikko">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <line x1="3" y1="6" x2="17" y2="6" />
+                    <line x1="3" y1="10" x2="17" y2="10" />
+                    <line x1="3" y1="14" x2="17" y2="14" />
+                </svg>
+            </button>
+            <span class="topbar-title">Unen laatu ja palautuminen</span>
+        </header>
+
+        <div class="content">
+
+            <!-- Pistekortit -->
+            <section class="card" id="scoreCard">
+                <div class="card-header">
+                    <span class="card-title">Unen laatu</span>
+                    <span class="date-label" id="dateLabel"></span>
+                </div>
+                <div class="score-grid">
+                    <div class="score-circle">
+                        <svg viewBox="0 0 110 110" width="110" height="110">
+                            <circle cx="55" cy="55" r="46" class="score-track" />
+                            <circle cx="55" cy="55" r="46" class="score-fill" id="scoreArc" />
+                        </svg>
+                        <div class="score-num">
+                            <span class="score-val" id="scoreVal">–</span>
+                            <span class="score-lbl">/100</span>
+                        </div>
+                    </div>
+                    <div class="score-details">
+                        <div class="score-rating" id="scoreRating">Ladataan...</div>
+                        <div class="metrics-grid">
+                            <div class="metric">
+                                <span class="metric-val" id="metricDuration">–</span>
+                                <span class="metric-lbl">Kesto</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-val" id="metricHrv">–</span>
+                                <span class="metric-lbl">HRV ka.</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-val" id="metricRecovery">–</span>
+                                <span class="metric-lbl">Palautuminen</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Kaaviot -->
+            <div class="two-col">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">HRV-vaihtelu yön aikana</span>
+                    </div>
+                    <div class="chart-wrap">
+                        <canvas id="hrvNightChart"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Univaiheet</span>
+                    </div>
+                    <div class="chart-wrap">
+                        <canvas id="sleepStagesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suositukset -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Suositukset</span>
+                </div>
+                <ul class="rec-list" id="recList"></ul>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Sivun oma JS (type="module" mahdollistaa importit) -->
+    <script type="module" src="/js/pages/dashboard.js"></script>
 </body>
+
 </html>
