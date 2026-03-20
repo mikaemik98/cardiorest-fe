@@ -40,6 +40,22 @@
             <span class="topbar-title">Unen laatu ja palautuminen</span>
         </header>
 
+        <!-- Mittaustyypin valinta -->
+<div class="view-tabs">
+    <button class="view-tab active" id="tabReadiness" onclick="switchView('readiness')">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="8" cy="8" r="6"/>
+        </svg>
+        Readiness
+    </button>
+    <button class="view-tab" id="tabTimevarying" onclick="switchView('timevarying')">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+            <polyline points="2,8 4,8 5,4 7,12 9,6 11,10 12,8 14,8"/>
+        </svg>
+        HRV-aikasarja
+    </button>
+</div>
+
         <div class="content">
 
             <!-- Pistekortit -->
@@ -81,23 +97,24 @@
 
             <!-- Kaaviot -->
             <div class="two-col">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">HRV-vaihtelu yön aikana</span>
-                    </div>
-                    <div class="chart-wrap">
-                        <canvas id="hrvNightChart"></canvas>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Univaiheet</span>
-                    </div>
-                    <div class="chart-wrap">
-                        <canvas id="sleepStagesChart"></canvas>
-                    </div>
-                </div>
-            </div>
+    <!-- HRV-kaavio — piilotettu oletuksena, näytetään vain timevarying-välilehdellä -->
+    <div class="card" id="hrvChartCard" style="display:none">
+        <div class="card-header">
+            <span class="card-title">HRV-vaihtelu yön aikana</span>
+        </div>
+        <div class="chart-wrap">
+            <canvas id="hrvNightChart"></canvas>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Univaiheet</span>
+        </div>
+        <div class="chart-wrap">
+            <canvas id="sleepStagesChart"></canvas>
+        </div>
+    </div>
+</div>
 
             <!-- Suositukset -->
             <div class="card">

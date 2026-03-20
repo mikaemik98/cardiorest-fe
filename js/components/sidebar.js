@@ -1,4 +1,3 @@
-// js/components/sidebar.js
 
 const navItems = [
   {
@@ -69,7 +68,7 @@ export function renderSidebar(activePage) {
         </div>
     `;
 
-  // ── Hamburger-logiikka ──
+  // Hamburger-logiikka
   const hamburger = document.getElementById("hamburger");
   const overlay = document.getElementById("sidebarOverlay");
 

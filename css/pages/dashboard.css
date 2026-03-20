@@ -26,6 +26,33 @@
     flex-shrink: 0;
 }
 
+.view-tabs {
+    display: flex;
+    gap: 2px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 4px;
+}
+
+.view-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    background: none;
+    font-family: var(--font);
+    transition: all 0.15s;
+}
+
+.view-tab:hover { color: var(--text); }
+.view-tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+
 /* mobiili */
 @media (max-width: 768px) {
     .chart-legend {
