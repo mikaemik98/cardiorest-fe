@@ -1,0 +1,67 @@
+.period-select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    color: var(--text);
+    font-size: 12px;
+    font-family: var(--font);
+    padding: 6px 10px;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.period-select:focus { border-color: var(--teal);}
+.period-select option { background: var(--surface2);}
+
+/* historia-taulukko */
+.history-table-wrap {
+    overflow-x: auto;
+}
+
+.history-table th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.history-table td {
+    padding: 12px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
+}
+
+.history-table tr:last-child td {
+    border-bottom: none;
+}
+
+.history-table tr:hover td {
+    background: var(--surface2);
+}
+
+/* tila-badge */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--font);
+}
+
+.status-good { background: rgba(16, 212, 160, 0.12); color: var(--teal);}
+.status-moderate { background: rgba(245, 158, 11, 0.12); color: var(--amber);}
+.status-poor { background: rgba(248, 113, 113, 0.12); color: var(--red);}
+
+/* responsiivisuus */
+@media (max-width: 768px) {
+    .history-table th:nth-child(3),
+    .history-table td:nth-child(3) { display: none;}
+}
