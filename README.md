@@ -141,9 +141,9 @@ Varmista että backend pyörii portissa `3000` ennen kuin vaihdat `USE_MOCK = fa
 
 | Nimi            | Vastuu                        |
 | --------------- | ----------------------------- |
-| Markus Kauremaa | Frontend                      |
+| Markus Kauremaa | Backend + Tietokanta          |
 | Mikael Mikkola  | Frontend + Kubios-integraatio |
-| Moumen Flih     | Backend                       |
+| Moumen Flih     | Frontend + Kubios-integraatio |
 | Daniil Pavliuk  | Backend + Tietokanta          |
 
 ---
