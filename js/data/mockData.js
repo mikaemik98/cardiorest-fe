@@ -14,7 +14,14 @@ export const mockAnalysis = {
         labels: Array.from({ length: 60 }, (_, i) => i * 5),
         rmssd:  Array.from({ length: 60 }, () => 40 + Math.random() * 40),
         hr:     Array.from({ length: 60 }, () => 55 + Math.random() * 25)
-    })
+    }),
+    sleep_stages: {
+        labels: ['22:00','23:00','00:00','01:00','02:00','03:00','04:00','05:00','06:00'],
+        deep:   [0,  20, 30, 25, 20, 25, 20, 15, 10],
+        light:  [30, 20, 15, 20, 25, 20, 25, 30, 35],
+        rem:    [10, 12, 10, 10, 10, 10, 10, 12, 12],
+        awake:  [5,   3,  5,  5,  5,  5,  5,  3,  3]
+    }
 };
 
 export const mockTrend = [

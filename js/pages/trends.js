@@ -1,16 +1,23 @@
 import { getAnalysisTrend } from "../services/analysisService.js";
 import { renderSidebar } from "../components/sidebar.js";
 import {
-  formatDate,
-  getRecoveryLevel,
-  getRecoveryText,
-  round,
-  average,
+    formatDate,
+    getRecoveryLevel,
+    getRecoveryText,
+    round,
+    average,
 } from "../utils/helpers.js";
 
-let trendChart = null;
-let pnsChart = null;
-let snsChart = null;
+// ── Vaihdettu Chart.js → amCharts root-objektit ──
+let trendRoot = null;
+let pnsRoot   = null;
+let snsRoot   = null;
+
+function destroyCharts() {
+    if (trendRoot) { trendRoot.dispose(); trendRoot = null; }
+    if (pnsRoot)   { pnsRoot.dispose();   pnsRoot   = null; }
+    if (snsRoot)   { snsRoot.dispose();   snsRoot   = null; }
+}
 
 const COLORS = {
   teal: "#10D4A0",
@@ -21,21 +28,6 @@ const COLORS = {
 };
 
 // ── Apufunktiot ensin ──
-
-function destroyCharts() {
-  if (trendChart) {
-    trendChart.destroy();
-    trendChart = null;
-  }
-  if (pnsChart) {
-    pnsChart.destroy();
-    pnsChart = null;
-  }
-  if (snsChart) {
-    snsChart.destroy();
-    snsChart = null;
-  }
-}
 
 function buildLabels(data) {
   return data.map((d) => formatDate(d.created_at));
@@ -89,125 +81,242 @@ function renderStatCards(data) {
 }
 
 function renderTrendChart(data) {
-  const ctx = document.getElementById("trendChart");
-  if (!ctx) return;
+    const el = document.getElementById('trendChart');
+    if (!el) return;
 
-  trendChart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: buildLabels(data),
-      datasets: [
-        {
-          label: "Readiness",
-          data: data.map((d) => round(d.readiness ?? 0, 0)),
-          borderColor: COLORS.teal,
-          borderWidth: 2,
-          pointRadius: 4,
-          pointHoverRadius: 6,
-          tension: 0.35,
-          fill: false,
-        },
-        {
-          label: "RMSSD",
-          data: data.map((d) => round(d.rmssd_ms ?? 0, 1)),
-          borderColor: COLORS.blue,
-          borderWidth: 2,
-          pointRadius: 4,
-          pointHoverRadius: 6,
-          tension: 0.35,
-          fill: false,
-        },
-        {
-          label: "Stress",
-          data: data.map((d) => round(d.stress_index ?? 0, 1)),
-          borderColor: COLORS.amber,
-          borderWidth: 2,
-          pointRadius: 4,
-          pointHoverRadius: 6,
-          tension: 0.35,
-          fill: false,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: { mode: "index", intersect: false },
-      },
-      scales: {
-        x: { grid: { color: COLORS.grid } },
-        y: { grid: { color: COLORS.grid }, min: 0 },
-      },
-    },
-  });
+    const chartData = data.map(d => ({
+        date:      formatDate(d.created_at),
+        readiness: round(d.readiness    ?? 0, 0),
+        rmssd:     round(d.rmssd_ms     ?? 0, 1),
+        stress:    round(d.stress_index ?? 0, 1)
+    }));
+
+    const root = am5.Root.new('trendChart');
+    trendRoot  = root;
+
+    root.setThemes([
+        am5themes_Animated.new(root),
+        am5themes_Dark.new(root)
+    ]);
+
+    const chart = root.container.children.push(
+        am5xy.XYChart.new(root, {
+            panX: true,
+            panY: false,
+            wheelX: 'panX',
+            wheelY: 'zoomX',
+            paddingLeft: 0,
+            paddingRight: 0
+        })
+    );
+
+    const cursor = chart.set('cursor', am5xy.XYCursor.new(root, {
+        behavior: 'none'
+    }));
+    cursor.lineY.set('visible', false);
+
+    const xAxis = chart.xAxes.push(
+        am5xy.CategoryAxis.new(root, {
+            categoryField: 'date',
+            renderer: am5xy.AxisRendererX.new(root, {
+                minGridDistance: 40
+            }),
+            tooltip: am5.Tooltip.new(root, {})
+        })
+    );
+
+    const yAxis = chart.yAxes.push(
+        am5xy.ValueAxis.new(root, {
+            renderer: am5xy.AxisRendererY.new(root, {})
+        })
+    );
+
+    xAxis.data.setAll(chartData);
+
+    function createSeries(name, field, color) {
+        const series = chart.series.push(
+            am5xy.LineSeries.new(root, {
+                name,
+                xAxis,
+                yAxis,
+                valueYField:    field,
+                categoryXField: 'date',
+                stroke: am5.color(color),
+                fill:   am5.color(color),
+                tooltip: am5.Tooltip.new(root, {
+                    labelText: '{name}: [bold]{valueY}[/]'
+                })
+            })
+        );
+
+        series.strokes.template.setAll({ strokeWidth: 2.5 });
+
+        series.bullets.push(() =>
+            am5.Bullet.new(root, {
+                sprite: am5.Circle.new(root, {
+                    radius:      4,
+                    fill:        series.get('fill'),
+                    stroke:      root.interfaceColors.get('background'),
+                    strokeWidth: 2
+                })
+            })
+        );
+
+        series.data.setAll(chartData);
+        series.appear(1000);
+        return series;
+    }
+
+    createSeries('Readiness', 'readiness', '#10D4A0');
+    createSeries('RMSSD',     'rmssd',     '#60A5FA');
+    createSeries('Stress',    'stress',    '#F59E0B');
+
+    const legend = chart.children.push(
+        am5.Legend.new(root, {
+            centerX: am5.p50,
+            x:       am5.p50
+        })
+    );
+    legend.data.setAll(chart.series.values);
+
+    chart.appear(1000, 100);
 }
 
 function renderPnsChart(data) {
-  const ctx = document.getElementById("pnsChart");
-  if (!ctx) return;
+    const el = document.getElementById('pnsChart');
+    if (!el) return;
 
-  pnsChart = new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels: buildLabels(data),
-      datasets: [
-        {
-          label: "PNS-indeksi",
-          data: data.map((d) => round(d.pns_index ?? 0, 2)),
-          backgroundColor: data.map((d) =>
-            (d.pns_index ?? 0) >= 0
-              ? "rgba(16,212,160,0.6)"
-              : "rgba(248,113,113,0.6)",
-          ),
-          borderRadius: 4,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { color: COLORS.grid } },
-        y: { grid: { color: COLORS.grid } },
-      },
-    },
-  });
+    const chartData = data.map(d => ({
+        date:  formatDate(d.created_at),
+        value: round(d.pns_index ?? 0, 2)
+    }));
+
+    const root = am5.Root.new('pnsChart');
+    pnsRoot    = root;
+
+    root.setThemes([
+        am5themes_Animated.new(root),
+        am5themes_Dark.new(root)
+    ]);
+
+    const chart = root.container.children.push(
+        am5xy.XYChart.new(root, {
+            paddingLeft: 0,
+            paddingRight: 0
+        })
+    );
+
+    const xAxis = chart.xAxes.push(
+        am5xy.CategoryAxis.new(root, {
+            categoryField: 'date',
+            renderer: am5xy.AxisRendererX.new(root, {
+                minGridDistance: 30
+            })
+        })
+    );
+
+    const yAxis = chart.yAxes.push(
+        am5xy.ValueAxis.new(root, {
+            renderer: am5xy.AxisRendererY.new(root, {})
+        })
+    );
+
+    const series = chart.series.push(
+        am5xy.ColumnSeries.new(root, {
+            xAxis,
+            yAxis,
+            valueYField:    'value',
+            categoryXField: 'date',
+            tooltip: am5.Tooltip.new(root, {
+                labelText: 'PNS: {valueY}'
+            })
+        })
+    );
+
+    series.columns.template.setAll({
+        cornerRadiusTL: 4,
+        cornerRadiusTR: 4,
+        strokeOpacity:  0
+    });
+
+    // Väri positiivinen/negatiivinen
+    series.columns.template.adapters.add('fill', (fill, target) => {
+        const val = target.dataItem?.get('valueY') ?? 0;
+        return am5.color(val >= 0 ? '#10D4A0' : '#F87171');
+    });
+
+    xAxis.data.setAll(chartData);
+    series.data.setAll(chartData);
+    series.appear(1000);
+    chart.appear(1000, 100);
 }
 
 function renderSnsChart(data) {
-  const ctx = document.getElementById("snsChart");
-  if (!ctx) return;
+    const el = document.getElementById('snsChart');
+    if (!el) return;
 
-  snsChart = new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels: buildLabels(data),
-      datasets: [
-        {
-          label: "SNS-indeksi",
-          data: data.map((d) => round(d.sns_index ?? 0, 2)),
-          backgroundColor: data.map((d) =>
-            (d.sns_index ?? 0) <= 0
-              ? "rgba(16,212,160,0.6)"
-              : "rgba(248,113,113,0.6)",
-          ),
-          borderRadius: 4,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { color: COLORS.grid } },
-        y: { grid: { color: COLORS.grid } },
-      },
-    },
-  });
+    const chartData = data.map(d => ({
+        date:  formatDate(d.created_at),
+        value: round(d.sns_index ?? 0, 2)
+    }));
+
+    const root = am5.Root.new('snsChart');
+    snsRoot    = root;
+
+    root.setThemes([
+        am5themes_Animated.new(root),
+        am5themes_Dark.new(root)
+    ]);
+
+    const chart = root.container.children.push(
+        am5xy.XYChart.new(root, {
+            paddingLeft: 0,
+            paddingRight: 0
+        })
+    );
+
+    const xAxis = chart.xAxes.push(
+        am5xy.CategoryAxis.new(root, {
+            categoryField: 'date',
+            renderer: am5xy.AxisRendererX.new(root, {
+                minGridDistance: 30
+            })
+        })
+    );
+
+    const yAxis = chart.yAxes.push(
+        am5xy.ValueAxis.new(root, {
+            renderer: am5xy.AxisRendererY.new(root, {})
+        })
+    );
+
+    const series = chart.series.push(
+        am5xy.ColumnSeries.new(root, {
+            xAxis,
+            yAxis,
+            valueYField:    'value',
+            categoryXField: 'date',
+            tooltip: am5.Tooltip.new(root, {
+                labelText: 'SNS: {valueY}'
+            })
+        })
+    );
+
+    series.columns.template.setAll({
+        cornerRadiusTL: 4,
+        cornerRadiusTR: 4,
+        strokeOpacity:  0
+    });
+
+    series.columns.template.adapters.add('fill', (fill, target) => {
+        const val = target.dataItem?.get('valueY') ?? 0;
+        return am5.color(val <= 0 ? '#10D4A0' : '#F87171');
+    });
+
+    xAxis.data.setAll(chartData);
+    series.data.setAll(chartData);
+    series.appear(1000);
+    chart.appear(1000, 100);
 }
 
 function renderHistoryTable(data) {
