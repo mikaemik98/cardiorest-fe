@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardioRest – HRV-analyysi</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/pages/hrv.css">
+</head>
+
+<body>
+
+    <nav class="sidebar" id="sidebar"></nav>
+
+    <main class="main">
+        <header class="topbar">
+            <button class="hamburger" id="hamburger" aria-label="Avaa valikko">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <line x1="3" y1="6" x2="17" y2="6" />
+                    <line x1="3" y1="10" x2="17" y2="10" />
+                    <line x1="3" y1="14" x2="17" y2="14" />
+                </svg>
+            </button>
+            <span class="topbar-title">HRV-analyysi</span>
+        </header>
+
+        <div class="content">
+
+            <!-- Readiness-pistekortti -->
+            <section class="card" id="hrvScoreCard">
+                <div class="card-header">
+                    <span class="card-title">HRV-yhteenveto</span>
+                    <span class="date-label" id="dateLabel"></span>
+                </div>
+                <div class="score-grid">
+                    <div class="score-circle">
+                        <svg viewBox="0 0 110 110" width="110" height="110">
+                            <circle cx="55" cy="55" r="46" class="score-track"/>
+                            <circle cx="55" cy="55" r="46" class="score-fill" id="scoreArc"/>
+                        </svg>
+                        <div class="score-num">
+                            <span class="score-val" id="scoreVal">–</span>
+                            <span class="score-lbl">/100</span>
+                        </div>
+                    </div>
+                    <div class="score-details">
+                        <div style="font-size:11px;color:var(--muted);margin-bottom:4px">
+                            Readiness-pistemäärä
+                        </div>
+                        <div class="score-rating" id="scoreRating">Ladataan...</div>
+                        <div class="metrics-grid">
+                            <div class="metric">
+                                <span class="metric-val" id="metricRmssd">–</span>
+                                <span class="metric-lbl">RMSSD (ms)</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-val" id="metricSdnn">–</span>
+                                <span class="metric-lbl">SDNN (ms)</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-val" id="metricHr">–</span>
+                                <span class="metric-lbl">Keskisyke (bpm)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Parametrikortit -->
+            <div class="three-col" id="paramCards">
+                <div class="stat-card">
+                    <div class="stat-lbl">PNS-indeksi</div>
+                    <div class="stat-val" id="statPns">–</div>
+                    <div class="stat-sub">Palautuminen</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-lbl">SNS-indeksi</div>
+                    <div class="stat-val" id="statSns">–</div>
+                    <div class="stat-sub">Kuormitus</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-lbl">Stress-indeksi</div>
+                    <div class="stat-val" id="statStress">–</div>
+                    <div class="stat-sub">Stressitaso</div>
+                </div>
+            </div>
+
+            <!-- Poincaré-parametrit (SD1 / SD2) -->
+            <div class="two-col">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+                                <polyline points="2,8 4,8 5,4 7,12 9,6 11,10 12,8 14,8"/>
+                            </svg>
+                            Poincaré-analyysi
+                        </span>
+                    </div>
+                    <div class="poincare-params">
+                        <div class="param-row">
+                            <span class="param-label">SD1 (ms)</span>
+                            <span class="param-val" id="paramSd1">–</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">SD2 (ms)</span>
+                            <span class="param-val" id="paramSd2">–</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">SD2/SD1</span>
+                            <span class="param-val" id="paramSdRatio">–</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+                                <circle cx="8" cy="8" r="6"/>
+                            </svg>
+                            Mittauksen laatu
+                        </span>
+                    </div>
+                    <div class="quality-info">
+                        <div class="quality-badge" id="qualityBadge">–</div>
+                        <div class="quality-desc" id="qualityDesc">Ladataan...</div>
+                        <div style="margin-top:14px">
+                            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+                                <span style="color:var(--muted)">Artefaktitaso</span>
+                                <span id="qualityPct" style="font-family:var(--mono)">–</span>
+                            </div>
+                            <div class="quality-bar">
+                                <div class="quality-fill" id="qualityFill" style="width:0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HRV-aikasarjakaavio -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">
+                        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+                            <polyline points="2,8 4,8 5,4 7,12 9,6 11,10 12,8 14,8"/>
+                        </svg>
+                        Yönaikainen HRV-aikasarja
+                    </span>
+                </div>
+                <div class="chart-wrap" style="height:260px">
+                    <div id="hrvTimeseriesChart" style="width:100%;height:100%"></div>
+                </div>
+                <div class="chart-legend">
+                    <span class="legend-item">
+                        <span class="legend-dot" style="background:#10D4A0"></span>
+                        Syke (bpm)
+                    </span>
+                    <span class="legend-item">
+                        <span class="legend-dot" style="background:#60A5FA"></span>
+                        RMSSD (ms)
+                    </span>
+                </div>
+            </div>
+
+            <!-- Autonomisen hermoston tasapainopalkit -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Autonomisen hermoston tasapaino</span>
+                </div>
+                <div class="ans-bars">
+                    <div class="ans-row">
+                        <span class="ans-label">PNS (palautuminen)</span>
+                        <div class="ans-bar-track">
+                            <div class="ans-bar-fill pns-fill" id="ansPnsFill" style="width:0%"></div>
+                        </div>
+                        <span class="ans-val" id="ansPnsVal">–</span>
+                    </div>
+                    <div class="ans-row">
+                        <span class="ans-label">SNS (kuormitus)</span>
+                        <div class="ans-bar-track">
+                            <div class="ans-bar-fill sns-fill" id="ansSnsFill" style="width:0%"></div>
+                        </div>
+                        <span class="ans-val" id="ansSnsVal">–</span>
+                    </div>
+                    <div class="ans-row">
+                        <span class="ans-label">Stressi</span>
+                        <div class="ans-bar-track">
+                            <div class="ans-bar-fill stress-fill" id="ansStressFill" style="width:0%"></div>
+                        </div>
+                        <span class="ans-val" id="ansStressVal">–</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Dark.js"></script>
+    <script type="module" src="/js/pages/hrv.js"></script>
+</body>
+
+</html>

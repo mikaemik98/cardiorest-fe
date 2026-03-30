@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardioRest — Kirjaudu sisään</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/pages/login.css">
+</head>
+<body class="login-body">
+    <div class="login-container">
+
+        <!-- Logo -->
+         <div class="login-logo">
+            <div class="login-logo-name">CardioRest</div>
+            <div class="login-logo-sub">HRV-pohjainen unenlaadun seuranta</div>
+         </div>
+
+         <!-- Kortti -->
+          <div class="login-card">
+            <h1 class="login-title">Kirjaudu sisään</h1>
+            <p class="login-desc">Syötä tunnuksesi jatkaaksesi</p>
+
+            <div class="login-form">
+
+                <!-- sähköposti -->
+                 <div class="form-group">
+                    <label class="form-label" for="email">Sähköposti</label>
+                    <div class="input-wrap">
+                        <svg class="input-icon" width="16" height="16" viewBox="0 0 16 16"
+                        fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="1" y="3" width="14" height="10" rx="2"/>
+                    </svg>
+                    <input 
+                        type="email"
+                        id="email"
+                        class="form-input"
+                        placeholder="matti@esimerkki.fi"
+                        autocomplete="email"
+                        >
+                    </div>
+                 </div>
+
+                 <!-- Salasana -->
+                  <div class="form-group">
+                    <label class="form-label" for="password">Salasana</label>
+                    <div class="input-wrap">
+                        <svg class="input-icon" width="16" height="16" viewBox="0 0 16 16"
+                             fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="2" y="7" width="12" height="8" rx="2"/>
+                            <path d="M5 7V5a3 3 0 016 0v2"/>
+                        </svg>
+                        <input
+                            type="password"
+                            id="password"
+                            class="form-input"
+                            placeholder="••••••••"
+                            autocomplete="current-password"
+                        >
+                        <button class="password-toggle" id="passwordToggle" type="button">
+                            <svg width="16" height="16" viewBox="0 0 16 16"
+                                 fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/>
+                                <circle cx="8" cy="8" r="2"/>
+                            </svg>
+                        </button>
+                    </div>
+                  </div>
+
+                  <!-- Virheviesti -->
+                   <div class="login-error" id="loginError" style="display:none">
+                    <svg width="14" height="14" viewBox="0 0 16 16"
+                         fill="none" stroke="currentColor" stroke-width="1.8">
+                        <circle cx="8" cy="8" r="6"/>
+                        <path d="M8 5v3M8 11h.01"/>
+                    </svg>
+                    <span id="loginErrorText">Väärä sähköposti tai salasana</span>
+                </div>
+
+   <!-- Kirjaudu nappi -->
+                <button class="login-btn" id="loginBtn" type="button">
+                    <span id="loginBtnText">Kirjaudu sisään</span>
+                    <div class="login-spinner" id="loginSpinner" style="display:none"></div>
+                </button>
+
+            </div>
+
+            <!-- Roolilinkit (mock-testaus) -->
+            <div class="login-mock-links">
+                <p class="mock-label">Testaa mock-datalla:</p>
+                <div class="mock-btns">
+                    <button class="mock-btn" onclick="mockLogin('patient')">
+                        <svg width="13" height="13" viewBox="0 0 16 16"
+                             fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="8" cy="5" r="3"/>
+                            <path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/>
+                        </svg>
+                        Potilas
+                    </button>
+                    <button class="mock-btn" onclick="mockLogin('professional')">
+                        <svg width="13" height="13" viewBox="0 0 16 16"
+                             fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M8 2v4M6 4h4M5 8H3a1 1 0 00-1 1v5h12V9a1 1 0 00-1-1h-2"/>
+                            <rect x="5" y="6" width="6" height="3" rx="1"/>
+                        </svg>
+                        Ammattilainen
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <p class="login-footer">
+            CardioRest &copy; 2026 · Metropolia Ammattikorkeakoulu
+        </p>
+
+    </div>
+
+    <script type="module" src="/js/pages/login.js"></script>
+</body>
+</html>

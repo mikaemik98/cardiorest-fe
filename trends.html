@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardioRest – Trendit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/pages/trends.css">
+</head>
+
+<body>
+
+    <nav class="sidebar" id="sidebar"></nav>
+
+    <main class="main">
+        <header class="topbar">
+            <button class="hamburger" id="hamburger" aria-label="Avaa valikko">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <line x1="3" y1="6" x2="17" y2="6" />
+                    <line x1="3" y1="10" x2="17" y2="10" />
+                    <line x1="3" y1="14" x2="17" y2="14" />
+                </svg>
+            </button>
+            <span class="topbar-title">Trendit</span>
+            <select class="period-select" id="periodSelect">
+                <option value="7">7 päivää</option>
+                <option value="14">14 päivää</option>
+                <option value="30">30 päivää</option>
+            </select>
+        </header>
+
+        <div class="content">
+
+            <!-- Tilastokortit -->
+            <div class="three-col" id="statCards">
+                <div class="stat-card">
+                    <div class="stat-lbl">Readiness ka.</div>
+                    <div class="stat-val" id="statReadiness">–</div>
+                    <div class="stat-delta" id="statReadinessDelta"></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-lbl">RMSSD ka.</div>
+                    <div class="stat-val" id="statRmssd">–</div>
+                    <div class="stat-delta" id="statRmssdDelta"></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-lbl">Stress-indeksi ka.</div>
+                    <div class="stat-val" id="statStress">–</div>
+                    <div class="stat-delta" id="statStressDelta"></div>
+                </div>
+            </div>
+
+            <!-- Pääkaavio -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">
+                        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor"
+                            stroke-width="1.6">
+                            <polyline points="2,11 5,7 9,9 14,4" />
+                        </svg>
+                        HRV-kehitys
+                    </span>
+                </div>
+                <div class="chart-wrap" style="height:260px">
+                    <div id="trendChart" style="width:100%;height:100%"></div>
+                </div>
+                <div class="chart-legend" id="trendLegend">
+                    <span class="legend-item">
+                        <span class="legend-dot" style="background:#10D4A0"></span>
+                        Readiness
+                    </span>
+                    <span class="legend-item">
+                        <span class="legend-dot" style="background:#60A5FA"></span>
+                        RMSSD (ms)
+                    </span>
+                    <span class="legend-item">
+                        <span class="legend-dot" style="background:#F59E0B"></span>
+                        Stress-indeksi
+                    </span>
+                </div>
+            </div>
+
+            <!-- PNS / SNS kaavio -->
+            <div class="two-col">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor"
+                                stroke-width="1.6">
+                                <polyline points="2,8 4,8 5,4 7,12 9,6 11,10 12,8 14,8" />
+                            </svg>
+                            PNS-indeksi (palautuminen)
+                        </span>
+                    </div>
+                    <div class="chart-wrap" style="height:180px">
+                        <div id="pnsChart" style="width:100%;height:100%"></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor"
+                                stroke-width="1.6">
+                                <polyline points="2,8 4,8 5,4 7,12 9,6 11,10 12,8 14,8" />
+                            </svg>
+                            SNS-indeksi (kuormitus)
+                        </span>
+                    </div>
+                    <div class="chart-wrap" style="height:180px">
+                        <div id="snsChart" style="width:100%;height:100%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mittaushistoria taulukko -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">
+                        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor"
+                            stroke-width="1.6">
+                            <rect x="1" y="2" width="14" height="12" rx="2" />
+                            <path d="M5 7h6M5 10h4" />
+                        </svg>
+                        Mittaushistoria
+                    </span>
+                </div>
+                <div class="history-table-wrap">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Päivämäärä</th>
+                                <th>Readiness</th>
+                                <th>RMSSD</th>
+                                <th>Stress</th>
+                                <th>Tila</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Dark.js"></script>
+    <script type="module" src="/js/pages/trends.js"></script>
+</body>
+
+</html>

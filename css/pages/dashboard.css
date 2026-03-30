@@ -1,0 +1,93 @@
+/* score-kortin teal-korostus palautumiselle */
+#metricRecovery {
+    color: var(--teal);
+}
+
+/* kaavioiden legend */
+.chart-legend {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.view-tabs {
+    display: flex;
+    gap: 2px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 4px;
+}
+
+.view-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    background: none;
+    font-family: var(--font);
+    transition: all 0.15s;
+}
+
+.view-tab:hover { color: var(--text); }
+.view-tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+
+/* Responsive chart container */
+.chart-wrap {
+    position: relative;
+    width: 100%;
+    min-height: 280px;
+}
+
+.chart-wrap > div {
+    width: 100%;
+    height: 100%;
+    min-height: 280px;
+}
+
+/* mobiili */
+@media (max-width: 768px) {
+    .chart-legend {
+        gap: 10px;
+    }
+
+    .chart-wrap {
+        min-height: 240px;
+    }
+
+    .chart-wrap > div {
+        min-height: 240px;
+    }
+}
+
+/* tablet */
+@media (max-width: 1024px) {
+    .chart-wrap {
+        min-height: 260px;
+    }
+
+    .chart-wrap > div {
+        min-height: 260px;
+    }
+}

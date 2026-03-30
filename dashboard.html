@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardioRest – Yhteenveto</title>
+
+    <!-- Google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Globaalit tyylit -->
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/components.css">
+
+    <!-- Sivukohtainen tyyli -->
+    <link rel="stylesheet" href="/css/pages/dashboard.css">
+</head>
+
+<body>
+
+    <!-- Sidebar (sama kaikilla sivuilla) -->
+    <nav class="sidebar" id="sidebar"></nav>
+
+    <main class="main">
+        <header class="topbar">
+            <!-- Hamburger mobiilille -->
+            <button class="hamburger" id="hamburger" aria-label="Avaa valikko">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <line x1="3" y1="6" x2="17" y2="6" />
+                    <line x1="3" y1="10" x2="17" y2="10" />
+                    <line x1="3" y1="14" x2="17" y2="14" />
+                </svg>
+            </button>
+            <span class="topbar-title">Unen laatu ja palautuminen</span>
+        </header>
+
+        <!-- Mittaustyypin valinta -->
+<div class="view-tabs">
+    <button class="view-tab active" id="tabReadiness" onclick="switchView('readiness')">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="8" cy="8" r="6"/>
+        </svg>
+        Readiness
+    </button>
+    <button class="view-tab" id="tabTimevarying" onclick="switchView('timevarying')">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+            <polyline points="2,8 4,8 5,4 7,12 9,6 11,10 12,8 14,8"/>
+        </svg>
+        HRV-aikasarja
+    </button>
+</div>
+
+        <div class="content">
+
+            <!-- Pistekortit -->
+            <section class="card" id="scoreCard">
+    <div class="card-header">
+        <span class="card-title">Unen laatu ja palautuminen</span>
+        <span class="date-label" id="dateLabel"></span>
+    </div>
+    <div class="score-grid">
+        <div class="score-circle">
+            <svg viewBox="0 0 110 110" width="110" height="110">
+                <circle cx="55" cy="55" r="46" class="score-track"/>
+                <circle cx="55" cy="55" r="46" class="score-fill" id="scoreArc"/>
+            </svg>
+            <div class="score-num">
+                <span class="score-val" id="scoreVal">–</span>
+                <span class="score-lbl">/100</span>
+            </div>
+        </div>
+        <div class="score-details">
+            <!-- Lisätty selite -->
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px">
+                Palautumispistemäärä
+            </div>
+            <div class="score-rating" id="scoreRating">Ladataan...</div>
+            <div class="metrics-grid">
+                <div class="metric">
+                    <span class="metric-val" id="metricDuration">–</span>
+                    <span class="metric-lbl">Unen kesto</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-val" id="metricHrv">–</span>
+                    <span class="metric-lbl">Sykevälivaihtelu</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-val" id="metricRecovery">–</span>
+                    <span class="metric-lbl">Palautuminen</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+            <!-- Kaaviot -->
+            <!-- Kaaviot — readiness-näkymässä minitrendi + palautumismittarit -->
+<div class="two-col" id="readinessCharts">
+    <!-- Minitrendi -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Palautumiskehitys (7 pv)</span>
+        </div>
+        <div class="chart-wrap" style="height:200px">
+            <div id="miniTrendChart" style="width:100%;height:100%"></div>
+        </div>
+    </div>
+
+    <!-- Palautumismittarit -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Palautumisen mittarit</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;padding:4px 0">
+            <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+                    <span style="color:var(--muted)">Palautumispistemäärä</span>
+                    <span id="meterReadiness" style="font-family:var(--mono);color:var(--teal)">–</span>
+                </div>
+                <div class="quality-bar">
+                    <div class="quality-fill" id="meterReadinessFill" style="width:0%"></div>
+                </div>
+            </div>
+            <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+                    <span style="color:var(--muted)">Palautumistaso</span>
+                    <span id="meterPns" style="font-family:var(--mono)">–</span>
+                </div>
+                <div class="quality-bar">
+                    <div class="quality-fill" id="meterPnsFill" style="width:0%"></div>
+                </div>
+            </div>
+            <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+                    <span style="color:var(--muted)">Stressitaso</span>
+                    <span id="meterStress" style="font-family:var(--mono)">–</span>
+                </div>
+                <div class="quality-bar">
+                    <div class="quality-fill" id="meterStressFill"
+                         style="width:0%;background:linear-gradient(90deg,#F59E0B,#F87171)"></div>
+                </div>
+            </div>
+            <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+                    <span style="color:var(--muted)">Mittauksen laatu</span>
+                    <span id="meterQuality" style="font-family:var(--mono)">–</span>
+                </div>
+                <div class="quality-bar">
+                    <div class="quality-fill" id="meterQualityFill" style="width:0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- HRV-kortti + univaiheet — näkyy vain timevarying-välilehdellä -->
+<div class="card" id="hrvChartCard" style="display:none">
+    <div class="card-header">
+        <span class="card-title">Yönaikainen sykedata</span>
+    </div>
+    <div class="chart-wrap" style="height:200px">
+        <div id="hrvNightChart" style="width:100%;height:100%"></div>
+    </div>
+</div>
+
+<div class="card" id="sleepChartCard" style="display:none">
+    <div class="card-header">
+        <span class="card-title">Univaiheet</span>
+    </div>
+    <div class="chart-wrap" style="height:200px">
+        <div id="sleepStagesChart" style="width:100%;height:100%"></div>
+    </div>
+    <!-- Legenda -->
+    <div class="chart-legend" style="margin-top:10px">
+        <span class="legend-item">
+            <span class="legend-dot" style="background:#1a5fb4"></span>
+            Syvä uni
+        </span>
+        <span class="legend-item">
+            <span class="legend-dot" style="background:#4a90d9"></span>
+            Kevyt uni
+        </span>
+        <span class="legend-item">
+            <span class="legend-dot" style="background:#c061cb"></span>
+            REM-uni
+        </span>
+        <span class="legend-item">
+            <span class="legend-dot" style="background:#e66100"></span>
+            Hereillä
+        </span>
+    </div>
+</div>
+
+            <!-- Suositukset -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Suositukset</span>
+                </div>
+                <ul class="rec-list" id="recList"></ul>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Dark.js"></script>
+    <!-- Sivun oma JS (type="module" mahdollistaa importit) -->
+    <script type="module" src="/js/pages/dashboard.js"></script>
+</body>
+
+</html>
