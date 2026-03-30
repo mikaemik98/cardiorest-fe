@@ -1,7 +1,7 @@
 // js/pages/login.js
 import { USE_MOCK } from "../services/analysisService.js";
 
-const MOCK_USERS = {
+/* const MOCK_USERS = {
   "matti@test.fi": {
     password: "test1234",
     role: "patient",
@@ -12,7 +12,7 @@ const MOCK_USERS = {
     role: "professional",
     name: "Anna Virtanen",
   },
-};
+}; */
 
 function showError(message) {
   const error = document.getElementById("loginError");
@@ -37,13 +37,13 @@ function setLoading(loading) {
   if (spinner) spinner.style.display = loading ? "block" : "none";
 }
 
-function redirectByRole(role) {
+/* function redirectByRole(role) {
   if (role === "professional") {
     window.location.href = "/professional.html";
   } else {
     window.location.href = "/dashboard.html";
   }
-}
+} */
 
 async function handleLogin() {
   const emailInput = document.getElementById("email");
@@ -67,66 +67,29 @@ async function handleLogin() {
   setLoading(true);
 
   try {
-    if (USE_MOCK) {
-      await new Promise((r) => setTimeout(r, 600));
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: email, password }),
+    });
 
-      const user = MOCK_USERS[email];
-      if (!user || user.password !== password) {
-        showError("Väärä sähköposti tai salasana");
-        setLoading(false);
-        return;
-      }
-
-      localStorage.setItem("token", "mock-token-12345");
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          name: user.name,
-          role: user.role,
-          email,
-        }),
-      );
-
-      redirectByRole(user.role);
-    } else {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            username: email, // backend odottaa 'username'
-            password: password,
-          }),
-        },
-      );
-
-      const data = await res.json();
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-
-      // Rooli täytyy hakea erikseen koska Kubios-käyttäjällä ei ole roolia suoraan
-      // Ohjataan oletuksena dashboardille
-      window.location.href = "/dashboard.html";
-
-      redirectByRole(data.user.role);
+    if (!res.ok) {
+      showError("Väärä sähköposti tai salasana");
+      setLoading(false);
+      return;
     }
+
+    const data = await res.json();
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+
+    window.location.href = "/dashboard.html";
   } catch (err) {
     console.error("Login virhe:", err);
     showError("Yhteysvirhe — yritä uudelleen");
     setLoading(false);
   }
 }
-
-window.mockLogin = function (role) {
-  const email = role === "professional" ? "anna@test.fi" : "matti@test.fi";
-  const name = role === "professional" ? "Anna Virtanen" : "Matti Meikäläinen";
-
-  localStorage.setItem("token", "mock-token-12345");
-  localStorage.setItem("user", JSON.stringify({ name, role, email }));
-
-  redirectByRole(role);
-};
 
 document.getElementById("loginBtn")?.addEventListener("click", handleLogin);
 

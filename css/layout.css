@@ -77,6 +77,10 @@ body {
 .sidebar-footer {
     padding: 14px 12px;
     border-top: 1px solid var(--border);
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .user-chip {
@@ -87,6 +91,26 @@ body {
     border-radius: 8px;
     cursor: pointer;
     transition: background 0.15s;
+    overflow: hidden;
+}
+
+.user-chip .name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-chip .role {
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.user-chip .user-info {
+    overflow: hidden;
+    min-width: 0;
 }
 
 .user-chip:hover {
