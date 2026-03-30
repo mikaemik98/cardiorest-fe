@@ -1,4 +1,3 @@
-
 const navItems = [
   {
     id: "dashboard",
@@ -65,8 +64,24 @@ export function renderSidebar(activePage) {
                     <div class="role">Potilas</div>
                 </div>
             </div>
+            <button class="logout-btn" id="logoutBtn">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none"
+                     stroke="currentColor" stroke-width="1.5">
+                    <path d="M6 2H2v12h4"/>
+                    <polyline points="11,5 14,8 11,11"/>
+                    <line x1="14" y1="8" x2="6" y2="8"/>
+                </svg>
+                Kirjaudu ulos
+            </button>
         </div>
     `;
+
+  // logout-toiminto
+  document.getElementById("logoutBtn")?.addEventListener("click", () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "/index.html";
+  });
 
   // Hamburger-logiikka
   const hamburger = document.getElementById("hamburger");
