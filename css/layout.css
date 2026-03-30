@@ -153,6 +153,30 @@ body {
     gap: 20px;
 }
 
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 10px;
+    margin-top: 8px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.logout-btn:hover {
+    border-color: var(--red);
+    color: var(--red);
+    background: rgba(248, 113, 113, 0.06);
+}
+
 /* responsiivisuus */
 @media (max-width: 1024px) {
     .sidebar {

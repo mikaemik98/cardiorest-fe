@@ -338,7 +338,16 @@ function switchView(view) {
 }
 window.switchView = switchView;
 
+// Tarkista että käyttäjä on kirjautunut
+function checkAuth() {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "/index.html";
+  }
+}
+
 async function init() {
+  checkAuth();
   renderSidebar("dashboard");
 
   try {
