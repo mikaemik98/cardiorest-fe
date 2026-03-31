@@ -77,10 +77,13 @@ body {
 .sidebar-footer {
     padding: 14px 12px;
     border-top: 1px solid var(--border);
+<<<<<<< HEAD
+=======
     margin-top: auto;
     display: flex;
     flex-direction: column;
     gap: 8px;
+>>>>>>> 69017402730e370c539a012f476def985ef053c1
 }
 
 .user-chip {
@@ -91,6 +94,8 @@ body {
     border-radius: 8px;
     cursor: pointer;
     transition: background 0.15s;
+<<<<<<< HEAD
+=======
     overflow: hidden;
 }
 
@@ -111,6 +116,7 @@ body {
 .user-chip .user-info {
     overflow: hidden;
     min-width: 0;
+>>>>>>> 69017402730e370c539a012f476def985ef053c1
 }
 
 .user-chip:hover {
