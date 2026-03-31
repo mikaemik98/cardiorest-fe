@@ -38,8 +38,6 @@ export function renderSidebar(activePage) {
   const sidebar = document.getElementById("sidebar");
   if (!sidebar) return;
 
-<<<<<<< HEAD
-=======
   // Hae käyttäjän tiedot localStoragesta
   const userRaw = localStorage.getItem("user");
   const user = userRaw ? JSON.parse(userRaw) : null;
@@ -57,7 +55,6 @@ export function renderSidebar(activePage) {
       ? `${firstName[0]}${lastName[0]}`.toUpperCase()
       : (user?.email ?? "KK").substring(0, 2).toUpperCase();
 
->>>>>>> 69017402730e370c539a012f476def985ef053c1
   sidebar.innerHTML = `
         <div class="logo">
             <div class="logo-name">CardioRest</div>
@@ -78,15 +75,9 @@ export function renderSidebar(activePage) {
         </nav>
         <div class="sidebar-footer">
             <div class="user-chip">
-<<<<<<< HEAD
-                <div class="avatar">MM</div>
-                <div class="user-info">
-                    <div class="name">Matti Meikäläinen</div>
-=======
                 <div class="avatar">${initials}</div>
                 <div class="user-info">
                     <div class="name">${displayName}</div>
->>>>>>> 69017402730e370c539a012f476def985ef053c1
                     <div class="role">Potilas</div>
                 </div>
             </div>
