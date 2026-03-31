@@ -350,11 +350,8 @@ async function init() {
   checkAuth();
   renderSidebar("dashboard");
 
-<<<<<<< HEAD
-=======
   console.log("user localStorage:", localStorage.getItem("user"));
 
->>>>>>> 69017402730e370c539a012f476def985ef053c1
   try {
     document.getElementById("scoreRating").textContent = "Ladataan...";
 

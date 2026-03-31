@@ -1,11 +1,7 @@
 // js/pages/login.js
 import { USE_MOCK } from "../services/analysisService.js";
 
-<<<<<<< HEAD
-const MOCK_USERS = {
-=======
 /* const MOCK_USERS = {
->>>>>>> 69017402730e370c539a012f476def985ef053c1
   "matti@test.fi": {
     password: "test1234",
     role: "patient",
@@ -16,11 +12,7 @@ const MOCK_USERS = {
     role: "professional",
     name: "Anna Virtanen",
   },
-<<<<<<< HEAD
-};
-=======
 }; */
->>>>>>> 69017402730e370c539a012f476def985ef053c1
 
 function showError(message) {
   const error = document.getElementById("loginError");
@@ -45,21 +37,13 @@ function setLoading(loading) {
   if (spinner) spinner.style.display = loading ? "block" : "none";
 }
 
-<<<<<<< HEAD
-function redirectByRole(role) {
-=======
 /* function redirectByRole(role) {
->>>>>>> 69017402730e370c539a012f476def985ef053c1
   if (role === "professional") {
     window.location.href = "/professional.html";
   } else {
     window.location.href = "/dashboard.html";
   }
-<<<<<<< HEAD
-}
-=======
 } */
->>>>>>> 69017402730e370c539a012f476def985ef053c1
 
 async function handleLogin() {
   const emailInput = document.getElementById("email");
@@ -83,52 +67,6 @@ async function handleLogin() {
   setLoading(true);
 
   try {
-<<<<<<< HEAD
-    if (USE_MOCK) {
-      await new Promise((r) => setTimeout(r, 600));
-
-      const user = MOCK_USERS[email];
-      if (!user || user.password !== password) {
-        showError("Väärä sähköposti tai salasana");
-        setLoading(false);
-        return;
-      }
-
-      localStorage.setItem("token", "mock-token-12345");
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          name: user.name,
-          role: user.role,
-          email,
-        }),
-      );
-
-      redirectByRole(user.role);
-    } else {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            username: email, // backend odottaa 'username'
-            password: password,
-          }),
-        },
-      );
-
-      const data = await res.json();
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-
-      // Rooli täytyy hakea erikseen koska Kubios-käyttäjällä ei ole roolia suoraan
-      // Ohjataan oletuksena dashboardille
-      window.location.href = "/dashboard.html";
-
-      redirectByRole(data.user.role);
-    }
-=======
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -146,7 +84,6 @@ async function handleLogin() {
     localStorage.setItem("user", JSON.stringify(data.user));
 
     window.location.href = "/dashboard.html";
->>>>>>> 69017402730e370c539a012f476def985ef053c1
   } catch (err) {
     console.error("Login virhe:", err);
     showError("Yhteysvirhe — yritä uudelleen");
@@ -154,19 +91,6 @@ async function handleLogin() {
   }
 }
 
-<<<<<<< HEAD
-window.mockLogin = function (role) {
-  const email = role === "professional" ? "anna@test.fi" : "matti@test.fi";
-  const name = role === "professional" ? "Anna Virtanen" : "Matti Meikäläinen";
-
-  localStorage.setItem("token", "mock-token-12345");
-  localStorage.setItem("user", JSON.stringify({ name, role, email }));
-
-  redirectByRole(role);
-};
-
-=======
->>>>>>> 69017402730e370c539a012f476def985ef053c1
 document.getElementById("loginBtn")?.addEventListener("click", handleLogin);
 
 document.getElementById("password")?.addEventListener("keydown", (e) => {
