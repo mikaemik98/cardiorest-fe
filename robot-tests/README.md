@@ -4,15 +4,17 @@
 
 ```
 robot-tests/
-├── tests/
-│   ├── auth_tests.robot    — kirjautumisen testit
-│   └── api_tests.robot     — API-reittien testit
 ├── resources/
-│   ├── common.resource     — yhteiset avainsanat ja muuttujat
+│   ├── api.resource        — API-kutsujen avainsanat
 │   ├── auth.resource       — kirjautumisen avainsanat
-│   └── api.resource        — API-kutsujen avainsanat
+│   └── common.resource     — yhteiset avainsanat ja muuttujat
+├── tests/
+│   ├── api_tests.robot     — API-reittien testit
+│   └── auth_tests.robot    — kirjautumisen testit
+├── asennukset.md           — asennusohjeet
+├── README.md               — projektin yleiskuvaus
 ├── requirements.txt        — Python-riippuvuudet
-└── README.md
+└── testaukset.md           — testien dokumentaatio
 ```
 
 ## Asennus
@@ -46,11 +48,11 @@ API_URL=http://localhost:3000
 
 ## Tagit
 
-| Tagi | Kuvaus |
-|---|---|
-| smoke | Perustoiminnallisuus |
-| auth | Kirjautumistestit |
-| api | API-reittien testit |
-| kubios | Kubios-integraatiotestit |
-| negative | Virhetilanteiden testit |
-| security | Tietoturvatestit |
+| Tagi     | Kuvaus                   |
+| -------- | ------------------------ |
+| smoke    | Perustoiminnallisuus     |
+| auth     | Kirjautumistestit        |
+| api      | API-reittien testit      |
+| kubios   | Kubios-integraatiotestit |
+| negative | Virhetilanteiden testit  |
+| security | Tietoturvatestit         |
