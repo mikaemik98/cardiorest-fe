@@ -65,10 +65,50 @@ function renderStatCards(data) {
   const avgRmssd = round(average(data.map((d) => d.rmssd_ms ?? 0)), 1);
   const avgStress = round(average(data.map((d) => d.stress_index ?? 0)), 1);
 
+  // Arvot
   document.getElementById("statReadiness").textContent = avgReadiness;
   document.getElementById("statRmssd").textContent = avgRmssd + " ms";
   document.getElementById("statStress").textContent = avgStress;
 
+  // Värikoodaus
+  document.getElementById("statReadiness").style.color =
+    avgReadiness >= 70 ? "#10D4A0" : avgReadiness >= 40 ? "#F59E0B" : "#F87171";
+
+  document.getElementById("statRmssd").style.color =
+    avgRmssd >= 50 ? "#10D4A0" : avgRmssd >= 30 ? "#F59E0B" : "#F87171";
+
+  document.getElementById("statStress").style.color =
+    avgStress < 10 ? "#10D4A0" : avgStress < 15 ? "#F59E0B" : "#F87171";
+
+  // Palkit
+  const readinessFill = document.getElementById("statReadinessFill");
+  if (readinessFill) {
+    readinessFill.style.width = avgReadiness + "%";
+    readinessFill.style.background =
+      avgReadiness >= 70
+        ? "linear-gradient(90deg, #0A8A68, #10D4A0)"
+        : avgReadiness >= 40
+          ? "linear-gradient(90deg, #B45309, #F59E0B)"
+          : "linear-gradient(90deg, #B91C1C, #F87171)";
+  }
+
+  const rmssdFill = document.getElementById("statRmssdFill");
+  if (rmssdFill) {
+    rmssdFill.style.width = Math.min(avgRmssd, 100) + "%";
+    rmssdFill.style.background =
+      avgRmssd >= 50
+        ? "linear-gradient(90deg, #0A8A68, #10D4A0)"
+        : avgRmssd >= 30
+          ? "linear-gradient(90deg, #B45309, #F59E0B)"
+          : "linear-gradient(90deg, #B91C1C, #F87171)";
+  }
+
+  const stressFill = document.getElementById("statStressFill");
+  if (stressFill) {
+    stressFill.style.width = Math.min((avgStress / 20) * 100, 100) + "%";
+  }
+
+  // Trendinuolet
   setDelta(
     "statReadinessDelta",
     average(recent.map((d) => d.readiness ?? 0)),
@@ -115,6 +155,8 @@ function renderTrendChart(data) {
       paddingRight: 0,
     }),
   );
+
+  chart.zoomOutButton.set("forceHidden", true);
 
   const cursor = chart.set(
     "cursor",
@@ -195,13 +237,18 @@ function renderPnsChart(data) {
   const el = document.getElementById("pnsChart");
   if (!el) return;
 
+  // Lyhennä päivämäärä jos paljon dataa
   const chartData = data.map((d) => ({
-    date: formatDate(d.created_at),
+    date:
+      data.length > 14
+        ? `${new Date(d.created_at).getDate()}.${new Date(d.created_at).getMonth() + 1}.`
+        : formatDate(d.created_at),
     value: round(d.pns_index ?? 0, 2),
   }));
 
   const root = am5.Root.new("pnsChart");
   pnsRoot = root;
+  root._logo?.dispose();
 
   root.setThemes([am5themes_Animated.new(root), am5themes_Dark.new(root)]);
 
@@ -209,15 +256,29 @@ function renderPnsChart(data) {
     am5xy.XYChart.new(root, {
       paddingLeft: 0,
       paddingRight: 0,
+      paddingBottom: 30,
     }),
   );
+
+  const xRenderer = am5xy.AxisRendererX.new(root, { minGridDistance: 60 }); // ← kasvata 40 → 60
+
+  // Rotaa labelit viistoon kun paljon dataa
+  if (data.length > 10) {
+    xRenderer.labels.template.setAll({
+      rotation: -45,
+      centerY: am5.p50,
+      centerX: am5.p100,
+      fontSize: 10,
+      paddingRight: 15,
+      maxWidth: 60,
+      oversizedBehavior: "truncate", // ← leikkaa liian pitkät
+    });
+  }
 
   const xAxis = chart.xAxes.push(
     am5xy.CategoryAxis.new(root, {
       categoryField: "date",
-      renderer: am5xy.AxisRendererX.new(root, {
-        minGridDistance: 30,
-      }),
+      renderer: xRenderer,
     }),
   );
 
@@ -233,9 +294,7 @@ function renderPnsChart(data) {
       yAxis,
       valueYField: "value",
       categoryXField: "date",
-      tooltip: am5.Tooltip.new(root, {
-        labelText: "PNS: {valueY}",
-      }),
+      tooltip: am5.Tooltip.new(root, { labelText: "PNS: {valueY}" }),
     }),
   );
 
@@ -245,8 +304,12 @@ function renderPnsChart(data) {
     strokeOpacity: 0,
   });
 
-  // Väri positiivinen/negatiivinen
   series.columns.template.adapters.add("fill", (fill, target) => {
+    const val = target.dataItem?.get("valueY") ?? 0;
+    return am5.color(val >= 0 ? "#10D4A0" : "#F87171");
+  });
+
+  series.columns.template.adapters.add("stroke", (stroke, target) => {
     const val = target.dataItem?.get("valueY") ?? 0;
     return am5.color(val >= 0 ? "#10D4A0" : "#F87171");
   });
@@ -262,28 +325,45 @@ function renderSnsChart(data) {
   if (!el) return;
 
   const chartData = data.map((d) => ({
-    date: formatDate(d.created_at),
+    date:
+      data.length > 14
+        ? `${new Date(d.created_at).getDate()}.${new Date(d.created_at).getMonth() + 1}.`
+        : formatDate(d.created_at),
     value: round(d.sns_index ?? 0, 2),
   }));
 
   const root = am5.Root.new("snsChart");
   snsRoot = root;
+  root._logo?.dispose();
 
   root.setThemes([am5themes_Animated.new(root), am5themes_Dark.new(root)]);
 
   const chart = root.container.children.push(
     am5xy.XYChart.new(root, {
-      paddingLeft: 0,
+      paddingLeft: 20,
       paddingRight: 0,
+      paddingBottom: 30,
     }),
   );
+
+  const xRenderer = am5xy.AxisRendererX.new(root, { minGridDistance: 60 });
+
+  if (data.length > 10) {
+    xRenderer.labels.template.setAll({
+      rotation: -45,
+      centerY: am5.p50,
+      centerX: am5.p100,
+      fontSize: 10,
+      paddingRight: 15,
+      maxWidth: 60,
+      oversizedBehavior: "truncate", // ← leikkaa liian pitkät
+    });
+  }
 
   const xAxis = chart.xAxes.push(
     am5xy.CategoryAxis.new(root, {
       categoryField: "date",
-      renderer: am5xy.AxisRendererX.new(root, {
-        minGridDistance: 30,
-      }),
+      renderer: xRenderer,
     }),
   );
 
@@ -299,9 +379,7 @@ function renderSnsChart(data) {
       yAxis,
       valueYField: "value",
       categoryXField: "date",
-      tooltip: am5.Tooltip.new(root, {
-        labelText: "SNS: {valueY}",
-      }),
+      tooltip: am5.Tooltip.new(root, { labelText: "SNS: {valueY}" }),
     }),
   );
 
@@ -312,6 +390,11 @@ function renderSnsChart(data) {
   });
 
   series.columns.template.adapters.add("fill", (fill, target) => {
+    const val = target.dataItem?.get("valueY") ?? 0;
+    return am5.color(val <= 0 ? "#10D4A0" : "#F87171");
+  });
+
+  series.columns.template.adapters.add("stroke", (stroke, target) => {
     const val = target.dataItem?.get("valueY") ?? 0;
     return am5.color(val <= 0 ? "#10D4A0" : "#F87171");
   });

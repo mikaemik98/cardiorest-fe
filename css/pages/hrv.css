@@ -21,12 +21,9 @@
 
 .score-fill {
     fill: none;
-    stroke: var(--teal);
-    stroke-width: 8;
+    stroke-width: 10;
     stroke-linecap: round;
-    transform: rotate(-90deg);
-    transform-origin: center;
-    transition: stroke-dashoffset 0.8s ease;
+    transition: stroke-dashoffset 0.8s ease, stroke 0.5s ease;
 }
 
 .score-num {
