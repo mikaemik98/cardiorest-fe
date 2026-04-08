@@ -71,7 +71,7 @@ function updateScoreCard(data) {
     getRecoveryText(readiness);
   document.getElementById("metricDuration").textContent = data.sleep_duration_h
     ? data.sleep_duration_h + "h"
-    : "–";
+    : "-";
   document.getElementById("metricHrv").textContent = rmssd.toFixed(1) + " ms";
   document.getElementById("metricRecovery").textContent =
     Math.round(readiness) + "%";
@@ -95,6 +95,22 @@ function updateScoreCard(data) {
     arc.style.strokeDasharray = circumference;
     arc.style.strokeDashoffset =
       circumference - (readiness / 100) * circumference;
+    arc.setAttribute(
+      "stroke",
+      readiness >= 70 ? "#10D4A0" : readiness >= 40 ? "#F59E0B" : "#F87171",
+    );
+  }
+
+  const scoreValEl = document.getElementById("scoreVal");
+  if (scoreValEl) {
+    scoreValEl.style.color =
+      readiness >= 70 ? "#10D4A0" : readiness >= 40 ? "#F59E0B" : "#F87171";
+  }
+
+  const recoveryEl = document.getElementById("metricRecovery");
+  if (recoveryEl) {
+    recoveryEl.style.color =
+      readiness >= 70 ? "#10D4A0" : readiness >= 40 ? "#F59E0B" : "#F87171";
   }
 }
 
@@ -105,6 +121,35 @@ let miniTrendRoot = null;
 function renderMiniTrend(trendData) {
   const el = document.getElementById("miniTrendChart");
   if (!el) return;
+
+  // Näytä viesti jos dataa liian vähän
+  if (!trendData || trendData.length < 3) {
+    el.innerHTML = `
+            <div style="
+                height:100%;
+                display:flex;
+                flex-direction:column;
+                align-items:center;
+                justify-content:center;
+                gap:8px;
+                color:var(--muted);
+                text-align:center;
+                padding:20px
+            ">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1.5" opacity="0.4">
+                    <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
+                </svg>
+                <div style="font-size:13px;font-weight:600;color:var(--text);opacity:0.6">
+                    Ei tarpeeksi dataa
+                </div>
+                <div style="font-size:13px;opacity:0.5;line-height:1.5">
+                    Tee vähintään 3 mittausta<br>nähdäksesi kehityskaavion
+                </div>
+            </div>
+        `;
+    return;
+  }
 
   if (miniTrendRoot) {
     miniTrendRoot.dispose();
@@ -234,21 +279,76 @@ function updateMeters(data) {
         ? "Kohtalainen"
         : "Heikko";
 
-  // Palkit
-  document.getElementById("meterReadinessFill").style.width =
-    Math.round(readiness) + "%";
+  // Värikoodaus
+  const readinessEl = document.getElementById("meterReadiness");
+  if (readinessEl)
+    readinessEl.style.color =
+      readiness >= 70 ? "#10D4A0" : readiness >= 40 ? "#F59E0B" : "#F87171";
 
-  // PNS: -3 → +3 skaalattu 0-100%
+  const pnsEl = document.getElementById("meterPns");
+  if (pnsEl) pnsEl.style.color = pns >= 0 ? "#10D4A0" : "#F87171";
+
+  const stressEl = document.getElementById("meterStress");
+  if (stressEl)
+    stressEl.style.color =
+      stress < 10 ? "#10D4A0" : stress < 15 ? "#F59E0B" : "#F87171";
+
+  const qualityEl = document.getElementById("meterQuality");
+  if (qualityEl)
+    qualityEl.style.color =
+      quality === "GOOD"
+        ? "#10D4A0"
+        : quality === "MODERATE"
+          ? "#F59E0B"
+          : "#F87171";
+
+  // Laske ensin
   const pnsPct = Math.min(Math.max(((pns + 3) / 6) * 100, 0), 100);
-  document.getElementById("meterPnsFill").style.width = pnsPct + "%";
-
-  // Stress: 0-20 skaalattu 0-100%
   const stressPct = Math.min((stress / 20) * 100, 100);
-  document.getElementById("meterStressFill").style.width = stressPct + "%";
 
-  // Laatu
-  document.getElementById("meterQualityFill").style.width =
-    quality === "GOOD" ? "90%" : quality === "MODERATE" ? "55%" : "25%";
+  // Palkit + värit
+  const readinessFill = document.getElementById("meterReadinessFill");
+  if (readinessFill) {
+    readinessFill.style.width = Math.round(readiness) + "%";
+    readinessFill.style.background =
+      readiness >= 70
+        ? "linear-gradient(90deg, #0A8A68, #10D4A0)"
+        : readiness >= 40
+          ? "linear-gradient(90deg, #B45309, #F59E0B)"
+          : "linear-gradient(90deg, #B91C1C, #F87171)";
+  }
+
+  const pnsFill = document.getElementById("meterPnsFill");
+  if (pnsFill) {
+    pnsFill.style.width = pnsPct + "%";
+    pnsFill.style.background =
+      pns >= 0
+        ? "linear-gradient(90deg, #0A8A68, #10D4A0)"
+        : "linear-gradient(90deg, #B91C1C, #F87171)";
+  }
+
+  const stressFill = document.getElementById("meterStressFill");
+  if (stressFill) {
+    stressFill.style.width = stressPct + "%";
+    stressFill.style.background =
+      stress < 10
+        ? "linear-gradient(90deg, #0A8A68, #10D4A0)"
+        : stress < 15
+          ? "linear-gradient(90deg, #B45309, #F59E0B)"
+          : "linear-gradient(90deg, #B91C1C, #F87171)";
+  }
+
+  const qualityFill = document.getElementById("meterQualityFill");
+  if (qualityFill) {
+    qualityFill.style.width =
+      quality === "GOOD" ? "90%" : quality === "MODERATE" ? "55%" : "25%";
+    qualityFill.style.background =
+      quality === "GOOD"
+        ? "linear-gradient(90deg, #0A8A68, #10D4A0)"
+        : quality === "MODERATE"
+          ? "linear-gradient(90deg, #B45309, #F59E0B)"
+          : "linear-gradient(90deg, #B91C1C, #F87171)";
+  }
 }
 
 function switchView(view) {
@@ -322,11 +422,27 @@ function switchView(view) {
     if (lblRecovery) lblRecovery.textContent = "Korkein syke";
 
     const arc = document.getElementById("scoreArc");
-    if (arc && avgHr) {
+    if (arc) {
       const circumference = 2 * Math.PI * 46;
-      const pct = Math.min((avgHr - 40) / 60, 1);
       arc.style.strokeDasharray = circumference;
-      arc.style.strokeDashoffset = circumference - pct * circumference;
+      arc.style.strokeDashoffset =
+        circumference - (readiness / 100) * circumference;
+      arc.setAttribute(
+        "stroke",
+        readiness >= 70 ? "#10D4A0" : readiness >= 40 ? "#F59E0B" : "#F87171",
+      );
+    }
+
+    const scoreValEl = document.getElementById("scoreVal");
+    if (scoreValEl) {
+      scoreValEl.style.color =
+        readiness >= 70 ? "#10D4A0" : readiness >= 40 ? "#F59E0B" : "#F87171";
+    }
+
+    const recoveryEl = document.getElementById("metricRecovery");
+    if (recoveryEl) {
+      recoveryEl.style.color =
+        readiness >= 70 ? "#10D4A0" : readiness >= 40 ? "#F59E0B" : "#F87171";
     }
 
     renderHrvNightChart("hrvNightChart", { labels: tv.labels, hr: tv.hr });
@@ -350,12 +466,9 @@ async function init() {
   checkAuth();
   renderSidebar("dashboard");
 
-  console.log("user localStorage:", localStorage.getItem("user"));
-
   try {
     document.getElementById("scoreRating").textContent = "Ladataan...";
 
-    // Hae data suoraan Kubios-reitistä
     const [data, trendData] = await Promise.all([
       getLatestAnalysis(),
       getAnalysisTrend(7),

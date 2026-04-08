@@ -42,81 +42,107 @@
                     <span class="card-title">HRV-yhteenveto</span>
                     <span class="date-label" id="dateLabel"></span>
                 </div>
-                <div class="score-grid">
-                    <div class="score-circle">
-                        <svg viewBox="0 0 110 110" width="110" height="110">
-                            <circle cx="55" cy="55" r="46" class="score-track"/>
-                            <circle cx="55" cy="55" r="46" class="score-fill" id="scoreArc"/>
-                        </svg>
-                        <div class="score-num">
-                            <span class="score-val" id="scoreVal">–</span>
-                            <span class="score-lbl">/100</span>
+                <div style="display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:24px;align-items:center">
+                    <div style="display:flex;align-items:center;gap:16px">
+                        <div class="score-circle">
+                            <svg viewBox="0 0 110 110" width="110" height="110">
+                                <circle cx="55" cy="55" r="46" class="score-track" />
+                                <circle cx="55" cy="55" r="46" class="score-fill" id="scoreArc" />
+                            </svg>
+                            <div class="score-num">
+                                <span class="score-val" id="scoreVal">–</span>
+                                <span class="score-lbl">/100</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="font-size:11px;color:var(--muted);margin-bottom:2px">Readiness-pistemäärä</div>
+                            <div class="score-rating" id="scoreRating">Ladataan...</div>
                         </div>
                     </div>
-                    <div class="score-details">
-                        <div style="font-size:11px;color:var(--muted);margin-bottom:4px">
-                            Readiness-pistemäärä
+                    <div style="padding-left:24px;border-left:1px solid var(--border)">
+                        <div style="font-family:var(--mono);font-size:24px;font-weight:500;color:var(--text)" id="metricRmssd">–
                         </div>
-                        <div class="score-rating" id="scoreRating">Ladataan...</div>
-                        <div class="metrics-grid">
-                            <div class="metric">
-                                <span class="metric-val" id="metricRmssd">–</span>
-                                <span class="metric-lbl">RMSSD (ms)</span>
-                            </div>
-                            <div class="metric">
-                                <span class="metric-val" id="metricSdnn">–</span>
-                                <span class="metric-lbl">SDNN (ms)</span>
-                            </div>
-                            <div class="metric">
-                                <span class="metric-val" id="metricHr">–</span>
-                                <span class="metric-lbl">Keskisyke (bpm)</span>
-                            </div>
+                        <div style="font-size:12px;color:var(--muted);margin-top:2px">RMSSD (ms)</div>
+                    </div>
+                    <div style="padding-left:24px;border-left:1px solid var(--border)">
+                        <div style="font-family:var(--mono);font-size:24px;font-weight:500;color:var(--text)" id="metricSdnn">–
                         </div>
+                        <div style="font-size:12px;color:var(--muted);margin-top:2px">SDNN (ms)</div>
+                    </div>
+                    <div style="padding-left:24px;border-left:1px solid var(--border)">
+                        <div style="font-family:var(--mono);font-size:24px;font-weight:500;color:var(--text)" id="metricHr">–</div>
+                        <div style="font-size:12px;color:var(--muted);margin-top:2px">Keskisyke (bpm)</div>
                     </div>
                 </div>
             </section>
-
-            <!-- Parametrikortit -->
+            
+            <!-- Parametrikortit — edistymispalkeilla -->
             <div class="three-col" id="paramCards">
                 <div class="stat-card">
                     <div class="stat-lbl">PNS-indeksi</div>
                     <div class="stat-val" id="statPns">–</div>
-                    <div class="stat-sub">Palautuminen</div>
+                    <div class="stat-sub" style="font-size:11px;color:var(--muted);margin:4px 0 10px">Palautuminen</div>
+                    <div class="quality-bar">
+                        <div class="quality-fill" id="pnsFill" style="width:0%"></div>
+                    </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-lbl">SNS-indeksi</div>
                     <div class="stat-val" id="statSns">–</div>
-                    <div class="stat-sub">Kuormitus</div>
+                    <div class="stat-sub" style="font-size:11px;color:var(--muted);margin:4px 0 10px">Kuormitus</div>
+                    <div class="quality-bar">
+                        <div class="quality-fill" id="snsFill" style="width:0%;background:linear-gradient(90deg,#B91C1C,#F87171)">
+                        </div>
+                    </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-lbl">Stress-indeksi</div>
                     <div class="stat-val" id="statStress">–</div>
-                    <div class="stat-sub">Stressitaso</div>
+                    <div class="stat-sub" style="font-size:11px;color:var(--muted);margin:4px 0 10px">Stressitaso</div>
+                    <div class="quality-bar">
+                        <div class="quality-fill" id="stressFill"
+                            style="width:0%;background:linear-gradient(90deg,#F59E0B,#F87171)"></div>
+                    </div>
                 </div>
             </div>
-
-            <!-- Poincaré-parametrit (SD1 / SD2) -->
+            
+            <!-- Poincaré-parametrit — selityksillä -->
             <div class="two-col">
                 <div class="card">
                     <div class="card-header">
                         <span class="card-title">
                             <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
-                                <polyline points="2,8 4,8 5,4 7,12 9,6 11,10 12,8 14,8"/>
+                                <polyline points="2,8 4,8 5,4 7,12 9,6 11,10 12,8 14,8" />
                             </svg>
                             Poincaré-analyysi
                         </span>
                     </div>
                     <div class="poincare-params">
                         <div class="param-row">
-                            <span class="param-label">SD1 (ms)</span>
+                            <div>
+                                <span class="param-label">SD1 (ms)</span>
+                                <div style="font-size:11px;color:var(--muted);margin-top:2px">
+                                    Lyhytaikainen sykevälivaihtelu
+                                </div>
+                            </div>
                             <span class="param-val" id="paramSd1">–</span>
                         </div>
                         <div class="param-row">
-                            <span class="param-label">SD2 (ms)</span>
+                            <div>
+                                <span class="param-label">SD2 (ms)</span>
+                                <div style="font-size:11px;color:var(--muted);margin-top:2px">
+                                    Pitkäaikainen sykevälivaihtelu
+                                </div>
+                            </div>
                             <span class="param-val" id="paramSd2">–</span>
                         </div>
                         <div class="param-row">
-                            <span class="param-label">SD2/SD1</span>
+                            <div>
+                                <span class="param-label">SD2/SD1</span>
+                                <div style="font-size:11px;color:var(--muted);margin-top:2px">
+                                    Lyhyt- ja pitkäaikaisen vaihtelun suhde
+                                </div>
+                            </div>
                             <span class="param-val" id="paramSdRatio">–</span>
                         </div>
                     </div>
@@ -125,7 +151,7 @@
                     <div class="card-header">
                         <span class="card-title">
                             <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
-                                <circle cx="8" cy="8" r="6"/>
+                                <circle cx="8" cy="8" r="6" />
                             </svg>
                             Mittauksen laatu
                         </span>
