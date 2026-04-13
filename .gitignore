@@ -26,3 +26,7 @@ dist-ssr
 *.sw?
 
 
+report.html
+log.html
+output.xml
+robot-tests/outputs/
