@@ -2,6 +2,8 @@
 Documentation       Yhteiset avainsanat ja muuttujat
 Library             RequestsLibrary
 Library             Collections
+Library             OperatingSystem
+Library             OperatingSystem
 
 
 *** Variables ***
@@ -16,3 +18,8 @@ Set Base URL
     Set Global Variable    ${BASE_URL}    ${env_url}
     Set Global Variable    ${API_URL}     ${env_url}/api
     Log    Base URL: ${BASE_URL}
+
+Alusta Testit
+    [Documentation]    Asettaa URL:t ja kirjautuu sisään ennen testejä
+    Set Base URL
+    Kirjaudu Ja Tallenna Token

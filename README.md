@@ -147,3 +147,7 @@ Varmista että backend pyörii portissa `3000` ennen kuin vaihdat `USE_MOCK = fa
 | Daniil Pavliuk  | Backend + Tietokanta          |
 
 ---
+
+## Testaus
+
+Katso testausdokumentaatio: **[testaukset.md](./testatukset.md)**

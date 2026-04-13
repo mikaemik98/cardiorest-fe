@@ -35,6 +35,7 @@ export async function syncTimevarying() {
 
 export async function getLatestAnalysis() {
   if (USE_MOCK) return mockAnalysis;
+  // haetaan suoraan Kubios-pilvestä, ei omaa DB:tä
   try {
     const res = await api.get("/api/kubios/user-data");
     const results = res.data.results ?? [];

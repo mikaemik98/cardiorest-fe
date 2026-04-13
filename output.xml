@@ -1,0 +1,833 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.4.2 (Python 3.11.5 on win32)" generated="2026-04-13T12:38:38.497802" rpa="false" schemaversion="5">
+<suite id="s1" name="Tests" source="C:\Users\Mikae\OneDrive\Tiedostot\cardiorest-fe\cardiorest-fe\robot-tests\tests">
+<suite id="s1-s1" name="Api Test" source="C:\Users\Mikae\OneDrive\Tiedostot\cardiorest-fe\cardiorest-fe\robot-tests\tests\api_test.robot">
+<kw name="Alusta Testit" owner="common" type="SETUP">
+<kw name="Set Base URL" owner="common">
+<kw name="Get Environment Variable" owner="OperatingSystem">
+<msg time="2026-04-13T12:38:38.644572" level="INFO">${env_url} = http://localhost:3000</msg>
+<var>${env_url}</var>
+<arg>API_URL</arg>
+<arg>default=${BASE_URL}</arg>
+<doc>Returns the value of an environment variable with the given name.</doc>
+<status status="PASS" start="2026-04-13T12:38:38.644572" elapsed="0.000000"/>
+</kw>
+<kw name="Set Global Variable" owner="BuiltIn">
+<msg time="2026-04-13T12:38:38.645577" level="INFO">${BASE_URL} = http://localhost:3000</msg>
+<arg>${BASE_URL}</arg>
+<arg>${env_url}</arg>
+<doc>Makes a variable available globally in all tests and suites.</doc>
+<status status="PASS" start="2026-04-13T12:38:38.644572" elapsed="0.001005"/>
+</kw>
+<kw name="Set Global Variable" owner="BuiltIn">
+<msg time="2026-04-13T12:38:38.645577" level="INFO">${API_URL} = http://localhost:3000/api</msg>
+<arg>${API_URL}</arg>
+<arg>${env_url}/api</arg>
+<doc>Makes a variable available globally in all tests and suites.</doc>
+<status status="PASS" start="2026-04-13T12:38:38.645577" elapsed="0.000000"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2026-04-13T12:38:38.645577" level="INFO">Base URL: http://localhost:3000</msg>
+<arg>Base URL: ${BASE_URL}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2026-04-13T12:38:38.645577" elapsed="0.001005"/>
+</kw>
+<doc>Asettaa base URL:n ympäristömuuttujasta jos määritelty</doc>
+<status status="PASS" start="2026-04-13T12:38:38.643269" elapsed="0.003313"/>
+</kw>
+<kw name="Kirjaudu Ja Tallenna Token" owner="auth">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-04-13T12:38:38.646582" level="INFO">${headers} = {'Content-Type': 'application/json'}</msg>
+<var>${headers}</var>
+<arg>Content-Type=application/json</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-04-13T12:38:38.646582" elapsed="0.000000"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-04-13T12:38:38.647586" level="INFO">${body} = {'username': 'mikael.mikkola@metropolia.fi', 'password': '6499aamjM'}</msg>
+<var>${body}</var>
+<arg>username=${TEST_USERNAME}</arg>
+<arg>password=${TEST_PASSWORD}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-04-13T12:38:38.646582" elapsed="0.001004"/>
+</kw>
+<kw name="Create Session" owner="RequestsLibrary">
+<msg time="2026-04-13T12:38:38.647586" level="INFO">Creating Session using : alias=login_session, url=http://localhost:3000, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<msg time="2026-04-13T12:38:38.647586" level="INFO">${session} = &lt;requests.sessions.Session object at 0x00000167A7BEE450&gt;</msg>
+<var>${session}</var>
+<arg>login_session</arg>
+<arg>${BASE_URL}</arg>
+<doc>Create Session: create a HTTP session to a server</doc>
+<status status="PASS" start="2026-04-13T12:38:38.647586" elapsed="0.000000"/>
+</kw>
+<kw name="POST On Session" owner="RequestsLibrary">
+<msg time="2026-04-13T12:38:41.416016" level="INFO">POST Request : url=http://localhost:3000/api/auth/login 
+ path_url=/api/auth/login 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'Content-Length': '69'} 
+ body=b'{"username": "mikael.mikkola@metropolia.fi", "password": "6499aamjM"}' 
+ </msg>
+<msg time="2026-04-13T12:38:41.416016" level="INFO">POST Response : url=http://localhost:3000/api/auth/login 
+ status=200, reason=OK 
+ headers={'X-Powered-By': 'Express', 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '1932', 'ETag': 'W/"78c-cxlZ7NHumqEcryc6gsi8YolvLDY"', 'Date': 'Mon, 13 Apr 2026 09:38:41 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body={"message":"Logged in successfully with Kubios","user":{"birthdate":"1998-10-30","email":"mikael.mikkola@metropolia.fi","family_name":"Mikkola","gender":"male","given_name":"Mikael","sub":"81d4c7d2-69e0-45a0-9872-b5ad58844440"},"user_id":1,"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImt1Ymlvc0lkVG9rZW4iOiJleUpyYVdRaU9pSlFWRVJSVUdaTGJqVTJiWEI1UlU5cGNIVnhPR1JGVURCUGVYbEpNV2gxV2xRd01WSlZla2RYVVN0UlBTSXNJbUZzWnlJNklsSlRNalUySW4wLmV5SmhkRjlvWVhOb0lqb2lWMUpyUjFrMVZuWmFSRUpVU204dFF6WXphMlprVVNJc0luTjFZaUk2SWpneFpEUmpOMlF5TFRZNVpUQXRORFZoTUMwNU9EY3lMV0kxWVdRMU9EZzBORFEwTUNJc0ltVnRZV2xzWDNabGNtbG1hV1ZrSWpwMGNuVmxMQ0pwYzNNaU9pSm9kSFJ3Y3pwY0wxd3ZZMjluYm1sMGJ5MXBaSEF1WlhVdGQyVnpkQzB4TG1GdFlYcHZibUYzY3k1amIyMWNMMlYxTFhkbGMzUXRNVjkxVVcxQlp6UTFlSGtpTENKamIyZHVhWFJ2T25WelpYSnVZVzFsSWpvaU9ERmtOR00zWkRJdE5qbGxNQzAwTldFd0xUazROekl0WWpWaFpEVTRPRFEwTkRRd0lpd2laMmwyWlc1ZmJtRnRaU0k2SWsxcGEyRmxiQ0lzSW1GMVpDSTZJakp5T0RNNFpXOXBaREYyWldJd2NXNXhaMjQ0TVhGaGRXMHdJaXdpWlhabGJuUmZhV1FpT2lKbFl6WTROV1l4WWkwMk56SmxMVFJtTmpRdE9XUXlNaTAyTkdKaVptWTFNakF6WW1RaUxDSjBiMnRsYmw5MWMyVWlPaUpwWkNJc0ltRjFkR2hmZEdsdFpTSTZNVGMzTmpBM016RXpNQ3dpWlhod0lqb3hOemMyTURjMk56TXdMQ0pwWVhRaU9qRTNOell3TnpNeE16QXNJbVpoYldsc2VWOXVZVzFsSWpvaVRXbHJhMjlzWVNJc0ltcDBhU0k2SWpBNE1XTmpNamc0TFRZM05XUXROREl5TXkxaVkySmpMVGxqWVdVNE16WXhaRFV4TnlJc0ltVnRZV2xzSWpvaWJXbHJZV1ZzTG0xcGEydHZiR0ZBYldWMGNtOXdiMnhwWVM1bWFTSjkuWjVQRnRzYVBjc0RpWHhYc0pQLUtOWExfeG1KQUhQZzdURWQ2NTdQSkJwYTVEemdCSGwyRHBab1d6UlRzUXAwSk5GdGdCUENNbnJJMXpfT3hydXoydGMwWW0yOVo2STZfb0Y1dURPa1hIUjVKRWE5WkdVQ29QVHNYUmdwQ2VsbFhKYTNXZy1RNi02b2FleWRVLXJkYzFhekZUYVduZXJ0eTlQYW9MckxNdmp2TUVEX0d2Y1V1SWFVa0sxLUxEWm1IMEV1cUZtYVBZbjhuS19XRmkzOU8yZHZpd3JIbXVzR1NzdHByU1dVMkt6OWJLcnBVU2JzX3lWVUVLR3FHSE1MUVVJY21USklOZUQ1YXktelRHb0hOSGlUXy1RVVd5MXlyS29MYWdvVEhINEkzSnVsMnhTWmhpelNTbDJ0M3lnSjAyZE9zX2RNdDZFOFBsbFV6V2xjZW1nIiwiaWF0IjoxNzc2MDczMTIxLCJleHAiOjE3NzYwNzY3MjF9.uTEVZaZ7BMqcgMek27j288yI0WwfluO1ofzzZMRxz8g"} 
+ </msg>
+<msg time="2026-04-13T12:38:41.416016" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>login_session</arg>
+<arg>/api/auth/login</arg>
+<arg>json=${body}</arg>
+<arg>headers=${headers}</arg>
+<arg>expected_status=200</arg>
+<doc>Sends a POST request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2026-04-13T12:38:38.647586" elapsed="2.769530"/>
+</kw>
+<kw name="Get From Dictionary" owner="Collections">
+<msg time="2026-04-13T12:38:41.417116" level="INFO">${token} = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImt1Ymlvc0lkVG9rZW4iOiJleUpyYVdRaU9pSlFWRVJSVUdaTGJqVTJiWEI1UlU5cGNIVnhPR1JGVURCUGVYbEpNV2gxV2xRd01WSlZla2RYVVN0UlBTSXNJbUZzWnlJNklsSlRNalUySW4wLmV...</msg>
+<var>${token}</var>
+<arg>${response.json()}</arg>
+<arg>token</arg>
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<status status="PASS" start="2026-04-13T12:38:41.417116" elapsed="0.000000"/>
+</kw>
+<kw name="Set Global Variable" owner="BuiltIn">
+<msg time="2026-04-13T12:38:41.417116" level="INFO">${AUTH_TOKEN} = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImt1Ymlvc0lkVG9rZW4iOiJleUpyYVdRaU9pSlFWRVJSVUdaTGJqVTJiWEI1UlU5cGNIVnhPR1JGVURCUGVYbEpNV2gxV2xRd01WSlZla2RYVVN0UlBTSXNJbUZzWnlJNklsSlRNalUySW4wLmV...</msg>
+<arg>${AUTH_TOKEN}</arg>
+<arg>${token}</arg>
+<doc>Makes a variable available globally in all tests and suites.</doc>
+<status status="PASS" start="2026-04-13T12:38:41.417116" elapsed="0.001023"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2026-04-13T12:38:41.418139" level="INFO">Token tallennettu, pituus: 1681</msg>
+<arg>Token tallennettu, pituus: ${token.__len__()}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2026-04-13T12:38:41.418139" elapsed="0.000000"/>
+</kw>
+<doc>Kirjautuu sisään ja tallentaa JWT-tokenin globaaliin muuttujaan</doc>
+<status status="PASS" start="2026-04-13T12:38:38.646582" elapsed="2.771557"/>
+</kw>
+<doc>Asettaa URL:t ja kirjautuu sisään ennen testejä</doc>
+<status status="PASS" start="2026-04-13T12:38:38.643269" elapsed="2.774870"/>
+</kw>
+<test id="s1-s1-t1" name="HRV-data haetaan onnistuneesti" line="13">
+<kw name="Hae Kubios Data" owner="api">
+<kw name="Luo Auth Header" owner="auth">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-04-13T12:38:41.420147" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImt1Ymlvc0lkVG9rZW4iOiJleUpyYVdRaU9pSlFWRVJSVUdaTGJqVTJiWEI1UlU5cGNIVnhPR1JGVURCUGVYbEpNV2gxV2xRd01WSlZla2RYVVN0UlBTSXNJb...</msg>
+<var>${headers}</var>
+<arg>Authorization=Bearer ${AUTH_TOKEN}</arg>
+<arg>Content-Type=application/json</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-04-13T12:38:41.419143" elapsed="0.001004"/>
+</kw>
+<return>
+<value>${headers}</value>
+<status status="PASS" start="2026-04-13T12:38:41.420147" elapsed="0.000000"/>
+</return>
+<msg time="2026-04-13T12:38:41.420147" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImt1Ymlvc0lkVG9rZW4iOiJleUpyYVdRaU9pSlFWRVJSVUdaTGJqVTJiWEI1UlU5cGNIVnhPR1JGVURCUGVYbEpNV2gxV2xRd01WSlZla2RYVVN0UlBTSXNJb...</msg>
+<var>${headers}</var>
+<doc>Luo Authorization-header tallennetulla tokenilla</doc>
+<status status="PASS" start="2026-04-13T12:38:41.419143" elapsed="0.001004"/>
+</kw>
+<kw name="Create Session" owner="RequestsLibrary">
+<msg time="2026-04-13T12:38:41.420147" level="INFO">Creating Session using : alias=kubios, url=http://localhost:3000, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<msg time="2026-04-13T12:38:41.420147" level="INFO">${session} = &lt;requests.sessions.Session object at 0x00000167A4031FD0&gt;</msg>
+<var>${session}</var>
+<arg>kubios</arg>
+<arg>${BASE_URL}</arg>
+<doc>Create Session: create a HTTP session to a server</doc>
+<status status="PASS" start="2026-04-13T12:38:41.420147" elapsed="0.000000"/>
+</kw>
+<kw name="GET On Session" owner="RequestsLibrary">
+<msg time="2026-04-13T12:38:43.546400" level="INFO">GET Request : url=http://localhost:3000/api/kubios/user-data 
+ path_url=/api/kubios/user-data 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImt1Ymlvc0lkVG9rZW4iOiJleUpyYVdRaU9pSlFWRVJSVUdaTGJqVTJiWEI1UlU5cGNIVnhPR1JGVURCUGVYbEpNV2gxV2xRd01WSlZla2RYVVN0UlBTSXNJbUZzWnlJNklsSlRNalUySW4wLmV5SmhkRjlvWVhOb0lqb2lWMUpyUjFrMVZuWmFSRUpVU204dFF6WXphMlprVVNJc0luTjFZaUk2SWpneFpEUmpOMlF5TFRZNVpUQXRORFZoTUMwNU9EY3lMV0kxWVdRMU9EZzBORFEwTUNJc0ltVnRZV2xzWDNabGNtbG1hV1ZrSWpwMGNuVmxMQ0pwYzNNaU9pSm9kSFJ3Y3pwY0wxd3ZZMjluYm1sMGJ5MXBaSEF1WlhVdGQyVnpkQzB4TG1GdFlYcHZibUYzY3k1amIyMWNMMlYxTFhkbGMzUXRNVjkxVVcxQlp6UTFlSGtpTENKamIyZHVhWFJ2T25WelpYSnVZVzFsSWpvaU9ERmtOR00zWkRJdE5qbGxNQzAwTldFd0xUazROekl0WWpWaFpEVTRPRFEwTkRRd0lpd2laMmwyWlc1ZmJtRnRaU0k2SWsxcGEyRmxiQ0lzSW1GMVpDSTZJakp5T0RNNFpXOXBaREYyWldJd2NXNXhaMjQ0TVhGaGRXMHdJaXdpWlhabGJuUmZhV1FpT2lKbFl6WTROV1l4WWkwMk56SmxMVFJtTmpRdE9XUXlNaTAyTkdKaVptWTFNakF6WW1RaUxDSjBiMnRsYmw5MWMyVWlPaUpwWkNJc0ltRjFkR2hmZEdsdFpTSTZNVGMzTmpBM016RXpNQ3dpWlhod0lqb3hOemMyTURjMk56TXdMQ0pwWVhRaU9qRTNOell3TnpNeE16QXNJbVpoYldsc2VWOXVZVzFsSWpvaVRXbHJhMjlzWVNJc0ltcDBhU0k2SWpBNE1XTmpNamc0TFRZM05XUXROREl5TXkxaVkySmpMVGxqWVdVNE16WXhaRFV4TnlJc0ltVnRZV2xzSWpvaWJXbHJZV1ZzTG0xcGEydHZiR0ZBYldWMGNtOXdiMnhwWVM1bWFTSjkuWjVQRnRzYVBjc0RpWHhYc0pQLUtOWExfeG1KQUhQZzdURWQ2NTdQSkJwYTVEemdCSGwyRHBab1d6UlRzUXAwSk5GdGdCUENNbnJJMXpfT3hydXoydGMwWW0yOVo2STZfb0Y1dURPa1hIUjVKRWE5WkdVQ29QVHNYUmdwQ2VsbFhKYTNXZy1RNi02b2FleWRVLXJkYzFhekZUYVduZXJ0eTlQYW9MckxNdmp2TUVEX0d2Y1V1SWFVa0sxLUxEWm1IMEV1cUZtYVBZbjhuS19XRmkzOU8yZHZpd3JIbXVzR1NzdHByU1dVMkt6OWJLcnBVU2JzX3lWVUVLR3FHSE1MUVVJY21USklOZUQ1YXktelRHb0hOSGlUXy1RVVd5MXlyS29MYWdvVEhINEkzSnVsMnhTWmhpelNTbDJ0M3lnSjAyZE9zX2RNdDZFOFBsbFV6V2xjZW1nIiwiaWF0IjoxNzc2MDczMTIxLCJleHAiOjE3NzYwNzY3MjF9.uTEVZaZ7BMqcgMek27j288yI0WwfluO1ofzzZMRxz8g', 'Content-Type': 'application/json'} 
+ body=None 
+ </msg>
+<msg time="2026-04-13T12:38:43.546400" level="INFO">GET Response : url=http://localhost:3000/api/kubios/user-data 
+ status=200, reason=OK 
+ headers={'X-Powered-By': 'Express', 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '30290', 'ETag': 'W/"7652-kCHiPQBTvH+BhXzAF+f45OxOoyQ"', 'Date': 'Mon, 13 Apr 2026 09:38:43 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body={"results":[{"create_timestamp":"2026-02-05T11:56:00.709161+00:00","daily_result":null,"measure_id":"dc563b9f-338a-4c51-92cc-1cbe94325349","measured_timestamp":"2026-02-05T13:52:26+02:00","result":{"analysis_segments":{"analysis_length":[179.95799999999986],"analysis_start":[0],"noise_length":[],"noise_start":[]},"artefact":1.53869236155103,"artefact_level":"GOOD","effective_prc":98.46130763844906,"effective_time":177.18900000000002,"freq_domain":{"HF_peak":0.16333333333333333,"HF_power":527.2861399141561,"HF_power_nu":23.73897274447008,"HF_power_prc":20.857148317824436,"LF_HF_power":3.209475564596557,"LF_peak":0.07,"LF_power":1692.3119816049254,"LF_power_nu":76.18965295200039,"LF_power_prc":66.94050787322371,"VLF_peak":0.03,"VLF_power":306.90009482370857,"VLF_power_prc":12.139634084701308,"tot_power":2528.0835705787235},"mean_hr_bpm":79.04737759458725,"mean_rr_ms":759.0384630812658,"physiological_age":26,"pns_index":-0.8257661328699232,"readiness":62.5,"recovery":62.5,"respiratory_rate":16.24,"rmssd_ms":40.56353954735526,"sd1_ms":28.74419904835319,"sd2_ms":71.30839329864017,"sdnn_ms":54.32321627191267,"sns_index":0.7630741812439951,"stress_index":8.50364664473946,"version":"1.6.0"},"result_id":"e266e997-5fe7-4622-9b5d-aecce22fd10a","result_type":"readiness","user_happiness":4},{"create_timestamp":"2026-02-05T12:28:45.371604+00:00","daily_result":"2026-02-05","measure_id":"781bdb1a-0110-47aa-bc61-2965dde63394","measured_timestamp":"2026-02-05T14:25:21+02:00","result":{"analysis_segments":{"analysis_length":[179.674],"analysis_start":[0],"noise_length":[],"noise_start":[]},"artefact":0.7235326201898995,"artefact_level":"GOOD","effective_prc":99.27646737981009,"effective_time":178.374,"freq_domain":{"HF_peak":0.15,"HF_power":273.9171308463503,"HF_power_nu":24.105081880160267,"HF_power_prc":22.257261307302304,"LF_HF_power":3.14844170825699,"LF_peak":0.11666666666666667,"LF_power":862.4121193627366,"LF_power_nu":75.8934451724464,"LF_power_prc":70.07568981148508,"VLF_peak":0.04,"VLF_power":94.34060487034702,"VLF_power_prc":7.6656888453833165,"tot_power":1230.6865928580432},"mean_hr_bpm":92.16076934207452,"mean_rr_ms":651.0362318840579,"physiological_age":41.7,"pns_index":-1.80644051588644,"readiness":62.5,"recovery":62.5,"respiratory_rate":8.28,"rmssd_ms":25.409150027700424,"sd1_ms":17.999759685080637,"sd2_ms":61.872713309098835,"sdnn_ms":45.56935374020698,"sns_index":2.175967217273554,"stress_index":11.63306173333123,"version":"1.6.0"},"result_id":"fb81f967-066f-460c-b74a-621fa0cf8c96","result_type":"readiness","user_happiness":4},{"create_timestamp":"2026-02-06T04:14:15.197504+00:00","daily_result":"2026-02-06","measure_id":"591ed745-b5cf-4167-984d-4fbc478c5593","measured_timestamp":"2026-02-06T06:10:54+02:00","result":{"analysis_segments":{"analysis_length":[127.00300000000001],"analysis_start":[51.331999999999994],"noise_length":[51.331999999999994],"noise_start":[0]},"artefact":6.63750806067233,"artefact_level":"LOW","effective_prc":64.57846188353379,"effective_time":115.166,"freq_domain":{"HF_peak":0.18,"HF_power":653.7704056736849,"HF_power_nu":12.803239047538993,"HF_power_prc":11.893893373003387,"LF_HF_power":6.81046886715189,"LF_peak":0.11333333333333333,"LF_power":4452.482994105892,"LF_power_nu":87.19606093196775,"LF_power_prc":81.00299052606375,"VLF_peak":0.03333333333333333,"VLF_power":390.40050227261986,"VLF_power_prc":7.102465799155719,"tot_power":5496.689647122656},"mean_hr_bpm":67.19221249330224,"mean_rr_ms":892.9606240601297,"physiological_age":26.2,"pns_index":0.19040277841559172,"readiness":71.27744510400314,"recovery":71.27744510400314,"respiratory_rate":7.78,"rmssd_ms":55.991232334857344,"sd1_ms":39.73855995558531,"sd2_ms":97.07839861644217,"sdnn_ms":74.12174430357987,"sns_index":-0.3414377793669666,"stress_index":6.244858396739213,"version":"1.6.0"},"result_id":"b92eb38f-1d21-4d59-9397-49fa76c7034a","result_type":"readiness","user_comment":"Väsyttää","user_happiness":3},{"create_timestamp":"2026-02-07T06:12:07.552640+00:00","daily_result":"2026-02-07","measure_id":"21abc8c7-0202-4841-9cca-bb5018c48119","measured_timestamp":"2026-02-07T08:08:48+02:00","result":{"analysis_segments":{"analysis_length":[179.63600000000005],"analysis_start":[0],"noise_length":[],"noise_start":[]},"artefact":0,"artefact_level":"GOOD","effective_prc":99.99999999999996,"effective_time":179.636,"freq_domain":{"HF_peak":0.15333333333333332,"HF_power":4066.035305578218,"HF_power_nu":39.93056511917542,"HF_power_prc":37.395383254208845,"LF_HF_power":1.5038589430329063,"LF_peak":0.11666666666666667,"LF_power":6114.74355698134,"LF_power_nu":60.04993745482979,"LF_power_prc":56.23738153498496,"VLF_peak":0.03,"VLF_power":690.3301153427241,"VLF_power_prc":6.348975671644413,"tot_power":10873.094354824098},"mean_hr_bpm":60.78959674007438,"mean_rr_ms":987.010989010989,"physiological_age":18.1,"pns_index":2.0159877674594,"readiness":74.72594937205652,"recovery":74.72594937205652,"respiratory_rate":10.66,"rmssd_ms":105.22363296243586,"sd1_ms":74.61218646693615,"sd2_ms":129.9860571854015,"sdnn_ms":105.81860736017467,"sns_index":-1.1249861142541335,"stress_index":4.38147445605272,"version":"1.6.0"},"result_id":"9a5ad10c-1b69-4169-acc1-1b258dec7eea","result_type":"readiness","user_happiness":4},{"create_timestamp":"2026-02-08T06:44:43.360674+00:00","daily_result":"2026-02-08","measure_id":"74b19053-6d01-4841-9d18-e441a8b08ae4","measured_timestamp":"2026-02-08T08:41:09+02:00","result":{"analysis_segments":{"analysis_length":[180.04999999999995],"analysis_start":[0],"noise_length":[],"noise_start":[]},"artefact":0,"artefact_level":"GOOD","effective_prc":100.00000000000003,"effective_time":180.05,"freq_domain":{"HF_peak":0.15,"HF_power":800.4004127636339,"HF_power_nu":14.726251007842137,"HF_power_prc":14.54248168835318,"LF_HF_power":5.790563869884046,"LF_peak":0.14,"LF_power":4634.769711589376,"LF_power_nu":85.2732970248542,"LF_power_prc":84.20916904302827,"VLF_peak":0.04,"VLF_power":68.68305223365012,"VLF_power_prc":1.247902941428172,"tot_power":5503.877741889548},"mean_hr_bpm":71.31352402110525,"mean_rr_ms":841.355140186916,"physiological_age":18.1,"pns_index":0.016612988729030016,"readiness":63.0528337421507,"recovery":63.0528337421507,"respiratory_rate":10.1,"rmssd_ms":57.95964920800039,"sd1_ms":41.08120617188218,"sd2_ms":99.03692408918174,"sdnn_ms":75.701984058726,"sns_index":-0.06897720048912903,"stress_index":6.348458416878568,"version":"1.6.0"},"result_id":"fbcbde1e-0157-44a0-a692-267cd0cac030","result_type":"readiness","user_happiness":4},{"create_timestamp":"2026-02-09T04:18:55.304877+00:00","daily_result":"2026-02-09","measure_id":"abd3cc61-2967-497c-99cc-ff09fe591ca8","measured_timestamp":"2026-02-09T06:15:20+02:00","result":{"analysis_segments":{"analysis_length":[180.6079999999999],"analysis_start":[0],"noise_length":[],"noise_start":[]},"artefact":1.5940600637845508,"artefact_level":"GOOD","effective_prc":98.4059399362155,"effective_time":177.72899999999998,"freq_domain":{"HF_peak":0.15333333333333332,"HF_power":964.3094448259184,"HF_power_nu":18.15818867090945,"HF_power_prc":17.584354331548568,"LF_HF_power":4.506865576997281,"LF_peak":0.13,"LF_power":4346.013042459291,"LF_power_nu":81.83651546154383,"LF_power_prc":79.25032123057927,"VLF_peak":0.03666666666666667,"VLF_power":173.30217109217145,"VLF_power_prc":3.1601959301161133,"tot_power":5483.905900916843},"mean_hr_bpm":67.24755455079793,"mean_rr_ms":892.2257530521318,"physiological_age":18.1,"pns_index":0.34165641105540606,"readiness":64.79875917386185,"recovery":64.79875917386185,"respiratory_rate":11.65,"rmssd_ms":61.38565046828391,"sd1_ms":43.51575431282022,"sd2_ms":102.14301894559121,"sdnn_ms":78.5431666261342,"sns_index":-0.4349143370574129,"stress_index":5.68544889078023,"version":"1.6.0"},"result_id":"00941e1b-6660-4322-a431-e85cc5e1ad8d","result_type":"readiness","user_happiness":4},{"create_timestamp":"2026-02-10T07:49:02.267943+00:00","daily_result":"2026-02-10","measure_id":"88ba269a-8947-4596-af2b-eb6dff3f0b89","measured_timestamp":"2026-02-10T09:45:42+02:00","result":{"analysis_segments":{"analysis_length":[180.8099999999999],"analysis_start":[0],"noise_length":[],"noise_start":[]},"artefact":0,"artefact_level":"GOOD","effective_prc":100.00000000000006,"effective_time":180.81,"freq_domain":{"HF_peak":0.15,"HF_power":581.2061910623004,"HF_power_nu":7.769782105448404,"HF_power_prc":7.62170635582784,"LF_HF_power":11.869469937525475,"LF_peak":0.11,"LF_power":6898.609412317662,"LF_power_nu":92.22319512174322,"LF_power_prc":90.46561446314539,"VLF_peak":0.04,"VLF_power":145.32927916963197,"VLF_power_prc":1.9057902475376953,"tot_power":7625.670209898451},"mean_hr_bpm":66.3680106188817,"mean_rr_ms":904.0500000000001,"physiological_age":18.1,"pns_index":0.2467124579829123,"readiness":64.03894701726846,"recovery":64.03894701726846,"respiratory_rate":6.75,"rmssd_ms":57.39033686509135,"sd1_ms":40.68411683349899,"sd2_ms":112.36623547833996,"sdnn_ms":84.61691661823187,"sns_index":-0.39115771847889574,"stress_index":6.062422906282097,"version":"1.6.0"},"result_id":"fb3000cd-96c7-4e14-a39a-e89563de330a","result_type":"readiness","user_happiness":4},{"create_timestamp":"2026-02-11T06:17:59.034747+00:00","daily_result":"2026-02-11","measure_id":"eabdaaf0-0724-431c-a763-4f17eb73376a","measured_timestamp":"2026-02-11T08:14:35+02:00","result":{"analysis_segments":{"analysis_length":[180.16299999999995],"analysis_start":[0],"noise_length":[],"noise_start":[]},"artefact":0,"artefact_level":"GOOD","effective_prc":100.00000000000004,"effective_time":180.163,"freq_domain":{"HF_peak":0.15,"HF_power":203.79132434801465,"HF_power_nu":6.388155344536128,"HF_power_prc":6.247973547869501,"LF_HF_power":14.65391289035894,"LF_peak":0.12,"LF_power":2986.340314806692,"LF_power_nu":93.61147194891332,"LF_power_prc":91.55726011174656,"VLF_peak":0.04,"VLF_power":71.57521524337066,"VLF_power_prc":2.1944018125126945,"tot_power":3261.7187442719814},"mean_hr_bpm":82.59187513529415,"mean_rr_ms":726.463709... (set the log level to DEBUG or TRACE to see the full content) 
+ </msg>
+<msg time="2026-04-13T12:38:43.547406" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>kubios</arg>
+<arg>/api/kubios/user-data</arg>
+<arg>headers=${headers}</arg>
+<arg>expected_status=any</arg>
+<doc>Sends a GET request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2026-04-13T12:38:41.420147" elapsed="2.127259"/>
+</kw>
+<return>
+<value>${response}</value>
+<status status="PASS" start="2026-04-13T12:38:43.547406" elapsed="0.000000"/>
+</return>
+<msg time="2026-04-13T12:38:43.547406" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<doc>Hakee HRV-datan Kubios-reitistä tokenilla</doc>
+<status status="PASS" start="2026-04-13T12:38:41.419143" elapsed="2.128263"/>
+</kw>
+<kw name="Should Be Equal As Strings" owner="BuiltIn">
+<msg time="2026-04-13T12:38:43.548410" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${response.status_code}</arg>
+<arg>200</arg>
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<status status="PASS" start="2026-04-13T12:38:43.547406" elapsed="0.001004"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-04-13T12:38:43.550755" level="INFO">${body} = {'results': [{'create_timestamp': '2026-02-05T11:56:00.709161+00:00', 'daily_result': None, 'measure_id': 'dc563b9f-338a-4c51-92cc-1cbe94325349', 'measured_timestamp': '2026-02-05T13:52:26+02:00', 're...</msg>
+<var>${body}</var>
+<arg>${response.json()}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-04-13T12:38:43.548410" elapsed="0.002345"/>
+</kw>
+<kw name="Dictionary Should Contain Key" owner="Collections">
+<arg>${body}</arg>
+<arg>results</arg>
+<doc>Fails if ``key`` is not found from ``dictionary``.</doc>
+<status status="PASS" start="2026-04-13T12:38:43.550755" elapsed="0.000000"/>
+</kw>
+<kw name="Get From Dictionary" owner="Collections">
+<msg time="2026-04-13T12:38:43.553837" level="INFO">${results} = [{'create_timestamp': '2026-02-05T11:56:00.709161+00:00', 'daily_result': None, 'measure_id': 'dc563b9f-338a-4c51-92cc-1cbe94325349', 'measured_timestamp': '2026-02-05T13:52:26+02:00', 'result': {'ana...</msg>
+<var>${results}</var>
+<arg>${body}</arg>
+<arg>results</arg>
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<status status="PASS" start="2026-04-13T12:38:43.551765" elapsed="0.002072"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2026-04-13T12:38:43.554874" level="INFO">Length is 23.</msg>
+<arg>${results}</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="PASS" start="2026-04-13T12:38:43.553837" elapsed="0.001037"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2026-04-13T12:38:43.555879" level="INFO">HRV-data haettu, mittauksia: 23</msg>
+<arg>HRV-data haettu, mittauksia: ${results.__len__()}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2026-04-13T12:38:43.554874" elapsed="0.001005"/>
+</kw>
+<doc>Kirjautunut käyttäjä hakee HRV-datan.
+Odotetaan 200 OK ja results-lista vastauksessa.</doc>
+<tag>api</tag>
+<tag>kubios</tag>
+<tag>smoke</tag>
+<tag>TC-004</tag>
+<status status="PASS" start="2026-04-13T12:38:41.418139" elapsed="2.137740"/>
+</test>
+<test id="s1-s1-t2" name="Etusivu näyttää viimeisimmän analyysin tuloksen" line="25">
+<kw name="Hae Kubios Data" owner="api">
+<kw name="Luo Auth Header" owner="auth">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-04-13T12:38:43.557905" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImt1Ymlvc0lkVG9rZW4iOiJleUpyYVdRaU9pSlFWRVJSVUdaTGJqVTJiWEI1UlU5cGNIVnhPR1JGVURCUGVYbEpNV2gxV2xRd01WSlZla2RYVVN0UlBTSXNJb...</msg>
+<var>${headers}</var>
+<arg>Authorization=Bearer ${AUTH_TOKEN}</arg>
+<arg>Content-Type=application/json</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-04-13T12:38:43.557905" elapsed="0.000000"/>
+</kw>
+<return>
+<value>${headers}</value>
+<status status="PASS" start="2026-04-13T12:38:43.558909" elapsed="0.000000"/>
+</return>
+<msg time="2026-04-13T12:38:43.558909" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImt1Ymlvc0lkVG9rZW4iOiJleUpyYVdRaU9pSlFWRVJSVUdaTGJqVTJiWEI1UlU5cGNIVnhPR1JGVURCUGVYbEpNV2gxV2xRd01WSlZla2RYVVN0UlBTSXNJb...</msg>
+<var>${headers}</var>
+<doc>Luo Authorization-header tallennetulla tokenilla</doc>
+<status status="PASS" start="2026-04-13T12:38:43.557905" elapsed="0.001004"/>
+</kw>
+<kw name="Create Session" owner="RequestsLibrary">
+<msg time="2026-04-13T12:38:43.558909" level="INFO">Creating Session using : alias=kubios, url=http://localhost:3000, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<msg time="2026-04-13T12:38:43.559930" level="INFO">${session} = &lt;requests.sessions.Session object at 0x00000167A7C2E810&gt;</msg>
+<var>${session}</var>
+<arg>kubios</arg>
+<arg>${BASE_URL}</arg>
+<doc>Create Session: create a HTTP session to a server</doc>
+<status status="PASS" start="2026-04-13T12:38:43.558909" elapsed="0.001021"/>
+</kw>
+<kw name="GET On Session" owner="RequestsLibrary">
+<msg time="2026-04-13T12:38:45.708056" level="INFO">GET Request : url=http://localhost:3000/api/kubios/user-data 
+ path_url=/api/kubios/user-data 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImt1Ymlvc0lkVG9rZW4iOiJleUpyYVdRaU9pSlFWRVJSVUdaTGJqVTJiWEI1UlU5cGNIVnhPR1JGVURCUGVYbEpNV2gxV2xRd01WSlZla2RYVVN0UlBTSXNJbUZzWnlJNklsSlRNalUySW4wLmV5SmhkRjlvWVhOb0lqb2lWMUpyUjFrMVZuWmFSRUpVU204dFF6WXphMlprVVNJc0luTjFZaUk2SWpneFpEUmpOMlF5TFRZNVpUQXRORFZoTUMwNU9EY3lMV0kxWVdRMU9EZzBORFEwTUNJc0ltVnRZV2xzWDNabGNtbG1hV1ZrSWpwMGNuVmxMQ0pwYzNNaU9pSm9kSFJ3Y3pwY0wxd3ZZMjluYm1sMGJ5MXBaSEF1WlhVdGQyVnpkQzB4TG1GdFlYcHZibUYzY3k1amIyMWNMMlYxTFhkbGMzUXRNVjkxVVcxQlp6UTFlSGtpTENKamIyZHVhWFJ2T25WelpYSnVZVzFsSWpvaU9ERmtOR00zWkRJdE5qbGxNQzAwTldFd0xUazROekl0WWpWaFpEVTRPRFEwTkRRd0lpd2laMmwyWlc1ZmJtRnRaU0k2SWsxcGEyRmxiQ0lzSW1GMVpDSTZJakp5T0RNNFpXOXBaREYyWldJd2NXNXhaMjQ0TVhGaGRXMHdJaXdpWlhabGJuUmZhV1FpT2lKbFl6WTROV1l4WWkwMk56SmxMVFJtTmpRdE9XUXlNaTAyTkdKaVptWTFNakF6WW1RaUxDSjBiMnRsYmw5MWMyVWlPaUpwWkNJc0ltRjFkR2hmZEdsdFpTSTZNVGMzTmpBM016RXpNQ3dpWlhod0lqb3hOemMyTURjMk56TXdMQ0pwWVhRaU9qRTNOell3TnpNeE16QXNJbVpoYldsc2VWOXVZVzFsSWpvaVRXbHJhMjlzWVNJc0ltcDBhU0k2SWpBNE1XTmpNamc0TFRZM05XUXROREl5TXkxaVkySmpMVGxqWVdVNE16WXhaRFV4TnlJc0ltVnRZV2xzSWpvaWJXbHJZV1ZzTG0xcGEydHZiR0ZBYldWMGNtOXdiMnhwWVM1bWFTSjkuWjVQRnRzYVBjc0RpWHhYc0pQLUtOWExfeG1KQUhQZzdURWQ2NTdQSkJwYTVEemdCSGwyRHBab1d6UlRzUXAwSk5GdGdCUENNbnJJMXpfT3hydXoydGMwWW0yOVo2STZfb0Y1dURPa1hIUjVKRWE5WkdVQ29QVHNYUmdwQ2VsbFhKYTNXZy1RNi02b2FleWRVLXJkYzFhekZUYVduZXJ0eTlQYW9MckxNdmp2TUVEX0d2Y1V1SWFVa0sxLUxEWm1IMEV1cUZtYVBZbjhuS19XRmkzOU8yZHZpd3JIbXVzR1NzdHByU1dVMkt6OWJLcnBVU2JzX3lWVUVLR3FHSE1MUVVJY21USklOZUQ1YXktelRHb0hOSGlUXy1RVVd5MXlyS29MYWdvVEhINEkzSnVsMnhTWmhpelNTbDJ0M3lnSjAyZE9zX2RNdDZFOFBsbFV6V2xjZW1nIiwiaWF0IjoxNzc2MDczMTIxLCJleHAiOjE3NzYwNzY3MjF9.uTEVZaZ7BMqcgMek27j288yI0WwfluO1ofzzZMRxz8g', 'Content-Type': 'application/json'} 
+ body=None 
+ </msg>
+<msg time="2026-04-13T12:38:45.708056" level="INFO">GET Response : url=http://localhost:3000/api/kubios/user-data 
+ status=200, reason=OK 
+ headers={'X-Powered-By': 'Express', 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '30290', 'ETag': 'W/"7652-kCHiPQBTvH+BhXzAF+f45OxOoyQ"', 'Date': 'Mon, 13 Apr 2026 09:38:45 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body={"results":[{"create_timestamp":"2026-02-05T11:56:00.709161+00:00","daily_result":null,"measure_id":"dc563b9f-338a-4c51-92cc-1cbe94325349","measured_timestamp":"2026-02-05T13:52:26+02:00","result":{"analysis_segments":{"analysis_length":[179.95799999999986],"analysis_start":[0],"noise_length":[],"noise_start":[]},"artefact":1.53869236155103,"artefact_level":"GOOD","effective_prc":98.46130763844906,"effective_time":177.18900000000002,"freq_domain":{"HF_peak":0.16333333333333333,"HF_power":527.2861399141561,"HF_power_nu":23.73897274447008,"HF_power_prc":20.857148317824436,"LF_HF_power":3.209475564596557,"LF_peak":0.07,"LF_power":1692.3119816049254,"LF_power_nu":76.18965295200039,"LF_power_prc":66.94050787322371,"VLF_peak":0.03,"VLF_power":306.90009482370857,"VLF_power_prc":12.139634084701308,"tot_power":2528.0835705787235},"mean_hr_bpm":79.04737759458725,"mean_rr_ms":759.0384630812658,"physiological_age":26,"pns_index":-0.8257661328699232,"readiness":62.5,"recovery":62.5,"respiratory_rate":16.24,"rmssd_ms":40.56353954735526,"sd1_ms":28.74419904835319,"sd2_ms":71.30839329864017,"sdnn_ms":54.32321627191267,"sns_index":0.7630741812439951,"stress_index":8.50364664473946,"version":"1.6.0"},"result_id":"e266e997-5fe7-4622-9b5d-aecce22fd10a","result_type":"readiness","user_happiness":4},{"create_timestamp":"2026-02-05T12:28:45.371604+00:00","daily_result":"2026-02-05","measure_id":"781bdb1a-0110-47aa-bc61-2965dde63394","measured_timestamp":"2026-02-05T14:25:21+02:00","result":{"analysis_segments":{"analysis_length":[179.674],"analysis_start":[0],"noise_length":[],"noise_start":[]},"artefact":0.7235326201898995,"artefact_level":"GOOD","effective_prc":99.27646737981009,"effective_time":178.374,"freq_domain":{"HF_peak":0.15,"HF_power":273.9171308463503,"HF_power_nu":24.105081880160267,"HF_power_prc":22.257261307302304,"LF_HF_power":3.14844170825699,"LF_peak":0.11666666666666667,"LF_power":862.4121193627366,"LF_power_nu":75.8934451724464,"LF_power_prc":70.07568981148508,"VLF_peak":0.04,"VLF_power":94.34060487034702,"VLF_power_prc":7.6656888453833165,"tot_power":1230.6865928580432},"mean_hr_bpm":92.16076934207452,"mean_rr_ms":651.0362318840579,"physiological_age":41.7,"pns_index":-1.80644051588644,"readiness":62.5,"recovery":62.5,"respiratory_rate":8.28,"rmssd_ms":25.409150027700424,"sd1_ms":17.999759685080637,"sd2_ms":61.872713309098835,"sdnn_ms":45.56935374020698,"sns_index":2.175967217273554,"stress_index":11.63306173333123,"version":"1.6.0"},"result_id":"fb81f967-066f-460c-b74a-621fa0cf8c96","result_type":"readiness","user_happiness":4},{"create_timestamp":"2026-02-06T04:14:15.197504+00:00","daily_result":"2026-02-06","measure_id":"591ed745-b5cf-4167-984d-4fbc478c5593","measured_timestamp":"2026-02-06T06:10:54+02:00","result":{"analysis_segments":{"analysis_length":[127.00300000000001],"analysis_start":[51.331999999999994],"noise_length":[51.331999999999994],"noise_start":[0]},"artefact":6.63750806067233,"artefact_level":"LOW","effective_prc":64.57846188353379,"effective_time":115.166,"freq_domain":{"HF_peak":0.18,"HF_power":653.7704056736849,"HF_power_nu":12.803239047538993,"HF_power_prc":11.893893373003387,"LF_HF_power":6.81046886715189,"LF_peak":0.11333333333333333,"LF_power":4452.482994105892,"LF_power_nu":87.19606093196775,"LF_power_prc":81.00299052606375,"VLF_peak":0.03333333333333333,"VLF_power":390.40050227261986,"VLF_power_prc":7.102465799155719,"tot_power":5496.689647122656},"mean_hr_bpm":67.19221249330224,"mean_rr_ms":892.9606240601297,"physiological_age":26.2,"pns_index":0.19040277841559172,"readiness":71.27744510400314,"recovery":71.27744510400314,"respiratory_rate":7.78,"rmssd_ms":55.991232334857344,"sd1_ms":39.73855995558531,"sd2_ms":97.07839861644217,"sdnn_ms":74.12174430357987,"sns_index":-0.3414377793669666,"stress_index":6.244858396739213,"version":"1.6.0"},"result_id":"b92eb38f-1d21-4d59-9397-49fa76c7034a","result_type":"readiness","user_comment":"Väsyttää","user_happiness":3},{"create_timestamp":"2026-02-07T06:12:07.552640+00:00","daily_result":"2026-02-07","measure_id":"21abc8c7-0202-4841-9cca-bb5018c48119","measured_timestamp":"2026-02-07T08:08:48+02:00","result":{"analysis_segments":{"analysis_length":[179.63600000000005],"analysis_start":[0],"noise_length":[],"noise_start":[]},"artefact":0,"artefact_level":"GOOD","effective_prc":99.99999999999996,"effective_time":179.636,"freq_domain":{"HF_peak":0.15333333333333332,"HF_power":4066.035305578218,"HF_power_nu":39.93056511917542,"HF_power_prc":37.395383254208845,"LF_HF_power":1.5038589430329063,"LF_peak":0.11666666666666667,"LF_power":6114.74355698134,"LF_power_nu":60.04993745482979,"LF_power_prc":56.23738153498496,"VLF_peak":0.03,"VLF_power":690.3301153427241,"VLF_power_prc":6.348975671644413,"tot_power":10873.094354824098},"mean_hr_bpm":60.78959674007438,"mean_rr_ms":987.010989010989,"physiological_age":18.1,"pns_index":2.0159877674594,"readiness":74.72594937205652,"recovery":74.72594937205652,"respiratory_rate":10.66,"rmssd_ms":105.22363296243586,"sd1_ms":74.61218646693615,"sd2_ms":129.9860571854015,"sdnn_ms":105.81860736017467,"sns_index":-1.1249861142541335,"stress_index":4.38147445605272,"version":"1.6.0"},"result_id":"9a5ad10c-1b69-4169-acc1-1b258dec7eea","result_type":"readiness","user_happiness":4},{"create_timestamp":"2026-02-08T06:44:43.360674+00:00","daily_result":"2026-02-08","measure_id":"74b19053-6d01-4841-9d18-e441a8b08ae4","measured_timestamp":"2026-02-08T08:41:09+02:00","result":{"analysis_segments":{"analysis_length":[180.04999999999995],"analysis_start":[0],"noise_length":[],"noise_start":[]},"artefact":0,"artefact_level":"GOOD","effective_prc":100.00000000000003,"effective_time":180.05,"freq_domain":{"HF_peak":0.15,"HF_power":800.4004127636339,"HF_power_nu":14.726251007842137,"HF_power_prc":14.54248168835318,"LF_HF_power":5.790563869884046,"LF_peak":0.14,"LF_power":4634.769711589376,"LF_power_nu":85.2732970248542,"LF_power_prc":84.20916904302827,"VLF_peak":0.04,"VLF_power":68.68305223365012,"VLF_power_prc":1.247902941428172,"tot_power":5503.877741889548},"mean_hr_bpm":71.31352402110525,"mean_rr_ms":841.355140186916,"physiological_age":18.1,"pns_index":0.016612988729030016,"readiness":63.0528337421507,"recovery":63.0528337421507,"respiratory_rate":10.1,"rmssd_ms":57.95964920800039,"sd1_ms":41.08120617188218,"sd2_ms":99.03692408918174,"sdnn_ms":75.701984058726,"sns_index":-0.06897720048912903,"stress_index":6.348458416878568,"version":"1.6.0"},"result_id":"fbcbde1e-0157-44a0-a692-267cd0cac030","result_type":"readiness","user_happiness":4},{"create_timestamp":"2026-02-09T04:18:55.304877+00:00","daily_result":"2026-02-09","measure_id":"abd3cc61-2967-497c-99cc-ff09fe591ca8","measured_timestamp":"2026-02-09T06:15:20+02:00","result":{"analysis_segments":{"analysis_length":[180.6079999999999],"analysis_start":[0],"noise_length":[],"noise_start":[]},"artefact":1.5940600637845508,"artefact_level":"GOOD","effective_prc":98.4059399362155,"effective_time":177.72899999999998,"freq_domain":{"HF_peak":0.15333333333333332,"HF_power":964.3094448259184,"HF_power_nu":18.15818867090945,"HF_power_prc":17.584354331548568,"LF_HF_power":4.506865576997281,"LF_peak":0.13,"LF_power":4346.013042459291,"LF_power_nu":81.83651546154383,"LF_power_prc":79.25032123057927,"VLF_peak":0.03666666666666667,"VLF_power":173.30217109217145,"VLF_power_prc":3.1601959301161133,"tot_power":5483.905900916843},"mean_hr_bpm":67.24755455079793,"mean_rr_ms":892.2257530521318,"physiological_age":18.1,"pns_index":0.34165641105540606,"readiness":64.79875917386185,"recovery":64.79875917386185,"respiratory_rate":11.65,"rmssd_ms":61.38565046828391,"sd1_ms":43.51575431282022,"sd2_ms":102.14301894559121,"sdnn_ms":78.5431666261342,"sns_index":-0.4349143370574129,"stress_index":5.68544889078023,"version":"1.6.0"},"result_id":"00941e1b-6660-4322-a431-e85cc5e1ad8d","result_type":"readiness","user_happiness":4},{"create_timestamp":"2026-02-10T07:49:02.267943+00:00","daily_result":"2026-02-10","measure_id":"88ba269a-8947-4596-af2b-eb6dff3f0b89","measured_timestamp":"2026-02-10T09:45:42+02:00","result":{"analysis_segments":{"analysis_length":[180.8099999999999],"analysis_start":[0],"noise_length":[],"noise_start":[]},"artefact":0,"artefact_level":"GOOD","effective_prc":100.00000000000006,"effective_time":180.81,"freq_domain":{"HF_peak":0.15,"HF_power":581.2061910623004,"HF_power_nu":7.769782105448404,"HF_power_prc":7.62170635582784,"LF_HF_power":11.869469937525475,"LF_peak":0.11,"LF_power":6898.609412317662,"LF_power_nu":92.22319512174322,"LF_power_prc":90.46561446314539,"VLF_peak":0.04,"VLF_power":145.32927916963197,"VLF_power_prc":1.9057902475376953,"tot_power":7625.670209898451},"mean_hr_bpm":66.3680106188817,"mean_rr_ms":904.0500000000001,"physiological_age":18.1,"pns_index":0.2467124579829123,"readiness":64.03894701726846,"recovery":64.03894701726846,"respiratory_rate":6.75,"rmssd_ms":57.39033686509135,"sd1_ms":40.68411683349899,"sd2_ms":112.36623547833996,"sdnn_ms":84.61691661823187,"sns_index":-0.39115771847889574,"stress_index":6.062422906282097,"version":"1.6.0"},"result_id":"fb3000cd-96c7-4e14-a39a-e89563de330a","result_type":"readiness","user_happiness":4},{"create_timestamp":"2026-02-11T06:17:59.034747+00:00","daily_result":"2026-02-11","measure_id":"eabdaaf0-0724-431c-a763-4f17eb73376a","measured_timestamp":"2026-02-11T08:14:35+02:00","result":{"analysis_segments":{"analysis_length":[180.16299999999995],"analysis_start":[0],"noise_length":[],"noise_start":[]},"artefact":0,"artefact_level":"GOOD","effective_prc":100.00000000000004,"effective_time":180.163,"freq_domain":{"HF_peak":0.15,"HF_power":203.79132434801465,"HF_power_nu":6.388155344536128,"HF_power_prc":6.247973547869501,"LF_HF_power":14.65391289035894,"LF_peak":0.12,"LF_power":2986.340314806692,"LF_power_nu":93.61147194891332,"LF_power_prc":91.55726011174656,"VLF_peak":0.04,"VLF_power":71.57521524337066,"VLF_power_prc":2.1944018125126945,"tot_power":3261.7187442719814},"mean_hr_bpm":82.59187513529415,"mean_rr_ms":726.463709... (set the log level to DEBUG or TRACE to see the full content) 
+ </msg>
+<msg time="2026-04-13T12:38:45.708056" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>kubios</arg>
+<arg>/api/kubios/user-data</arg>
+<arg>headers=${headers}</arg>
+<arg>expected_status=any</arg>
+<doc>Sends a GET request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2026-04-13T12:38:43.559930" elapsed="2.148126"/>
+</kw>
+<return>
+<value>${response}</value>
+<status status="PASS" start="2026-04-13T12:38:45.708056" elapsed="0.001469"/>
+</return>
+<msg time="2026-04-13T12:38:45.709525" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<doc>Hakee HRV-datan Kubios-reitistä tokenilla</doc>
+<status status="PASS" start="2026-04-13T12:38:43.556899" elapsed="2.152626"/>
+</kw>
+<kw name="Should Be Equal As Strings" owner="BuiltIn">
+<msg time="2026-04-13T12:38:45.709525" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${response.status_code}</arg>
+<arg>200</arg>
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<status status="PASS" start="2026-04-13T12:38:45.709525" elapsed="0.001136"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-04-13T12:38:45.711664" level="INFO">${body} = {'results': [{'create_timestamp': '2026-02-05T11:56:00.709161+00:00', 'daily_result': None, 'measure_id': 'dc563b9f-338a-4c51-92cc-1cbe94325349', 'measured_timestamp': '2026-02-05T13:52:26+02:00', 're...</msg>
+<var>${body}</var>
+<arg>${response.json()}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-04-13T12:38:45.710661" elapsed="0.001003"/>
+</kw>
+<kw name="Get From Dictionary" owner="Collections">
+<msg time="2026-04-13T12:38:45.713137" level="INFO">${results} = [{'create_timestamp': '2026-02-05T11:56:00.709161+00:00', 'daily_result': None, 'measure_id': 'dc563b9f-338a-4c51-92cc-1cbe94325349', 'measured_timestamp': '2026-02-05T13:52:26+02:00', 'result': {'ana...</msg>
+<var>${results}</var>
+<arg>${body}</arg>
+<arg>results</arg>
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<status status="PASS" start="2026-04-13T12:38:45.711664" elapsed="0.001473"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2026-04-13T12:38:45.713137" level="INFO">Length is 23.</msg>
+<arg>${results}</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="PASS" start="2026-04-13T12:38:45.713137" elapsed="0.001300"/>
+</kw>
+<kw name="Get From List" owner="Collections">
+<msg time="2026-04-13T12:38:45.714437" level="INFO">${latest} = {'create_timestamp': '2026-02-05T11:56:00.709161+00:00', 'daily_result': None, 'measure_id': 'dc563b9f-338a-4c51-92cc-1cbe94325349', 'measured_timestamp': '2026-02-05T13:52:26+02:00', 'result': {'anal...</msg>
+<var>${latest}</var>
+<arg>${results}</arg>
+<arg>0</arg>
+<doc>Returns the value specified with an ``index`` from ``list``.</doc>
+<status status="PASS" start="2026-04-13T12:38:45.714437" elapsed="0.000000"/>
+</kw>
+<kw name="Dictionary Should Contain Key" owner="Collections">
+<arg>${latest}</arg>
+<arg>result</arg>
+<doc>Fails if ``key`` is not found from ``dictionary``.</doc>
+<status status="PASS" start="2026-04-13T12:38:45.714437" elapsed="0.000000"/>
+</kw>
+<kw name="Get From Dictionary" owner="Collections">
+<msg time="2026-04-13T12:38:45.715671" level="INFO">${result} = {'analysis_segments': {'analysis_length': [179.95799999999986], 'analysis_start': [0], 'noise_length': [], 'noise_start': []}, 'artefact': 1.53869236155103, 'artefact_level': 'GOOD', 'effective_prc': ...</msg>
+<var>${result}</var>
+<arg>${latest}</arg>
+<arg>result</arg>
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<status status="PASS" start="2026-04-13T12:38:45.714437" elapsed="0.001234"/>
+</kw>
+<kw name="Dictionary Should Contain Key" owner="Collections">
+<arg>${result}</arg>
+<arg>readiness</arg>
+<doc>Fails if ``key`` is not found from ``dictionary``.</doc>
+<status status="PASS" start="2026-04-13T12:38:45.715671" elapsed="0.000000"/>
+</kw>
+<kw name="Dictionary Should Contain Key" owner="Collections">
+<arg>${result}</arg>
+<arg>rmssd_ms</arg>
+<doc>Fails if ``key`` is not found from ``dictionary``.</doc>
+<status status="PASS" start="2026-04-13T12:38:45.716683" elapsed="0.000000"/>
+</kw>
+<kw name="Dictionary Should Contain Key" owner="Collections">
+<arg>${result}</arg>
+<arg>stress_index</arg>
+<doc>Fails if ``key`` is not found from ``dictionary``.</doc>
+<status status="PASS" start="2026-04-13T12:38:45.716683" elapsed="0.000000"/>
+</kw>
+<kw name="Get From Dictionary" owner="Collections">
+<msg time="2026-04-13T12:38:45.717665" level="INFO">${readiness} = 62.5</msg>
+<var>${readiness}</var>
+<arg>${result}</arg>
+<arg>readiness</arg>
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<status status="PASS" start="2026-04-13T12:38:45.717665" elapsed="0.000000"/>
+</kw>
+<kw name="Should Be True" owner="BuiltIn">
+<arg>${readiness} &gt;= 0</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="PASS" start="2026-04-13T12:38:45.717665" elapsed="0.001011"/>
+</kw>
+<kw name="Should Be True" owner="BuiltIn">
+<arg>${readiness} &lt;= 100</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="PASS" start="2026-04-13T12:38:45.718676" elapsed="0.000985"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2026-04-13T12:38:45.720660" level="INFO">Uusin readiness-arvo: 62.5</msg>
+<arg>Uusin readiness-arvo: ${readiness}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2026-04-13T12:38:45.719661" elapsed="0.000999"/>
+</kw>
+<doc>Varmistaa että API palauttaa readiness-arvon uusimmasta mittauksesta.
+Frontend käyttää tätä dashboardin score-kortissa.</doc>
+<tag>api</tag>
+<tag>kubios</tag>
+<tag>smoke</tag>
+<tag>TC-005</tag>
+<status status="PASS" start="2026-04-13T12:38:43.555879" elapsed="2.164781"/>
+</test>
+<test id="s1-s1-t3" name="Käyttäjä näkee omat profiilitietonsa" line="45">
+<kw name="Hae Käyttäjätiedot" owner="api">
+<kw name="Luo Auth Header" owner="auth">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-04-13T12:38:45.722982" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImt1Ymlvc0lkVG9rZW4iOiJleUpyYVdRaU9pSlFWRVJSVUdaTGJqVTJiWEI1UlU5cGNIVnhPR1JGVURCUGVYbEpNV2gxV2xRd01WSlZla2RYVVN0UlBTSXNJb...</msg>
+<var>${headers}</var>
+<arg>Authorization=Bearer ${AUTH_TOKEN}</arg>
+<arg>Content-Type=application/json</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-04-13T12:38:45.722982" elapsed="0.000000"/>
+</kw>
+<return>
+<value>${headers}</value>
+<status status="PASS" start="2026-04-13T12:38:45.722982" elapsed="0.000000"/>
+</return>
+<msg time="2026-04-13T12:38:45.722982" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImt1Ymlvc0lkVG9rZW4iOiJleUpyYVdRaU9pSlFWRVJSVUdaTGJqVTJiWEI1UlU5cGNIVnhPR1JGVURCUGVYbEpNV2gxV2xRd01WSlZla2RYVVN0UlBTSXNJb...</msg>
+<var>${headers}</var>
+<doc>Luo Authorization-header tallennetulla tokenilla</doc>
+<status status="PASS" start="2026-04-13T12:38:45.721655" elapsed="0.001327"/>
+</kw>
+<kw name="Create Session" owner="RequestsLibrary">
+<msg time="2026-04-13T12:38:45.722982" level="INFO">Creating Session using : alias=userinfo, url=http://localhost:3000, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<msg time="2026-04-13T12:38:45.724009" level="INFO">${session} = &lt;requests.sessions.Session object at 0x00000167A7C42050&gt;</msg>
+<var>${session}</var>
+<arg>userinfo</arg>
+<arg>${BASE_URL}</arg>
+<doc>Create Session: create a HTTP session to a server</doc>
+<status status="PASS" start="2026-04-13T12:38:45.722982" elapsed="0.001027"/>
+</kw>
+<kw name="GET On Session" owner="RequestsLibrary">
+<msg time="2026-04-13T12:38:47.932887" level="INFO">GET Request : url=http://localhost:3000/api/kubios/user-info 
+ path_url=/api/kubios/user-info 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImt1Ymlvc0lkVG9rZW4iOiJleUpyYVdRaU9pSlFWRVJSVUdaTGJqVTJiWEI1UlU5cGNIVnhPR1JGVURCUGVYbEpNV2gxV2xRd01WSlZla2RYVVN0UlBTSXNJbUZzWnlJNklsSlRNalUySW4wLmV5SmhkRjlvWVhOb0lqb2lWMUpyUjFrMVZuWmFSRUpVU204dFF6WXphMlprVVNJc0luTjFZaUk2SWpneFpEUmpOMlF5TFRZNVpUQXRORFZoTUMwNU9EY3lMV0kxWVdRMU9EZzBORFEwTUNJc0ltVnRZV2xzWDNabGNtbG1hV1ZrSWpwMGNuVmxMQ0pwYzNNaU9pSm9kSFJ3Y3pwY0wxd3ZZMjluYm1sMGJ5MXBaSEF1WlhVdGQyVnpkQzB4TG1GdFlYcHZibUYzY3k1amIyMWNMMlYxTFhkbGMzUXRNVjkxVVcxQlp6UTFlSGtpTENKamIyZHVhWFJ2T25WelpYSnVZVzFsSWpvaU9ERmtOR00zWkRJdE5qbGxNQzAwTldFd0xUazROekl0WWpWaFpEVTRPRFEwTkRRd0lpd2laMmwyWlc1ZmJtRnRaU0k2SWsxcGEyRmxiQ0lzSW1GMVpDSTZJakp5T0RNNFpXOXBaREYyWldJd2NXNXhaMjQ0TVhGaGRXMHdJaXdpWlhabGJuUmZhV1FpT2lKbFl6WTROV1l4WWkwMk56SmxMVFJtTmpRdE9XUXlNaTAyTkdKaVptWTFNakF6WW1RaUxDSjBiMnRsYmw5MWMyVWlPaUpwWkNJc0ltRjFkR2hmZEdsdFpTSTZNVGMzTmpBM016RXpNQ3dpWlhod0lqb3hOemMyTURjMk56TXdMQ0pwWVhRaU9qRTNOell3TnpNeE16QXNJbVpoYldsc2VWOXVZVzFsSWpvaVRXbHJhMjlzWVNJc0ltcDBhU0k2SWpBNE1XTmpNamc0TFRZM05XUXROREl5TXkxaVkySmpMVGxqWVdVNE16WXhaRFV4TnlJc0ltVnRZV2xzSWpvaWJXbHJZV1ZzTG0xcGEydHZiR0ZBYldWMGNtOXdiMnhwWVM1bWFTSjkuWjVQRnRzYVBjc0RpWHhYc0pQLUtOWExfeG1KQUhQZzdURWQ2NTdQSkJwYTVEemdCSGwyRHBab1d6UlRzUXAwSk5GdGdCUENNbnJJMXpfT3hydXoydGMwWW0yOVo2STZfb0Y1dURPa1hIUjVKRWE5WkdVQ29QVHNYUmdwQ2VsbFhKYTNXZy1RNi02b2FleWRVLXJkYzFhekZUYVduZXJ0eTlQYW9MckxNdmp2TUVEX0d2Y1V1SWFVa0sxLUxEWm1IMEV1cUZtYVBZbjhuS19XRmkzOU8yZHZpd3JIbXVzR1NzdHByU1dVMkt6OWJLcnBVU2JzX3lWVUVLR3FHSE1MUVVJY21USklOZUQ1YXktelRHb0hOSGlUXy1RVVd5MXlyS29MYWdvVEhINEkzSnVsMnhTWmhpelNTbDJ0M3lnSjAyZE9zX2RNdDZFOFBsbFV6V2xjZW1nIiwiaWF0IjoxNzc2MDczMTIxLCJleHAiOjE3NzYwNzY3MjF9.uTEVZaZ7BMqcgMek27j288yI0WwfluO1ofzzZMRxz8g', 'Content-Type': 'application/json'} 
+ body=None 
+ </msg>
+<msg time="2026-04-13T12:38:47.932887" level="INFO">GET Response : url=http://localhost:3000/api/kubios/user-info 
+ status=200, reason=OK 
+ headers={'X-Powered-By': 'Express', 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '195', 'ETag': 'W/"c3-4K6n/8t2IZS01efGGL+tiukT17Y"', 'Date': 'Mon, 13 Apr 2026 09:38:47 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body={"status":"ok","user":{"birthdate":"1998-10-30","email":"mikael.mikkola@metropolia.fi","family_name":"Mikkola","gender":"male","given_name":"Mikael","sub":"81d4c7d2-69e0-45a0-9872-b5ad58844440"}} 
+ </msg>
+<msg time="2026-04-13T12:38:47.932887" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>userinfo</arg>
+<arg>/api/kubios/user-info</arg>
+<arg>headers=${headers}</arg>
+<arg>expected_status=any</arg>
+<doc>Sends a GET request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2026-04-13T12:38:45.724009" elapsed="2.209889"/>
+</kw>
+<return>
+<value>${response}</value>
+<status status="PASS" start="2026-04-13T12:38:47.933898" elapsed="0.000000"/>
+</return>
+<msg time="2026-04-13T12:38:47.933898" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<doc>Hakee käyttäjän profiilitiedot Kubios-tokenilla</doc>
+<status status="PASS" start="2026-04-13T12:38:45.721655" elapsed="2.212243"/>
+</kw>
+<kw name="Should Be Equal As Strings" owner="BuiltIn">
+<msg time="2026-04-13T12:38:47.934903" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${response.status_code}</arg>
+<arg>200</arg>
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<status status="PASS" start="2026-04-13T12:38:47.933898" elapsed="0.001005"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-04-13T12:38:47.934903" level="INFO">${body} = {'status': 'ok', 'user': {'birthdate': '1998-10-30', 'email': 'mikael.mikkola@metropolia.fi', 'family_name': 'Mikkola', 'gender': 'male', 'given_name': 'Mikael', 'sub': '81d4c7d2-69e0-45a0-9872-b5ad58...</msg>
+<var>${body}</var>
+<arg>${response.json()}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-04-13T12:38:47.934903" elapsed="0.000000"/>
+</kw>
+<kw name="Get From Dictionary" owner="Collections">
+<msg time="2026-04-13T12:38:47.935906" level="INFO">${user} = {'birthdate': '1998-10-30', 'email': 'mikael.mikkola@metropolia.fi', 'family_name': 'Mikkola', 'gender': 'male', 'given_name': 'Mikael', 'sub': '81d4c7d2-69e0-45a0-9872-b5ad58844440'}</msg>
+<var>${user}</var>
+<arg>${body}</arg>
+<arg>user</arg>
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<status status="PASS" start="2026-04-13T12:38:47.935906" elapsed="0.000000"/>
+</kw>
+<kw name="Dictionary Should Contain Key" owner="Collections">
+<arg>${user}</arg>
+<arg>email</arg>
+<doc>Fails if ``key`` is not found from ``dictionary``.</doc>
+<status status="PASS" start="2026-04-13T12:38:47.935906" elapsed="0.000000"/>
+</kw>
+<kw name="Dictionary Should Contain Key" owner="Collections">
+<arg>${user}</arg>
+<arg>given_name</arg>
+<doc>Fails if ``key`` is not found from ``dictionary``.</doc>
+<status status="PASS" start="2026-04-13T12:38:47.935906" elapsed="0.000000"/>
+</kw>
+<kw name="Dictionary Should Contain Key" owner="Collections">
+<arg>${user}</arg>
+<arg>family_name</arg>
+<doc>Fails if ``key`` is not found from ``dictionary``.</doc>
+<status status="PASS" start="2026-04-13T12:38:47.936921" elapsed="0.000000"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2026-04-13T12:38:47.936921" level="INFO">Length is 28.</msg>
+<arg>${user}[email]</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="PASS" start="2026-04-13T12:38:47.936921" elapsed="0.000000"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2026-04-13T12:38:47.937924" level="INFO">Käyttäjätiedot haettu: Mikael Mikkola</msg>
+<arg>Käyttäjätiedot haettu: ${user}[given_name] ${user}[family_name]</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2026-04-13T12:38:47.936921" elapsed="0.001003"/>
+</kw>
+<doc>Kirjautunut käyttäjä hakee omat tietonsa.
+Odotetaan käyttäjän sähköposti, etunimi ja sukunimi.</doc>
+<tag>api</tag>
+<tag>profile</tag>
+<tag>smoke</tag>
+<tag>TC-006</tag>
+<status status="PASS" start="2026-04-13T12:38:45.721655" elapsed="2.216269"/>
+</test>
+<test id="s1-s1-t4" name="Pyyntö ilman tokenia palauttaa 401" line="59">
+<kw name="GET" owner="RequestsLibrary">
+<msg time="2026-04-13T12:38:49.981322" level="INFO">GET Request : url=http://localhost:3000/api/kubios/user-data 
+ path_url=/api/kubios/user-data 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'} 
+ body=None 
+ </msg>
+<msg time="2026-04-13T12:38:49.981322" level="INFO">GET Response : url=http://localhost:3000/api/kubios/user-data 
+ status=401, reason=Unauthorized 
+ headers={'X-Powered-By': 'Express', 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '64', 'ETag': 'W/"40-sCkYMUpigt6QXTfTAP3Ot7jN/qg"', 'Date': 'Mon, 13 Apr 2026 09:38:49 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body={"error":"Ei tokenia. Anna authorization header Bearer &lt;token&gt;"} 
+ </msg>
+<msg time="2026-04-13T12:38:49.981322" level="INFO">${response} = &lt;Response [401]&gt;</msg>
+<var>${response}</var>
+<arg>${KUBIOS_URL}</arg>
+<arg>expected_status=any</arg>
+<doc>Sends a GET request.</doc>
+<status status="PASS" start="2026-04-13T12:38:47.939013" elapsed="2.042309"/>
+</kw>
+<kw name="Should Be Equal As Strings" owner="BuiltIn">
+<msg time="2026-04-13T12:38:49.982350" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${response.status_code}</arg>
+<arg>401</arg>
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<status status="PASS" start="2026-04-13T12:38:49.982350" elapsed="0.001002"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2026-04-13T12:38:49.984348" level="INFO">Ilman tokenia palautui: 401</msg>
+<arg>Ilman tokenia palautui: ${response.status_code}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2026-04-13T12:38:49.983352" elapsed="0.000996"/>
+</kw>
+<doc>Suojattu reitti hylkää pyynnön ilman Authorization-headeria.</doc>
+<tag>api</tag>
+<tag>security</tag>
+<tag>TC-007</tag>
+<status status="PASS" start="2026-04-13T12:38:47.939013" elapsed="2.045335"/>
+</test>
+<doc>CardioRest — API-reittien automaatiotestit
+Testaa Kubios-datan haku ja profiilitiedot autentikoiduilla pyynnöillä</doc>
+<status status="PASS" start="2026-04-13T12:38:38.528093" elapsed="11.457574"/>
+</suite>
+<suite id="s1-s2" name="Auth Test" source="C:\Users\Mikae\OneDrive\Tiedostot\cardiorest-fe\cardiorest-fe\robot-tests\tests\auth_test.robot">
+<kw name="Set Base URL" owner="common" type="SETUP">
+<kw name="Get Environment Variable" owner="OperatingSystem">
+<msg time="2026-04-13T12:38:49.992824" level="INFO">${env_url} = http://localhost:3000</msg>
+<var>${env_url}</var>
+<arg>API_URL</arg>
+<arg>default=${BASE_URL}</arg>
+<doc>Returns the value of an environment variable with the given name.</doc>
+<status status="PASS" start="2026-04-13T12:38:49.992824" elapsed="0.000000"/>
+</kw>
+<kw name="Set Global Variable" owner="BuiltIn">
+<msg time="2026-04-13T12:38:49.992824" level="INFO">${BASE_URL} = http://localhost:3000</msg>
+<arg>${BASE_URL}</arg>
+<arg>${env_url}</arg>
+<doc>Makes a variable available globally in all tests and suites.</doc>
+<status status="PASS" start="2026-04-13T12:38:49.992824" elapsed="0.000000"/>
+</kw>
+<kw name="Set Global Variable" owner="BuiltIn">
+<msg time="2026-04-13T12:38:49.993953" level="INFO">${API_URL} = http://localhost:3000/api</msg>
+<arg>${API_URL}</arg>
+<arg>${env_url}/api</arg>
+<doc>Makes a variable available globally in all tests and suites.</doc>
+<status status="PASS" start="2026-04-13T12:38:49.992824" elapsed="0.001129"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2026-04-13T12:38:49.993953" level="INFO">Base URL: http://localhost:3000</msg>
+<arg>Base URL: ${BASE_URL}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2026-04-13T12:38:49.993953" elapsed="0.000000"/>
+</kw>
+<doc>Asettaa base URL:n ympäristömuuttujasta jos määritelty</doc>
+<status status="PASS" start="2026-04-13T12:38:49.991820" elapsed="0.002133"/>
+</kw>
+<test id="s1-s2-t1" name="Kirjautuminen oikeilla tunnuksilla onnistuu" line="12">
+<kw name="Kirjaudu Sisään" owner="auth">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-04-13T12:38:49.994978" level="INFO">${headers} = {'Content-Type': 'application/json'}</msg>
+<var>${headers}</var>
+<arg>Content-Type=application/json</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-04-13T12:38:49.994978" elapsed="0.000000"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-04-13T12:38:49.996109" level="INFO">${body} = {'username': 'mikael.mikkola@metropolia.fi', 'password': '6499aamjM'}</msg>
+<var>${body}</var>
+<arg>username=${username}</arg>
+<arg>password=${password}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-04-13T12:38:49.996109" elapsed="0.000000"/>
+</kw>
+<kw name="POST" owner="RequestsLibrary">
+<msg time="2026-04-13T12:38:52.770219" level="INFO">POST Request : url=http://localhost:3000/api/auth/login 
+ path_url=/api/auth/login 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'Content-Length': '69'} 
+ body=b'{"username": "mikael.mikkola@metropolia.fi", "password": "6499aamjM"}' 
+ </msg>
+<msg time="2026-04-13T12:38:52.770219" level="INFO">POST Response : url=http://localhost:3000/api/auth/login 
+ status=200, reason=OK 
+ headers={'X-Powered-By': 'Express', 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '1932', 'ETag': 'W/"78c-3lGqzIw75KUPbdbIUPop2os1zX4"', 'Date': 'Mon, 13 Apr 2026 09:38:52 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body={"message":"Logged in successfully with Kubios","user":{"birthdate":"1998-10-30","email":"mikael.mikkola@metropolia.fi","family_name":"Mikkola","gender":"male","given_name":"Mikael","sub":"81d4c7d2-69e0-45a0-9872-b5ad58844440"},"user_id":1,"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImt1Ymlvc0lkVG9rZW4iOiJleUpyYVdRaU9pSlFWRVJSVUdaTGJqVTJiWEI1UlU5cGNIVnhPR1JGVURCUGVYbEpNV2gxV2xRd01WSlZla2RYVVN0UlBTSXNJbUZzWnlJNklsSlRNalUySW4wLmV5SmhkRjlvWVhOb0lqb2liVzl5WVc0eWJGcGpRMEUyUmpOclpFSkpPRlpoZHlJc0luTjFZaUk2SWpneFpEUmpOMlF5TFRZNVpUQXRORFZoTUMwNU9EY3lMV0kxWVdRMU9EZzBORFEwTUNJc0ltVnRZV2xzWDNabGNtbG1hV1ZrSWpwMGNuVmxMQ0pwYzNNaU9pSm9kSFJ3Y3pwY0wxd3ZZMjluYm1sMGJ5MXBaSEF1WlhVdGQyVnpkQzB4TG1GdFlYcHZibUYzY3k1amIyMWNMMlYxTFhkbGMzUXRNVjkxVVcxQlp6UTFlSGtpTENKamIyZHVhWFJ2T25WelpYSnVZVzFsSWpvaU9ERmtOR00zWkRJdE5qbGxNQzAwTldFd0xUazROekl0WWpWaFpEVTRPRFEwTkRRd0lpd2laMmwyWlc1ZmJtRnRaU0k2SWsxcGEyRmxiQ0lzSW1GMVpDSTZJakp5T0RNNFpXOXBaREYyWldJd2NXNXhaMjQ0TVhGaGRXMHdJaXdpWlhabGJuUmZhV1FpT2lKbE1EUmlObVl3T1MwMllXSm1MVFEzTkRrdE9HWTVaUzFsWmpJM05EaGpZV0ptT1dJaUxDSjBiMnRsYmw5MWMyVWlPaUpwWkNJc0ltRjFkR2hmZEdsdFpTSTZNVGMzTmpBM016RTBNaXdpWlhod0lqb3hOemMyTURjMk56UXlMQ0pwWVhRaU9qRTNOell3TnpNeE5ESXNJbVpoYldsc2VWOXVZVzFsSWpvaVRXbHJhMjlzWVNJc0ltcDBhU0k2SWpsaE5qVTBPR1l4TFdZek1HVXROR1UzTXkwNE5qUmpMVEU0T1dWaU1qTTBZMkkxTlNJc0ltVnRZV2xzSWpvaWJXbHJZV1ZzTG0xcGEydHZiR0ZBYldWMGNtOXdiMnhwWVM1bWFTSjkuU3ZtMFNGZ1NlUUwwb0ljb0pZSW9MczY1aFYzREY1Y0N4OF9YNGJlcDl5b3laSzdncXlzQUJDcEloSUVGSDh2M2cwU1NzSW5GdkcxWm5NaTlmWkU4VTBNd1FJeXM0Ym9FRkgwdEpTUV9XX3VwZC1rSWFGdnBLc2JySnk1NExrYXd3YktTNURwOFlCdURHV3JybkgwV3lkVHJBMGR6OXRFOFhxUlo3VVRPRzN6WWwwMFlueWZjelhPQU5VZ19RcFVXSGotdllQZWtJTlo0N1JQdlV1MTg2UnZGOTd2UEZ6d2lrWUR3V0FKVWNWYXFOQm1senQzYTZkbHZNTkxnU1l4blJJc2M5VFhhZlc5ZE84ckhZaVo2Z2NVRG1naDBwYmRubEthVDVwQWVLcGZfMlZGeUs5b3hHRFlaYzdFUTJMWVp3emp3Rk9KMTRFTXE1d1duVWM3R1FBIiwiaWF0IjoxNzc2MDczMTMyLCJleHAiOjE3NzYwNzY3MzJ9.TSUpWK0vceVbUZChXAa0aZHklkFkdPaOWr1LUz_p6qo"} 
+ </msg>
+<msg time="2026-04-13T12:38:52.770219" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>${LOGIN_URL}</arg>
+<arg>json=${body}</arg>
+<arg>headers=${headers}</arg>
+<arg>expected_status=any</arg>
+<doc>Sends a POST request.</doc>
+<status status="PASS" start="2026-04-13T12:38:49.996109" elapsed="2.774110"/>
+</kw>
+<return>
+<value>${response}</value>
+<status status="PASS" start="2026-04-13T12:38:52.770219" elapsed="0.000000"/>
+</return>
+<msg time="2026-04-13T12:38:52.771307" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>${TEST_USERNAME}</arg>
+<arg>${TEST_PASSWORD}</arg>
+<doc>Lähettää kirjautumispyynnön ja palauttaa response-objektin</doc>
+<status status="PASS" start="2026-04-13T12:38:49.994978" elapsed="2.776329"/>
+</kw>
+<kw name="Should Be Equal As Strings" owner="BuiltIn">
+<msg time="2026-04-13T12:38:52.771307" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${response.status_code}</arg>
+<arg>200</arg>
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<status status="PASS" start="2026-04-13T12:38:52.771307" elapsed="0.000000"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-04-13T12:38:52.772311" level="INFO">${body} = {'message': 'Logged in successfully with Kubios', 'user': {'birthdate': '1998-10-30', 'email': 'mikael.mikkola@metropolia.fi', 'family_name': 'Mikkola', 'gender': 'male', 'given_name': 'Mikael', 'sub'...</msg>
+<var>${body}</var>
+<arg>${response.json()}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-04-13T12:38:52.772311" elapsed="0.000000"/>
+</kw>
+<kw name="Dictionary Should Contain Key" owner="Collections">
+<arg>${body}</arg>
+<arg>token</arg>
+<doc>Fails if ``key`` is not found from ``dictionary``.</doc>
+<status status="PASS" start="2026-04-13T12:38:52.772311" elapsed="0.000000"/>
+</kw>
+<kw name="Dictionary Should Contain Key" owner="Collections">
+<arg>${body}</arg>
+<arg>user</arg>
+<doc>Fails if ``key`` is not found from ``dictionary``.</doc>
+<status status="PASS" start="2026-04-13T12:38:52.773343" elapsed="0.000000"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2026-04-13T12:38:52.773343" level="INFO">Length is 1681.</msg>
+<arg>${body}[token]</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="PASS" start="2026-04-13T12:38:52.773343" elapsed="0.000000"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2026-04-13T12:38:52.774347" level="INFO">Kirjautuminen onnistui, token saatu</msg>
+<arg>Kirjautuminen onnistui, token saatu</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2026-04-13T12:38:52.773343" elapsed="0.001004"/>
+</kw>
+<doc>Käyttäjä kirjautuu oikeilla Kubios-tunnuksilla.
+Odotetaan 200 OK ja JWT-token vastauksessa.</doc>
+<tag>auth</tag>
+<tag>smoke</tag>
+<tag>TC-001</tag>
+<status status="PASS" start="2026-04-13T12:38:49.993953" elapsed="2.780394"/>
+</test>
+<test id="s1-s2-t2" name="Kirjautuminen väärällä salasanalla epäonnistuu" line="24">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-04-13T12:38:52.775349" level="INFO">${headers} = {'Content-Type': 'application/json'}</msg>
+<var>${headers}</var>
+<arg>Content-Type=application/json</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-04-13T12:38:52.775349" elapsed="0.000000"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-04-13T12:38:52.776366" level="INFO">${body} = {'username': 'mikael.mikkola@metropolia.fi', 'password': 'vaara_salasana_12345'}</msg>
+<var>${body}</var>
+<arg>username=${TEST_USERNAME}</arg>
+<arg>password=vaara_salasana_12345</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-04-13T12:38:52.775349" elapsed="0.001017"/>
+</kw>
+<kw name="POST" owner="RequestsLibrary">
+<msg time="2026-04-13T12:38:55.061268" level="INFO">POST Request : url=http://localhost:3000/api/auth/login 
+ path_url=/api/auth/login 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'Content-Length': '80'} 
+ body=b'{"username": "mikael.mikkola@metropolia.fi", "password": "vaara_salasana_12345"}' 
+ </msg>
+<msg time="2026-04-13T12:38:55.061268" level="INFO">POST Response : url=http://localhost:3000/api/auth/login 
+ status=500, reason=Internal Server Error 
+ headers={'X-Powered-By': 'Express', 'Access-Control-Allow-Origin': '*', 'Content-Security-Policy': "default-src 'none'", 'X-Content-Type-Options': 'nosniff', 'Content-Type': 'text/html; charset=utf-8', 'Content-Length': '581', 'Date': 'Mon, 13 Apr 2026 09:38:55 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body=&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Error&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;pre&gt;Error: Login with Kubios failed due bad username/password&lt;br&gt; &amp;nbsp; &amp;nbsp;at kubiosLogin (file:///C:/Users/Mikae/OneDrive/Tiedostot/cardiorest-be/cardiorest-be/controllers/kubios-auth-controller.js:58:12)&lt;br&gt; &amp;nbsp; &amp;nbsp;at process.processTicksAndRejections (node:internal/process/task_queues:103:5)&lt;br&gt; &amp;nbsp; &amp;nbsp;at async postLogin (file:///C:/Users/Mikae/OneDrive/Tiedostot/cardiorest-be/cardiorest-be/controllers/kubios-auth-controller.js:141:28)&lt;/pre&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+ 
+ </msg>
+<msg time="2026-04-13T12:38:55.061268" level="INFO">${response} = &lt;Response [500]&gt;</msg>
+<var>${response}</var>
+<arg>${LOGIN_URL}</arg>
+<arg>json=${body}</arg>
+<arg>headers=${headers}</arg>
+<arg>expected_status=any</arg>
+<doc>Sends a POST request.</doc>
+<status status="PASS" start="2026-04-13T12:38:52.776366" elapsed="2.284902"/>
+</kw>
+<kw name="Should Be True" owner="BuiltIn">
+<arg>${response.status_code} &gt;= 400</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="PASS" start="2026-04-13T12:38:55.061268" elapsed="0.001080"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2026-04-13T12:38:55.063351" level="INFO">Väärä salasana palautti statuksen: 500</msg>
+<arg>Väärä salasana palautti statuksen: ${response.status_code}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2026-04-13T12:38:55.062348" elapsed="0.001003"/>
+</kw>
+<doc>Käyttäjä yrittää kirjautua väärällä salasanalla.
+Odotetaan 401 Unauthorized tai 500 virhekoodi.</doc>
+<tag>auth</tag>
+<tag>negative</tag>
+<tag>TC-002</tag>
+<status status="PASS" start="2026-04-13T12:38:52.774347" elapsed="2.289004"/>
+</test>
+<test id="s1-s2-t3" name="Kirjautuminen tyhjillä kentillä epäonnistuu" line="39">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-04-13T12:38:55.065368" level="INFO">${headers} = {'Content-Type': 'application/json'}</msg>
+<var>${headers}</var>
+<arg>Content-Type=application/json</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-04-13T12:38:55.064366" elapsed="0.001002"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-04-13T12:38:55.066488" level="INFO">${body} = {'username': '', 'password': ''}</msg>
+<var>${body}</var>
+<arg>username=${EMPTY}</arg>
+<arg>password=${EMPTY}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-04-13T12:38:55.065368" elapsed="0.001120"/>
+</kw>
+<kw name="POST" owner="RequestsLibrary">
+<msg time="2026-04-13T12:38:57.152181" level="INFO">POST Request : url=http://localhost:3000/api/auth/login 
+ path_url=/api/auth/login 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'Content-Length': '32'} 
+ body=b'{"username": "", "password": ""}' 
+ </msg>
+<msg time="2026-04-13T12:38:57.152181" level="INFO">POST Response : url=http://localhost:3000/api/auth/login 
+ status=500, reason=Internal Server Error 
+ headers={'X-Powered-By': 'Express', 'Access-Control-Allow-Origin': '*', 'Content-Security-Policy': "default-src 'none'", 'X-Content-Type-Options': 'nosniff', 'Content-Type': 'text/html; charset=utf-8', 'Content-Length': '581', 'Date': 'Mon, 13 Apr 2026 09:38:57 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body=&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Error&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;pre&gt;Error: Login with Kubios failed due bad username/password&lt;br&gt; &amp;nbsp; &amp;nbsp;at kubiosLogin (file:///C:/Users/Mikae/OneDrive/Tiedostot/cardiorest-be/cardiorest-be/controllers/kubios-auth-controller.js:58:12)&lt;br&gt; &amp;nbsp; &amp;nbsp;at process.processTicksAndRejections (node:internal/process/task_queues:103:5)&lt;br&gt; &amp;nbsp; &amp;nbsp;at async postLogin (file:///C:/Users/Mikae/OneDrive/Tiedostot/cardiorest-be/cardiorest-be/controllers/kubios-auth-controller.js:141:28)&lt;/pre&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+ 
+ </msg>
+<msg time="2026-04-13T12:38:57.152181" level="INFO">${response} = &lt;Response [500]&gt;</msg>
+<var>${response}</var>
+<arg>${LOGIN_URL}</arg>
+<arg>json=${body}</arg>
+<arg>headers=${headers}</arg>
+<arg>expected_status=any</arg>
+<doc>Sends a POST request.</doc>
+<status status="PASS" start="2026-04-13T12:38:55.066488" elapsed="2.085693"/>
+</kw>
+<kw name="Should Be True" owner="BuiltIn">
+<arg>${response.status_code} &gt;= 400</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="PASS" start="2026-04-13T12:38:57.153305" elapsed="0.000000"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2026-04-13T12:38:57.154352" level="INFO">Tyhjät kentät palautti statuksen: 500</msg>
+<arg>Tyhjät kentät palautti statuksen: ${response.status_code}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2026-04-13T12:38:57.154352" elapsed="0.000000"/>
+</kw>
+<doc>Käyttäjä lähettää tyhjän kirjautumispyynnön.
+Odotetaan virhekoodia (400 tai 500).</doc>
+<tag>auth</tag>
+<tag>negative</tag>
+<tag>TC-003</tag>
+<status status="PASS" start="2026-04-13T12:38:55.064366" elapsed="2.089986"/>
+</test>
+<doc>CardioRest — Kirjautumisen automaatiotestit
+Testaa POST /api/auth/login -reitin eri skenaarioilla</doc>
+<status status="PASS" start="2026-04-13T12:38:49.986691" elapsed="7.168779"/>
+</suite>
+<status status="PASS" start="2026-04-13T12:38:38.498808" elapsed="18.657664"/>
+</suite>
+<statistics>
+<total>
+<stat pass="7" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="4" fail="0" skip="0">api</stat>
+<stat pass="3" fail="0" skip="0">auth</stat>
+<stat pass="2" fail="0" skip="0">kubios</stat>
+<stat pass="2" fail="0" skip="0">negative</stat>
+<stat pass="1" fail="0" skip="0">profile</stat>
+<stat pass="1" fail="0" skip="0">security</stat>
+<stat pass="4" fail="0" skip="0">smoke</stat>
+<stat pass="1" fail="0" skip="0">TC-001</stat>
+<stat pass="1" fail="0" skip="0">TC-002</stat>
+<stat pass="1" fail="0" skip="0">TC-003</stat>
+<stat pass="1" fail="0" skip="0">TC-004</stat>
+<stat pass="1" fail="0" skip="0">TC-005</stat>
+<stat pass="1" fail="0" skip="0">TC-006</stat>
+<stat pass="1" fail="0" skip="0">TC-007</stat>
+</tag>
+<suite>
+<stat name="Tests" id="s1" pass="7" fail="0" skip="0">Tests</stat>
+<stat name="Api Test" id="s1-s1" pass="4" fail="0" skip="0">Tests.Api Test</stat>
+<stat name="Auth Test" id="s1-s2" pass="3" fail="0" skip="0">Tests.Auth Test</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

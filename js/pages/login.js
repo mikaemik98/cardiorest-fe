@@ -66,6 +66,7 @@ async function handleLogin() {
 
   setLoading(true);
 
+  // POST /api/auth/login - lähettää Kubios-tunnukset backendille
   try {
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
       method: "POST",

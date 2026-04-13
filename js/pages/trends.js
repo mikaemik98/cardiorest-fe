@@ -304,6 +304,7 @@ function renderPnsChart(data) {
     strokeOpacity: 0,
   });
 
+  // värikoodaus positiivinen/negatiivinen arvo
   series.columns.template.adapters.add("fill", (fill, target) => {
     const val = target.dataItem?.get("valueY") ?? 0;
     return am5.color(val >= 0 ? "#10D4A0" : "#F87171");

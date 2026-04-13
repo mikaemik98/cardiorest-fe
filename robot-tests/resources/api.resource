@@ -5,23 +5,26 @@ Library             Collections
 
 
 *** Variables ***
-${PROFILE_URL}      ${API_URL}/users/profile
 ${KUBIOS_URL}       ${API_URL}/kubios/user-data
+${USER_INFO_URL}    ${API_URL}/kubios/user-info
+${PROFILE_URL}      ${API_URL}/users/profile
 
 
 *** Keywords ***
-Hae Profiili
-    [Documentation]    Hakee käyttäjän profiilin tokenilla
-    ${headers}=     Luo Auth Header
-    ${response}=    GET    ${PROFILE_URL}
-    ...             headers=${headers}
-    ...             expected_status=200
-    RETURN    ${response.json()}
-
 Hae Kubios Data
-    [Documentation]    Hakee Kubios-datan tokenilla
+    [Documentation]    Hakee HRV-datan Kubios-reitistä tokenilla
     ${headers}=     Luo Auth Header
-    ${response}=    GET    ${KUBIOS_URL}
+    ${session}=     Create Session    kubios    ${BASE_URL}
+    ${response}=    GET On Session    kubios    /api/kubios/user-data
     ...             headers=${headers}
-    ...             expected_status=200
-    RETURN    ${response.json()}
+    ...             expected_status=any
+    RETURN    ${response}
+
+Hae Käyttäjätiedot
+    [Documentation]    Hakee käyttäjän profiilitiedot Kubios-tokenilla
+    ${headers}=     Luo Auth Header
+    ${session}=     Create Session    userinfo    ${BASE_URL}
+    ${response}=    GET On Session    userinfo    /api/kubios/user-info
+    ...             headers=${headers}
+    ...             expected_status=any
+    RETURN    ${response}
