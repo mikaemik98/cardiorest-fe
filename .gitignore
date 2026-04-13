@@ -26,7 +26,3 @@ dist-ssr
 *.sw?
 
 
-# Robot Framework tulokset
-robot-tests/outputs/output.xml
-robot-tests/outputs/log.html
-robot-tests/outputs/report.html
