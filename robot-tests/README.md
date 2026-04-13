@@ -4,6 +4,7 @@
 
 ```
 robot-tests/
+├── outputs/
 ├── resources/
 │   ├── api.resource        — API-kutsujen avainsanat
 │   ├── auth.resource       — kirjautumisen avainsanat
