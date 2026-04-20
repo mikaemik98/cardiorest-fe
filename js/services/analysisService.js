@@ -33,6 +33,17 @@ export async function syncTimevarying() {
   // Ei tarvita vielä
 }
 
+export async function getTimevaryingData() {
+    if (USE_MOCK) return null;
+    try {
+        const res = await api.get('/api/kubios/timevarying');
+        return res.data;
+    } catch (err) {
+        console.warn('Timevarying haku epäonnistui:', err.message);
+        return null;
+    }
+}
+
 export async function getLatestAnalysis() {
   if (USE_MOCK) return mockAnalysis;
   // haetaan suoraan Kubios-pilvestä, ei omaa DB:tä
