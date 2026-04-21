@@ -60,6 +60,30 @@
 .status-moderate { background: rgba(245, 158, 11, 0.12); color: var(--amber);}
 .status-poor { background: rgba(248, 113, 113, 0.12); color: var(--red);}
 
+.period-btn {
+    padding: 8px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.period-btn:hover {
+    border-color: var(--teal);
+    color: var(--text);
+}
+
+.period-btn.active {
+    background: rgba(16, 212, 160, 0.12);
+    border-color: var(--teal);
+    color: var(--teal);
+}
+
 /* responsiivisuus */
 @media (max-width: 768px) {
     .history-table th:nth-child(3),
