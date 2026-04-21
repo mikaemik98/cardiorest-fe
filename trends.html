@@ -30,15 +30,18 @@
                 </svg>
             </button>
             <span class="topbar-title">Trendit</span>
-            <select class="period-select" id="periodSelect">
-                <option value="7">7 päivää</option>
-                <option value="14">14 päivää</option>
-                <option value="30">30 päivää</option>
-            </select>
         </header>
 
         <div class="content">
-
+            <!-- Aikavälin valinta -->
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+                <div style="font-size:16px;font-weight:600;color:var(--text)">Valitse tarkasteltava aikaväli:</div>
+                <div style="display:flex;gap:8px">
+                    <button class="period-btn active" id="btn7" onclick="selectPeriod(7, this)">7 päivää</button>
+                    <button class="period-btn" id="btn14" onclick="selectPeriod(14, this)">14 päivää</button>
+                    <button class="period-btn" id="btn30" onclick="selectPeriod(30, this)">30 päivää</button>
+                </div>
+            </div>
             <!-- Tilastokortit -->
             <div class="three-col" id="statCards">
                 <div class="stat-card">
