@@ -24,12 +24,13 @@ const navItems = [
            </svg>`,
   },
   {
-    id: "professional",
-    label: "Ammattilainen",
-    href: "/professional.html",
+    id: "diary",
+    label: "Päiväkirja",
+    href: "/diary.html",
     icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-             <circle cx="6" cy="5" r="3"/>
-             <path d="M1 14c0-3 2.2-5 5-5h4c2.8 0 5 2 5 5"/>
+             <path d="M4 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
+             <line x1="5" y1="6" x2="11" y2="6"/>
+             <line x1="5" y1="9" x2="9" y2="9"/>
            </svg>`,
   },
 ];
