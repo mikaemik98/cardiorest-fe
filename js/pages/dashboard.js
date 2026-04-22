@@ -1,7 +1,8 @@
 import {
   getLatestAnalysis,
   getAnalysisTrend,
-  getTimevaryingData
+  getTimevaryingData,
+  getLatestDiaryEntry,
 } from "../services/analysisService.js";
 import { renderHrvNightChart } from "../components/hrvChart.js";
 import { renderSleepStagesChart } from "../components/sleepChart.js";
@@ -377,55 +378,64 @@ async function switchView(view) {
     if (sleepCard) sleepCard.style.display = "block";
 
     try {
-        const tvData = await getTimevaryingData();
+      const tvData = await getTimevaryingData();
 
-        if (tvData?.timevarying) {
-            const tv = tvData.timevarying;
-            const avgHr = tv.hr?.length
-                ? Math.round(tv.hr.reduce((a, b) => a + b, 0) / tv.hr.length)
-                : null;
-            const maxHr = tv.hr?.length ? Math.round(Math.max(...tv.hr)) : null;
-            const minHr = tv.hr?.length ? Math.round(Math.min(...tv.hr)) : null;
+      if (tvData?.timevarying) {
+        const tv = tvData.timevarying;
+        const avgHr = tv.hr?.length
+          ? Math.round(tv.hr.reduce((a, b) => a + b, 0) / tv.hr.length)
+          : null;
+        const maxHr = tv.hr?.length ? Math.round(Math.max(...tv.hr)) : null;
+        const minHr = tv.hr?.length ? Math.round(Math.min(...tv.hr)) : null;
 
-            document.getElementById("scoreVal").textContent = avgHr ?? "–";
-            document.getElementById("scoreRating").textContent = "Yönaikainen analyysi";
-            document.getElementById("metricDuration").textContent = minHr ? minHr + " bpm" : "–";
-            document.getElementById("metricHrv").textContent = avgHr ? avgHr + " bpm" : "–";
-            document.getElementById("metricRecovery").textContent = maxHr ? maxHr + " bpm" : "–";
+        document.getElementById("scoreVal").textContent = avgHr ?? "–";
+        document.getElementById("scoreRating").textContent =
+          "Yönaikainen analyysi";
+        document.getElementById("metricDuration").textContent = minHr
+          ? minHr + " bpm"
+          : "–";
+        document.getElementById("metricHrv").textContent = avgHr
+          ? avgHr + " bpm"
+          : "–";
+        document.getElementById("metricRecovery").textContent = maxHr
+          ? maxHr + " bpm"
+          : "–";
 
-            const lblDuration = document.getElementById("metricDuration")?.nextElementSibling;
-            const lblHrv      = document.getElementById("metricHrv")?.nextElementSibling;
-            const lblRecovery = document.getElementById("metricRecovery")?.nextElementSibling;
-            if (lblDuration) lblDuration.textContent = "Alin syke";
-            if (lblHrv)      lblHrv.textContent      = "Keskisyke";
-            if (lblRecovery) lblRecovery.textContent  = "Korkein syke";
+        const lblDuration =
+          document.getElementById("metricDuration")?.nextElementSibling;
+        const lblHrv = document.getElementById("metricHrv")?.nextElementSibling;
+        const lblRecovery =
+          document.getElementById("metricRecovery")?.nextElementSibling;
+        if (lblDuration) lblDuration.textContent = "Alin syke";
+        if (lblHrv) lblHrv.textContent = "Keskisyke";
+        if (lblRecovery) lblRecovery.textContent = "Korkein syke";
 
-            const arc = document.getElementById("scoreArc");
-            if (arc && avgHr) {
-                const circumference = 2 * Math.PI * 46;
-                const pct = Math.min((avgHr - 40) / 60, 1);
-                arc.style.strokeDasharray  = circumference;
-                arc.style.strokeDashoffset = circumference - pct * circumference;
-                arc.setAttribute("stroke", "#60A5FA");
-            }
+        const arc = document.getElementById("scoreArc");
+        if (arc && avgHr) {
+          const circumference = 2 * Math.PI * 46;
+          const pct = Math.min((avgHr - 40) / 60, 1);
+          arc.style.strokeDasharray = circumference;
+          arc.style.strokeDashoffset = circumference - pct * circumference;
+          arc.setAttribute("stroke", "#60A5FA");
+        }
 
-            const scoreValEl = document.getElementById("scoreVal");
-            if (scoreValEl) scoreValEl.style.color = "#60A5FA";
+        const scoreValEl = document.getElementById("scoreVal");
+        if (scoreValEl) scoreValEl.style.color = "#60A5FA";
 
-            renderHrvNightChart("hrvNightChart", { labels: tv.labels, hr: tv.hr });
-            renderSleepStagesChart("sleepStagesChart", null);
-
-        } else {
-            if (hrvCard) hrvCard.innerHTML = `
+        renderHrvNightChart("hrvNightChart", { labels: tv.labels, hr: tv.hr });
+        renderSleepStagesChart("sleepStagesChart", null);
+      } else {
+        if (hrvCard)
+          hrvCard.innerHTML = `
                 <div class="card-header">
                     <span class="card-title">Yönaikainen sykedata</span>
                 </div>
                 <div style="padding:20px;text-align:center;color:var(--muted);font-size:13px">
                     Ei HRV-aikasarjadataa saatavilla.
                 </div>`;
-        }
+      }
     } catch (err) {
-        console.error('Timevarying haku epäonnistui:', err);
+      console.error("Timevarying haku epäonnistui:", err);
     }
   }
 }
@@ -439,6 +449,53 @@ function checkAuth() {
   }
 }
 
+function renderLatestDiaryEntry(entry) {
+  const el = document.getElementById("latestDiaryCard");
+  if (!el) return;
+
+  if (!entry) {
+    el.style.display = "none";
+    return;
+  }
+
+  const date = new Date(entry.entry_date).toLocaleDateString("fi-FI", {
+    day: "numeric",
+    month: "numeric",
+    year: "numeric",
+  });
+
+  const moodEmoji =
+    {
+      erinomainen: "😊",
+      hyvä: "🙂",
+      neutraali: "😐",
+      huono: "😕",
+      "erittäin huono": "😞",
+    }[entry.mood] ?? "";
+
+  const preview =
+    entry.content.length > 100
+      ? entry.content.substring(0, 100) + "..."
+      : entry.content;
+
+  el.innerHTML = `
+        <div class="card-header">
+            <span class="card-title">Viimeisin päiväkirjamerkintä</span>
+            <span style="font-size:12px;color:var(--muted);font-family:var(--mono)">${date}</span>
+        </div>
+        <div style="font-size:14px;color:var(--text);line-height:1.6;margin-bottom:12px">
+            ${moodEmoji ? `<span style="margin-right:6px">${moodEmoji}</span>` : ""}
+            ${preview}
+        </div>
+        <a href="/diary.html" style="font-size:12px;color:var(--teal);font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px">
+            Avaa päiväkirja
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 8h10M9 4l4 4-4 4"/>
+            </svg>
+        </a>
+    `;
+}
+
 async function init() {
   checkAuth();
   renderSidebar("dashboard");
@@ -446,9 +503,10 @@ async function init() {
   try {
     document.getElementById("scoreRating").textContent = "Ladataan...";
 
-    const [data, trendData] = await Promise.all([
+    const [data, trendData, diaryEntry] = await Promise.all([
       getLatestAnalysis(),
       getAnalysisTrend(7),
+      getLatestDiaryEntry(),
     ]);
 
     currentData = data;
@@ -457,6 +515,7 @@ async function init() {
     updateMeters(data);
     renderRecommendations(data.readiness);
     renderMiniTrend(trendData);
+    renderLatestDiaryEntry(diaryEntry);
 
     const hrvCard = document.getElementById("hrvChartCard");
     if (hrvCard) hrvCard.style.display = "none";

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardioRest – Päiväkirja</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/pages/diary.css">
+</head>
+
+<body>
+
+    <nav class="sidebar" id="sidebar"></nav>
+
+    <main class="main">
+        <header class="topbar">
+            <button class="hamburger" id="hamburger" aria-label="Avaa valikko">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <line x1="3" y1="6" x2="17" y2="6" />
+                    <line x1="3" y1="10" x2="17" y2="10" />
+                    <line x1="3" y1="14" x2="17" y2="14" />
+                </svg>
+            </button>
+            <span class="topbar-title">Päiväkirja</span>
+        </header>
+
+        <div class="content">
+            <!-- Otsikko + nappi samalla rivillä -->
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+                <div>
+                    <div style="font-size:15px;font-weight:600;color:var(--text)">Päiväkirjamerkinnät</div>
+                    <div style="font-size:12px;color:var(--muted);margin-top:2px">Kirjaa päivittäinen hyvinvointisi</div>
+                </div>
+                <button class="btn btn-primary" id="newEntryBtn">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="8" y1="3" x2="8" y2="13" />
+                        <line x1="3" y1="8" x2="13" y2="8" />
+                    </svg>
+                    Uusi merkintä
+                </button>
+            </div>
+            <!-- Uuden merkinnän lomake -->
+            <div class="card" id="entryForm" style="display: none;">
+                <div class="card-header">
+                    <h3 class="card-title">Uusi päiväkirjamerkintä</h3>
+                    <button class="btn-icon" id="cancelBtn" aria-label="Sulje">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="4" y1="4" x2="12" y2="12" />
+                            <line x1="12" y1="4" x2="4" y2="12" />
+                        </svg>
+                    </button>
+                </div>
+                <form id="diaryForm">
+                    <input type="hidden" id="entryId" value="">
+
+                    <div class="form-group">
+                        <label for="entryDate" class="form-label">Päivämäärä</label>
+                        <input type="date" id="entryDate" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="entryMood" class="form-label">Mieliala (valinnainen)</label>
+                        <select id="entryMood" class="form-input">
+                            <option value="">Valitse...</option>
+                            <option value="erinomainen">😊 Erinomainen</option>
+                            <option value="hyvä">🙂 Hyvä</option>
+                            <option value="neutraali">😐 Neutraali</option>
+                            <option value="huono">😕 Huono</option>
+                            <option value="erittäin huono">😞 Erittäin huono</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="entryContent" class="form-label">Merkintä</label>
+                        <textarea id="entryContent" class="form-textarea" rows="6"
+                            placeholder="Kirjoita päiväkirjamerkintäsi..." required></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn" id="cancelFormBtn">Peruuta</button>
+                        <button type="submit" class="btn btn-primary" id="saveBtn">Tallenna</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Merkintälistaus -->
+            <div class="entries-container">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Merkinnät</h3>
+                        <span class="entry-count" id="entryCount">0 merkintää</span>
+                    </div>
+                    <div id="entriesList" class="entries-list">
+                        <!-- Merkinnät ladataan tänne -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script type="module" src="/js/pages/diary.js"></script>
+
+</body>
+
+</html>
