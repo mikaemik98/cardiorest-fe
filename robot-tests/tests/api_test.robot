@@ -63,3 +63,44 @@ Pyyntö ilman tokenia palauttaa 401
     ...             expected_status=any
     Should Be Equal As Strings    ${response.status_code}    401
     Log    Ilman tokenia palautui: ${response.status_code}
+
+Päiväkirjamerkinnän luonti onnistuu
+    [Documentation]    Kirjautunut käyttäjä luo uuden päiväkirjamerkinnän.
+    ...                Odotetaan 201 Created ja merkinnän id vastauksessa.
+    [Tags]    api    diary    smoke    TC-008
+    ${headers}=    Luo Auth Header
+    ${body}=       Create Dictionary
+    ...    entry_date=2026-04-26
+    ...    content=Testimerkintä automaatiotestauksesta
+    ...    mood=hyvä
+    ${session}=    Create Session    diary_session    ${BASE_URL}
+    ${response}=   POST On Session    diary_session    /api/diary
+    ...            json=${body}
+    ...            headers=${headers}
+    ...            expected_status=201
+    ${data}=    Set Variable    ${response.json()}
+    Dictionary Should Contain Key    ${data}    id
+    Should Be True    ${data}[id] > 0
+    Log    Merkintä luotu id:llä: ${data}[id]
+
+Päiväkirjamerkinnät haetaan onnistuneesti
+    [Documentation]    Kirjautunut käyttäjä hakee kaikki päiväkirjamerkinnät.
+    ...                Odotetaan 200 OK ja entries-lista vastauksessa.
+    [Tags]    api    diary    smoke    TC-009
+    ${headers}=    Luo Auth Header
+    ${session}=    Create Session    diary_get_session    ${BASE_URL}
+    ${response}=   GET On Session    diary_get_session    /api/diary
+    ...            headers=${headers}
+    ...            expected_status=200
+    ${data}=    Set Variable    ${response.json()}
+    Dictionary Should Contain Key    ${data}    entries
+    Log    Merkintöjä löytyi: ${data}[entries].__len__()
+
+Päiväkirja ilman tokenia palauttaa 401
+    [Documentation]    Suojattu päiväkirjareitti hylkää pyynnön ilman tokenia.
+    [Tags]    api    diary    security    TC-010
+    ${session}=    Create Session    diary_noauth_session    ${BASE_URL}
+    ${response}=   GET On Session    diary_noauth_session    /api/diary
+    ...            expected_status=any
+    Should Be Equal As Strings    ${response.status_code}    401
+    Log    Ilman tokenia palautui: ${response.status_code}
