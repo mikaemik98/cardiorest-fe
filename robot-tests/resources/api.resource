@@ -7,6 +7,7 @@ Library             Collections
 *** Variables ***
 ${KUBIOS_URL}       ${API_URL}/kubios/user-data
 ${USER_INFO_URL}    ${API_URL}/kubios/user-info
+${DIARY_URL}        ${API_URL}/diary
 ${PROFILE_URL}      ${API_URL}/users/profile
 
 
