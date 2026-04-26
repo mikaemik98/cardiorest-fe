@@ -26,8 +26,5 @@ dist-ssr
 *.sln
 *.sw?
 
-
-report.html
-log.html
-output.xml
-robot-tests/outputs/
+robot-tests/outputs/log.html
+robot-tests/outputs/output.xml
