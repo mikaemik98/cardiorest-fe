@@ -271,31 +271,51 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-    .three-col {
-        grid-template-columns: 1fr;
-    }
-
-    .two-col {
-        grid-template-columns: 1fr;
-    }
-
-    .score-grid {
-        flex-direction: column;
-        text-align: center;
-    }
-
+    /* Metriikat 2 per rivi */
     .metrics-grid {
-        justify-content: center;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 12px;
     }
 
+    /* Stat-kortit yhteen sarakkeeseen */
+    .three-col {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Two-col yhteen sarakkeeseen */
+    .two-col {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* ANS-palkit — label lyhyemmäksi */
     .ans-label {
-        min-width: 100px;
+        min-width: 80px;
         font-size: 11px;
+    }
+
+    .ans-val {
+        min-width: 40px;
+        font-size: 12px;
+    }
+
+    /* Poincaré param-rivi */
+    .param-row {
+        gap: 8px;
+    }
+
+    .param-label {
+        font-size: 12px;
     }
 }
 
-@media (max-width: 1024px) {
-    .three-col {
-        grid-template-columns: 1fr 1fr;
+@media (max-width: 480px) {
+    /* Metriikat 1 per rivi kaikkein pienimmillä */
+    .metrics-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .ans-label {
+        font-size: 10px;
+        min-width: 70px;
     }
 }

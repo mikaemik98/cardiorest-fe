@@ -371,6 +371,12 @@
     opacity: 1;
 }
 
+.score-grid {
+    display: grid;
+    grid-template-columns: auto 1fr 1fr 1fr;
+    gap: 24px;
+    align-items: center;
+}
 /* responsiivisuus */
 @media (max-width: 1024px) {
     .three-col {
@@ -379,7 +385,7 @@
 }
 
 /* modbiili */
-@media (max-width: 768px) {
+@media (max-width: 600px) {
     /*kaksipalstaiset muuttuu yksisarakkeisiksi */
     .two-col,
     .three-col {
@@ -412,7 +418,7 @@
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 964px) {
     .hamburger {
         display: flex;
         align-items: center;

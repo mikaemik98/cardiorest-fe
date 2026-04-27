@@ -67,19 +67,6 @@
 }
 
 /* mobiili */
-@media (max-width: 768px) {
-    .chart-legend {
-        gap: 10px;
-    }
-
-    .chart-wrap {
-        min-height: 240px;
-    }
-
-    .chart-wrap > div {
-        min-height: 240px;
-    }
-}
 
 /* tablet */
 @media (max-width: 1024px) {
@@ -89,5 +76,31 @@
 
     .chart-wrap > div {
         min-height: 260px;
+    }
+}
+
+@media (max-width: 768px) {
+    .score-grid {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+        gap: 16px;
+    }
+
+    .score-grid > div {
+        padding-left: 0 !important;
+        border-left: none !important;
+        width: 100%;
+    }
+
+    .score-grid > div:first-child {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 700px) {
+    /* Metriikat 1 per rivi kaikkein pienimmillä */
+    .score-grid > div:not(.score-circle) {
+        grid-template-columns: 1fr 1fr !important;
     }
 }
