@@ -160,7 +160,7 @@ body {
     padding: 0 28px;
     position: sticky;
     top: 0;
-    z-index: 50;
+    z-index: 300;
 }
 
 .topbar-title {
@@ -225,7 +225,7 @@ body {
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 964px) {
     /*sivupalkki piiloutuu vasemmalle */
     .sidebar {
         transform: translateX(-100%);
@@ -261,10 +261,17 @@ body {
         gap: 12px;
     }
 
+    .topbar-title {
+        flex: 1;
+        margin-left: 4px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
     .content {
         padding: 16px;
         gap: 14px;
     }
     
 }
-
