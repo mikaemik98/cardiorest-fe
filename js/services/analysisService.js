@@ -33,6 +33,17 @@ export async function syncTimevarying() {
   // Ei tarvita vielä
 }
 
+export async function getTimevaryingData() {
+  if (USE_MOCK) return null;
+  try {
+    const res = await api.get("/api/kubios/timevarying");
+    return res.data;
+  } catch (err) {
+    console.warn("Timevarying haku epäonnistui:", err.message);
+    return null;
+  }
+}
+
 export async function getLatestAnalysis() {
   if (USE_MOCK) return mockAnalysis;
   // haetaan suoraan Kubios-pilvestä, ei omaa DB:tä
@@ -84,5 +95,18 @@ export async function getAnalysisTrend(days = 7) {
       err.message,
     );
     return mockTrend;
+  }
+}
+
+export async function getLatestDiaryEntry() {
+  if (USE_MOCK) return null;
+  try {
+    const res = await api.get("/api/diary");
+    const entries = res.data.entries ?? [];
+    if (entries.length === 0) return null;
+    return entries[0]; // uusin ensin
+  } catch (err) {
+    console.warn("Päiväkirja haku epäonnistui", err.message);
+    return null;
   }
 }

@@ -1,5 +1,5 @@
 // js/pages/hrv.js
-import { getLatestAnalysis } from "../services/analysisService.js";
+import { getLatestAnalysis, getTimevaryingData } from "../services/analysisService.js";
 import { renderHrvNightChart } from "../components/hrvChart.js";
 import { renderSidebar } from "../components/sidebar.js";
 import { getRecoveryText } from "../utils/helpers.js";
@@ -11,25 +11,34 @@ renderSidebar("hrv");
 init();
 
 async function init() {
-  try {
-    const analysis = await getLatestAnalysis();
-    // Yhdistä analyysi + HRV-parametrit (mock tai API)
-    const params = USE_MOCK ? mockHrvParams : mapToHrvParams(analysis);
-    renderScoreCard(params);
-    renderParamCards(params);
-    renderPoincareCard(params);
-    renderQualityCard(params);
-    renderAnsBars(params);
-    renderTimeseries(analysis);
-  } catch (err) {
-    console.error("HRV-sivun alustus epäonnistui:", err);
-    // Käytä mock-dataa fallbackina
-    renderScoreCard(mockHrvParams);
-    renderParamCards(mockHrvParams);
-    renderPoincareCard(mockHrvParams);
-    renderQualityCard(mockHrvParams);
-    renderAnsBars(mockHrvParams);
-  }
+    try {
+        const [analysis, tvData] = await Promise.all([
+            getLatestAnalysis(),
+            getTimevaryingData()
+        ]);
+
+        const params = USE_MOCK ? mockHrvParams : mapToHrvParams(analysis);
+        renderScoreCard(params);
+        renderParamCards(params);
+        renderPoincareCard(params);
+        renderQualityCard(params);
+        renderAnsBars(params);
+
+        // Käytä oikeaa timevarying-dataa jos saatavilla
+        if (tvData?.timevarying) {
+            renderTimeseries({ timevarying_data: tvData.timevarying });
+        } else {
+            renderTimeseries(analysis);
+        }
+
+    } catch (err) {
+        console.error('HRV-sivun alustus epäonnistui:', err);
+        renderScoreCard(mockHrvParams);
+        renderParamCards(mockHrvParams);
+        renderPoincareCard(mockHrvParams);
+        renderQualityCard(mockHrvParams);
+        renderAnsBars(mockHrvParams);
+    }
 }
 
 function mapToHrvParams(analysis) {
@@ -210,28 +219,30 @@ function renderAnsBars(p) {
 
 /* ── HRV-aikasarjakaavio ─────────────────── */
 function renderTimeseries(analysis) {
-  let timevarying = null;
-  if (analysis.timevarying_data) {
-    try {
-      timevarying =
-        typeof analysis.timevarying_data === "string"
-          ? JSON.parse(analysis.timevarying_data)
-          : analysis.timevarying_data;
-    } catch (_) {
-      /* ignore */
+    let timevarying = null;
+
+    // Jos saadaan suoraan timevarying-objekti
+    if (analysis?.labels && analysis?.hr) {
+        timevarying = analysis;
+    // Jos saadaan analysis-objekti jossa timevarying_data
+    } else if (analysis?.timevarying_data) {
+        try {
+            timevarying = typeof analysis.timevarying_data === 'string'
+                ? JSON.parse(analysis.timevarying_data)
+                : analysis.timevarying_data;
+        } catch (_) { /* ignore */ }
     }
-  }
 
-  if (!timevarying) {
-    // Generoi mock-aikasarjadata
-    timevarying = {
-      labels: Array.from({ length: 60 }, (_, i) => i * 5),
-      hr: Array.from({ length: 60 }, () => 55 + Math.random() * 25),
-      rmssd: Array.from({ length: 60 }, () => 40 + Math.random() * 40),
-    };
-  }
+    if (!timevarying) {
+        // Mock-data fallback
+        timevarying = {
+            labels: Array.from({ length: 60 }, (_, i) => i * 5),
+            hr:     Array.from({ length: 60 }, () => 55 + Math.random() * 25),
+            rmssd:  Array.from({ length: 60 }, () => 40 + Math.random() * 40),
+        };
+    }
 
-  renderDualTimeseries("hrvTimeseriesChart", timevarying);
+    renderDualTimeseries('hrvTimeseriesChart', timevarying);
 }
 
 /* ── Kahden sarjan kaavio (syke + RMSSD) ── */

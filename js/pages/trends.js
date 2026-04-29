@@ -429,6 +429,18 @@ function renderHistoryTable(data) {
   });
 }
 
+function selectPeriod(days, btn) {
+  // Poista active kaikilta napeilta
+  document
+    .querySelectorAll(".period-btn")
+    .forEach((b) => b.classList.remove("active"));
+  // Lisää active klikatulle
+  btn.classList.add("active");
+  // Lataa data
+  loadTrends(days);
+}
+window.selectPeriod = selectPeriod;
+
 // ── Päälogiikka ──
 
 async function loadTrends(days) {

@@ -1,4 +1,5 @@
 .env
+.env.production
 .venv
 # Logs
 logs
@@ -25,8 +26,7 @@ dist-ssr
 *.sln
 *.sw?
 
-
-report.html
-log.html
-output.xml
-robot-tests/outputs/
+robot-tests/outputs/log.html
+robot-tests/outputs/log_iteraatio1.html
+robot-tests/outputs/log_iteraatio2.html
+robot-tests/outputs/output.xml
