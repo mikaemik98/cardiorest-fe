@@ -354,15 +354,15 @@
     left: 0;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
+    border-radius: 12px;
+    padding: 20px 14px;
     font-size: 12px;
     color: var(--text);
     width: 220px;
     line-height: 1.5;
     z-index: 999;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-    pointer-events: none;
+    pointer-events: auto; /* mahdollistaa linkkien klikkauksen tooltip-boxissa */
     transition: opacity 0.15s;
 }
 
@@ -426,3 +426,56 @@
     }
 }
 
+
+
+/* "Lue lisää →" -linkki tooltip-boxin sisällä */
+.tooltip-read-more {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--teal);
+    text-decoration: none;
+    border: 1px solid rgba(16, 212, 160, 0.25);
+    background: rgba(16, 212, 160, 0.08);
+    padding: 3px 9px;
+    border-radius: 5px;
+    transition: background 0.15s;
+    pointer-events: auto;
+}
+
+.tooltip-read-more:hover {
+    background: rgba(16, 212, 160, 0.16);
+}
+
+/* Tooltip-boxin hover-säännön päälle:
+   kun .tooltip-wrap:hover .tooltip-box on auki ja hiiri
+   liikkuu tooltip-boxin päälle, se pysyy näkyvissä */
+.tooltip-wrap:hover .tooltip-box,
+.tooltip-box:hover {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Poistetaan pointer-events:none oletuksesta —
+   se asetetaan nyt JS:ssä vain niille tooltip-boxeille
+   joilla on data-term-id (eli "lue lisää" -linkki) */
+
+/* ────────────────────────────────────────────────────────────────────
+   SIDEBAR-NAV: lisää Termistö-kohta sidebar.js:ssä tai -templatessa
+   ──────────────────────────────────────────────────────────────────── */
+/*
+   Etsi sivupalkistasi koodi joka rakentaa nav-itemit ja lisää:
+
+   { id: 'termisto', label: 'Termistö', path: '/termisto.html', icon: bookIcon }
+
+   Päiväkirjan JÄLKEEN. Ikonin SVG alla:
+
+   const bookIcon = `<svg width="16" height="16" viewBox="0 0 16 16"
+     fill="none" stroke="currentColor" stroke-width="1.6">
+     <path d="M3 2h8a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3"/>
+     <path d="M3 2a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1"/>
+     <line x1="6" y1="6" x2="10" y2="6"/>
+     <line x1="6" y1="9" x2="10" y2="9"/>
+   </svg>`;
+*/

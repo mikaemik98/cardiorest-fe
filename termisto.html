@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="fi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardioRest – Termistö</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/pages/termisto.css">
+</head>
+
+<body>
+
+    <nav class="sidebar" id="sidebar"></nav>
+
+    <main class="main">
+        <header class="topbar">
+            <button class="hamburger" id="hamburger" aria-label="Avaa valikko">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <line x1="3" y1="6" x2="17" y2="6" />
+                    <line x1="3" y1="10" x2="17" y2="10" />
+                    <line x1="3" y1="14" x2="17" y2="14" />
+                </svg>
+            </button>
+            <span class="topbar-title">Termistö ja viiterajat</span>
+        </header>
+
+        <div class="content">
+
+            <!-- Sivun kuvaus -->
+            <div>
+                <div style="font-size:15px;font-weight:600;color:var(--text)">Termistö ja viiterajat</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:2px">
+                    Selitykset kaikille mittareille ja viiterajat Kubios HRV -tutkimuksiin perustuen
+                </div>
+            </div>
+
+            <!-- ── YLEISMITTARIT ─────────────────────────────────── -->
+            <div class="term-section-label">Yleismittarit</div>
+
+            <!-- Readiness -->
+            <div class="card term-card" id="readiness">
+                <div class="term-card-header">
+                    <div>
+                        <div class="term-name">Readiness-pistemäärä</div>
+                        <div class="term-sub">Kokonaispalautumisen indeksi · 0–100</div>
+                    </div>
+                    <span class="badge badge-green">HRV</span>
+                </div>
+                <p class="term-desc">
+                    Readiness kertoo kehon valmiuden harjoitteluun tai päivän haasteisiin. Se lasketaan yhdistämällä
+                    HRV-mittarit (RMSSD, PNS- ja SNS-indeksi) sekä unen kesto. Mitä korkeammat pisteet, sitä paremmin
+                    keho on palautunut.
+                </p>
+                <div class="range-section">
+                    <div class="range-label">Viiterajat</div>
+                    <div class="range-bar">
+                        <div class="range-seg" style="width:50%;background:var(--red);opacity:0.75"></div>
+                        <div class="range-seg" style="width:20%;background:var(--amber);opacity:0.8"></div>
+                        <div class="range-seg" style="width:15%;background:#d4b800;opacity:0.8"></div>
+                        <div class="range-seg" style="width:15%;background:var(--teal);opacity:0.9"></div>
+                    </div>
+                    <div class="zones-grid">
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--red)">&lt; 50</div>
+                            <div class="zone-name">Matala</div>
+                        </div>
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--amber)">50–69</div>
+                            <div class="zone-name">Kohtalainen</div>
+                        </div>
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:#d4b800">70–84</div>
+                            <div class="zone-name">Hyvä</div>
+                        </div>
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--teal)">85–100</div>
+                            <div class="zone-name">Erinomainen</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RMSSD -->
+            <div class="card term-card" id="rmssd">
+                <div class="term-card-header">
+                    <div>
+                        <div class="term-name">RMSSD</div>
+                        <div class="term-sub">Root Mean Square of Successive Differences · ms</div>
+                    </div>
+                    <span class="badge badge-green">HRV</span>
+                </div>
+                <p class="term-desc">
+                    RMSSD on tärkein yksittäinen HRV-mittari. Se kuvaa peräkkäisten sydämenlyöntien välisten aikaerojen
+                    vaihtelua ja heijastaa parasympaattisen hermoston (PNS) toimintaa. Korkea RMSSD tarkoittaa parempaa
+                    palautumista ja stressinsietokykyä.
+                </p>
+                <div class="term-formula">RMSSD = √( (1/N−1) × Σ(RR[n+1] − RR[n])² )</div>
+                <div class="range-section">
+                    <div class="range-label">Tyypilliset viitearvot (lepotila, aikuiset)</div>
+                    <div class="range-bar">
+                        <div class="range-seg" style="width:25%;background:var(--red);opacity:0.75"></div>
+                        <div class="range-seg" style="width:40%;background:var(--amber);opacity:0.75"></div>
+                        <div class="range-seg" style="width:35%;background:var(--teal);opacity:0.9"></div>
+                    </div>
+                    <div class="zones-grid">
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--red)">&lt; 20 ms</div>
+                            <div class="zone-name">Matala</div>
+                        </div>
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--amber)">20–50 ms</div>
+                            <div class="zone-name">Normaali</div>
+                        </div>
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--teal)">&gt; 50 ms</div>
+                            <div class="zone-name">Korkea / hyvä</div>
+                        </div>
+                    </div>
+                    <p class="term-footnote">
+                        * Arvot vaihtelevat merkittävästi iän, sukupuolen ja kuntotason mukaan.
+                        Tärkeämpää on oma henkilökohtainen suuntaus kuin absoluuttinen arvo.
+                    </p>
+                </div>
+            </div>
+
+            <!-- SDNN -->
+            <div class="card term-card" id="sdnn">
+                <div class="term-card-header">
+                    <div>
+                        <div class="term-name">SDNN</div>
+                        <div class="term-sub">Standard Deviation of Normal-to-Normal intervals · ms</div>
+                    </div>
+                    <span class="badge badge-green">HRV</span>
+                </div>
+                <p class="term-desc">
+                    SDNN kuvaa kaikkien RR-intervallien kokonaisvaihtelua ja heijastaa sekä sympaattisen että
+                    parasympaattisen hermoston yhteisvaikutusta. Se on hyvä yleismittari sydämen autonomiselle
+                    säätelylle.
+                </p>
+                <div class="term-formula">SDNN = √( (1/N) × Σ(RR[n] − RR̄)² )</div>
+                <div class="range-section">
+                    <div class="range-bar">
+                        <div class="range-seg" style="width:30%;background:var(--red);opacity:0.75"></div>
+                        <div class="range-seg" style="width:40%;background:var(--amber);opacity:0.75"></div>
+                        <div class="range-seg" style="width:30%;background:var(--teal);opacity:0.9"></div>
+                    </div>
+                    <div class="zones-grid">
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--red)">&lt; 50 ms</div>
+                            <div class="zone-name">Matala</div>
+                        </div>
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--amber)">50–100 ms</div>
+                            <div class="zone-name">Normaali</div>
+                        </div>
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--teal)">&gt; 100 ms</div>
+                            <div class="zone-name">Erinomainen</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Keskisyke -->
+            <div class="card term-card" id="heart-rate">
+                <div class="term-card-header">
+                    <div>
+                        <div class="term-name">Keskisyke</div>
+                        <div class="term-sub">bpm · lyöntiä minuutissa</div>
+                    </div>
+                    <span class="badge badge-green">HRV</span>
+                </div>
+                <p class="term-desc">
+                    Unen aikainen keskimääräinen syke. Matala leposyke yöllä on merkki hyvästä palautumisesta ja
+                    parasympaattisesta dominanssista. Korkea leposyke voi viitata ylikuormitukseen, sairauteen tai
+                    huonoon palautumiseen.
+                </p>
+                <div class="range-section">
+                    <div class="range-bar">
+                        <div class="range-seg" style="width:20%;background:var(--teal);opacity:0.9"></div>
+                        <div class="range-seg" style="width:45%;background:var(--amber);opacity:0.7"></div>
+                        <div class="range-seg" style="width:35%;background:var(--red);opacity:0.75"></div>
+                    </div>
+                    <div class="zones-grid">
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--teal)">40–60 bpm</div>
+                            <div class="zone-name">Matala / urheilija</div>
+                        </div>
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--amber)">60–80 bpm</div>
+                            <div class="zone-name">Normaali</div>
+                        </div>
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--red)">&gt; 80 bpm</div>
+                            <div class="zone-name">Korkea</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── ANS-INDEKSIT ───────────────────────────────────── -->
+            <div class="term-section-label">ANS-indeksit · autonominen hermosto</div>
+
+            <!-- PNS -->
+            <div class="card term-card" id="pns">
+                <div class="term-card-header">
+                    <div>
+                        <div class="term-name">PNS-indeksi</div>
+                        <div class="term-sub">Parasympaattinen hermosto · Palautuminen</div>
+                    </div>
+                    <span class="badge badge-blue">ANS</span>
+                </div>
+                <p class="term-desc">
+                    PNS-indeksi kuvaa "lepää ja sulata" -järjestelmän aktiivisuutta. Korkea PNS-indeksi tarkoittaa,
+                    että keho on palautumisvaiheessa: syke on matala, hengitys rauhallista ja lihasten verenkierto
+                    hyvää. Lasketaan RMSSD:stä ja RR-intervallien tilastollisista ominaisuuksista.
+                </p>
+                <div class="range-section">
+                    <div class="range-label">Viitearvot (yöunen aikana)</div>
+                    <div class="range-bar">
+                        <div class="range-seg" style="width:25%;background:var(--red);opacity:0.75"></div>
+                        <div class="range-seg" style="width:25%;background:#e86c3a;opacity:0.8"></div>
+                        <div class="range-seg" style="width:25%;background:var(--amber);opacity:0.75"></div>
+                        <div class="range-seg" style="width:25%;background:var(--teal);opacity:0.9"></div>
+                    </div>
+                    <div class="zones-grid">
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--red)">&lt; −1</div>
+                            <div class="zone-name">Hyvin matala</div>
+                        </div>
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:#e86c3a">−1 – 0</div>
+                            <div class="zone-name">Matala</div>
+                        </div>
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--amber)">0 – 1</div>
+                            <div class="zone-name">Normaali</div>
+                        </div>
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--teal)">&gt; 1</div>
+                            <div class="zone-name">Korkea / hyvä</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SNS -->
+            <div class="card term-card" id="sns">
+                <div class="term-card-header">
+                    <div>
+                        <div class="term-name">SNS-indeksi</div>
+                        <div class="term-sub">Sympaattinen hermosto · Kuormitus</div>
+                    </div>
+                    <span class="badge badge-blue">ANS</span>
+                </div>
+                <p class="term-desc">
+                    SNS-indeksi kuvaa "taistele tai pakene" -järjestelmän aktiivisuutta. Korkea SNS-arvo yöllä viittaa
+                    kehon kuormitukseen, stressiin tai vajaaseen palautumiseen. Matala tai negatiivinen arvo on
+                    merkki hyvästä levosta.
+                </p>
+                <div class="range-section">
+                    <div class="range-label">Viitearvot (yöunen aikana)</div>
+                    <div class="range-bar">
+                        <div class="range-seg" style="width:33%;background:var(--teal);opacity:0.9"></div>
+                        <div class="range-seg" style="width:34%;background:var(--amber);opacity:0.75"></div>
+                        <div class="range-seg" style="width:33%;background:var(--red);opacity:0.75"></div>
+                    </div>
+                    <div class="zones-grid">
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--teal)">&lt; −0.5</div>
+                            <div class="zone-name">Hyvä lepo</div>
+                        </div>
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--amber)">−0.5 – 0.5</div>
+                            <div class="zone-name">Normaali</div>
+                        </div>
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--red)">&gt; 0.5</div>
+                            <div class="zone-name">Kuormittunut</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stress -->
+            <div class="card term-card" id="stress">
+                <div class="term-card-header">
+                    <div>
+                        <div class="term-name">Stressitaso / Stress-indeksi</div>
+                        <div class="term-sub">Baevskyn stressitasoindeksi</div>
+                    </div>
+                    <span class="badge badge-amber">Stressi</span>
+                </div>
+                <p class="term-desc">
+                    Stress-indeksi (Baevsky SI) kuvaa sympaattisen hermoston ylikuormitusta. Se lasketaan
+                    RR-intervallien histogrammista ja heijastaa sydämen autonomisen säätelyn "jäykkyyttä".
+                    Korkea arvo tarkoittaa, että keho on stressitilassa tai kärsii ylikuormituksesta.
+                </p>
+                <div class="range-section">
+                    <div class="range-bar">
+                        <div class="range-seg" style="width:30%;background:var(--teal);opacity:0.9"></div>
+                        <div class="range-seg" style="width:35%;background:var(--amber);opacity:0.75"></div>
+                        <div class="range-seg" style="width:20%;background:#e86c3a;opacity:0.8"></div>
+                        <div class="range-seg" style="width:15%;background:var(--red);opacity:0.75"></div>
+                    </div>
+                    <div class="zones-grid">
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--teal)">1–10</div>
+                            <div class="zone-name">Matala</div>
+                        </div>
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--amber)">10–30</div>
+                            <div class="zone-name">Normaali</div>
+                        </div>
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:#e86c3a">30–50</div>
+                            <div class="zone-name">Kohonnut</div>
+                        </div>
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--red)">&gt; 50</div>
+                            <div class="zone-name">Korkea</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── POINCARÉ ────────────────────────────────────────── -->
+            <div class="term-section-label">Poincaré-analyysi</div>
+
+            <div class="card term-card" id="poincare">
+                <div class="term-card-header">
+                    <div>
+                        <div class="term-name">Poincaré-analyysi</div>
+                        <div class="term-sub">SD1, SD2 ja SD2/SD1</div>
+                    </div>
+                    <span class="badge badge-green">HRV</span>
+                </div>
+                <p class="term-desc">
+                    Poincaré-analyysi on graafinen menetelmä, jossa jokainen RR-intervalli piirretään sitä
+                    seuraavaa vastaan hajontakuvioksi. Ellipsin muoto ja koko kuvaavat sykevälivaihtelun
+                    lyhyt- ja pitkäaikaista rakennetta.
+                </p>
+                <div class="poincare-grid">
+                    <div class="poincare-item">
+                        <div class="poincare-key" style="color:var(--blue)">SD1</div>
+                        <div class="poincare-val">Lyhytaikainen vaihtelu</div>
+                        <div class="poincare-desc">
+                            Heijastaa parasympaattista (PNS) aktiivisuutta. Korkea arvo = parempi palautuminen.
+                        </div>
+                    </div>
+                    <div class="poincare-item">
+                        <div class="poincare-key" style="color:var(--teal)">SD2</div>
+                        <div class="poincare-val">Pitkäaikainen vaihtelu</div>
+                        <div class="poincare-desc">
+                            Heijastaa sympaattista ja parasympaattista yhteistoimintaa. Korkea = hyvä kokonaishermosto.
+                        </div>
+                    </div>
+                    <div class="poincare-item">
+                        <div class="poincare-key" style="color:var(--amber)">SD2/SD1</div>
+                        <div class="poincare-val">Vaihtelun suhde</div>
+                        <div class="poincare-desc">
+                            Normaali arvo ~1.5–2.5. Korkea suhde voi viitata sympaattiseen yliaktiivisuuteen.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── MITTAUKSEN LAATU ───────────────────────────────── -->
+            <div class="term-section-label">Mittauksen laatu</div>
+
+            <div class="card term-card" id="quality">
+                <div class="term-card-header">
+                    <div>
+                        <div class="term-name">Mittauksen laatu</div>
+                        <div class="term-sub">Artefaktitaso · %</div>
+                    </div>
+                    <span class="badge badge-amber">Laatu</span>
+                </div>
+                <p class="term-desc">
+                    Artefaktitaso kuvaa kuinka suuri osuus mitatuista RR-intervalleista on laadukkaita ilman kohinaa,
+                    liikeartefakteja tai mittausvirheitä. Korkea prosentti tarkoittaa luotettavaa mittausta.
+                    Alle 90&nbsp;%:n mittaus voi antaa epäluotettavia HRV-arvoja.
+                </p>
+                <div class="range-section">
+                    <div class="quality-gauge-list">
+                        <div class="quality-gauge-row">
+                            <span class="quality-gauge-label" style="color:var(--red)">Heikko</span>
+                            <div class="quality-bar" style="flex:1">
+                                <div class="quality-fill" style="width:65%;background:var(--red)"></div>
+                            </div>
+                            <span class="quality-gauge-range" style="color:var(--red)">&lt; 90&nbsp;%</span>
+                        </div>
+                        <div class="quality-gauge-row">
+                            <span class="quality-gauge-label" style="color:var(--amber)">Kohtalainen</span>
+                            <div class="quality-bar" style="flex:1">
+                                <div class="quality-fill" style="width:80%;background:var(--amber)"></div>
+                            </div>
+                            <span class="quality-gauge-range" style="color:var(--amber)">90–95&nbsp;%</span>
+                        </div>
+                        <div class="quality-gauge-row">
+                            <span class="quality-gauge-label" style="color:var(--teal)">Hyvä</span>
+                            <div class="quality-bar" style="flex:1">
+                                <div class="quality-fill" style="width:96%"></div>
+                            </div>
+                            <span class="quality-gauge-range" style="color:var(--teal)">&gt; 95&nbsp;%</span>
+                        </div>
+                    </div>
+                    <p class="term-footnote" style="margin-top:10px">
+                        Vinkki: Yöunen aikainen mittaus antaa yleensä parhaan laadun. Vältä ranteen liikehdintää
+                        ennen nukahtamista.
+                    </p>
+                </div>
+            </div>
+
+            <!-- ── UNI ──────────────────────────────────────────────── -->
+            <div class="term-section-label">Uni</div>
+
+            <div class="card term-card" id="sleep">
+                <div class="term-card-header">
+                    <div>
+                        <div class="term-name">Unen kesto</div>
+                        <div class="term-sub">Vain yömittauksessa · h</div>
+                    </div>
+                    <span class="badge badge-blue">Uni</span>
+                </div>
+                <p class="term-desc">
+                    Unen kokonaiskesto tunnissa. Riittävä uni on yksi tärkeimmistä palautumiseen vaikuttavista
+                    tekijöistä. Unen kestoa käytetään Readiness-pistemäärän laskennassa.
+                </p>
+                <div class="range-section">
+                    <div class="range-bar">
+                        <div class="range-seg" style="width:20%;background:var(--red);opacity:0.75"></div>
+                        <div class="range-seg" style="width:30%;background:var(--amber);opacity:0.75"></div>
+                        <div class="range-seg" style="width:35%;background:var(--teal);opacity:0.9"></div>
+                        <div class="range-seg" style="width:15%;background:var(--muted);opacity:0.4"></div>
+                    </div>
+                    <div class="zones-grid">
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--red)">&lt; 6 h</div>
+                            <div class="zone-name">Liian vähän</div>
+                        </div>
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--amber)">6–7 h</div>
+                            <div class="zone-name">Kohtalainen</div>
+                        </div>
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--teal)">7–9 h</div>
+                            <div class="zone-name">Suositeltu</div>
+                        </div>
+                        <div class="zone-pill">
+                            <div class="zone-val" style="color:var(--muted)">&gt; 9 h</div>
+                            <div class="zone-name">Yli suosituksen</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── LÄHDELUETTELO ──────────────────────────────────── -->
+            <div class="card" id="sources">
+                <div class="card-header">
+                    <h3 class="card-title">Lähteet</h3>
+                </div>
+                <ol class="sources-list">
+                    <li>
+                        Tarvainen, M.P. et al. (2014). Kubios HRV – Heart rate variability analysis software.
+                        <em>Computer Methods and Programs in Biomedicine</em>, 113(1), 210–220.
+                        <a class="source-link" href="https://doi.org/10.1016/j.cmpb.2013.07.024"
+                            target="_blank" rel="noopener">doi:10.1016/j.cmpb.2013.07.024 ↗</a>
+                    </li>
+                    <li>
+                        Task Force of the European Society of Cardiology (1996). Heart rate variability: standards
+                        of measurement, physiological interpretation and clinical use.
+                        <em>Circulation</em>, 93(5), 1043–1065.
+                        <a class="source-link" href="https://doi.org/10.1161/01.CIR.93.5.1043"
+                            target="_blank" rel="noopener">doi:10.1161/01.CIR.93.5.1043 ↗</a>
+                    </li>
+                    <li>
+                        Kubios HRV Scientific User Guide (2023). Kubios Oy, Kuopio, Finland.
+                        <a class="source-link" href="https://www.kubios.com/hrv-analysis-methods/"
+                            target="_blank" rel="noopener">kubios.com ↗</a>
+                    </li>
+                    <li>
+                        Shaffer, F. &amp; Ginsberg, J.P. (2017). An Overview of Heart Rate Variability Metrics
+                        and Norms. <em>Frontiers in Public Health</em>, 5, 258.
+                        <a class="source-link" href="https://doi.org/10.3389/fpubh.2017.00258"
+                            target="_blank" rel="noopener">doi:10.3389/fpubh.2017.00258 ↗</a>
+                    </li>
+                    <li>
+                        Baevsky, R.M. &amp; Chernikova, A.G. (2017). Heart rate variability analysis:
+                        Physiological foundations and main methods.
+                        <em>Cardiometry</em>, (10), 66–76.
+                        <a class="source-link" href="https://doi.org/10.12710/cardiometry.2017.66-76"
+                            target="_blank" rel="noopener">doi:10.12710/cardiometry.2017.66-76 ↗</a>
+                    </li>
+                </ol>
+            </div>
+
+        </div>
+    </main>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <script type="module" src="/js/pages/termisto.js"></script>
+
+</body>
+
+</html>

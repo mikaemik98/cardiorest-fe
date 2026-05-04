@@ -1,5 +1,5 @@
 // js/pages/login.js
-import { USE_MOCK } from "../services/analysisService.js";
+import api from "../api/client.js";
 
 /* const MOCK_USERS = {
   "matti@test.fi": {
@@ -68,26 +68,19 @@ async function handleLogin() {
 
   // POST /api/auth/login - lähettää Kubios-tunnukset backendille
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: email, password }),
-    });
+    const { data } = await api.post("/api/auth/login", { email, password });
 
-    if (!res.ok) {
-      showError("Väärä sähköposti tai salasana");
-      setLoading(false);
-      return;
-    }
-
-    const data = await res.json();
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data.user));
 
     window.location.href = "/dashboard.html";
   } catch (err) {
-    console.error("Login virhe:", err);
-    showError("Yhteysvirhe — yritä uudelleen");
+    if (err.response?.status === 401) {
+      showError("Väärä sähköposti tai salasana");
+    } else {
+      console.error("Login virhe:", err);
+      showError("Yhteysvirhe — yritä uudelleen");
+    }
     setLoading(false);
   }
 }
