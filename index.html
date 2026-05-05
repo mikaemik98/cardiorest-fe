@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="CardioRest – Kirjaudu sisään Kubios-tunnuksillasi ja seuraa unenlaatua sekä palautumista HRV-analyysin avulla.">
     <title>CardioRest — Kirjaudu sisään</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,6 +13,26 @@
     <link rel="stylesheet" href="/css/pages/login.css">
 </head>
 <body class="login-body">
+
+    <!-- Taustaanimaatio -->
+    <div class="ecg-bg" aria-hidden="true">
+        <svg class="ecg-svg" viewBox="0 0 1200 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <polyline class="ecg-line" points="
+                0,100 100,100 130,100 145,60 155,140 165,20 175,160 185,100 220,100
+        320,100 350,100 365,60 375,140 385,20 395,160 405,100 440,100
+        540,100 570,100 585,60 595,140 605,20 615,160 625,100 660,100
+        760,100 790,100 805,60 815,140 825,20 835,160 845,100 880,100
+        980,100 1010,100 1025,60 1035,140 1045,20 1055,160 1065,100 1100,100
+        1200,100 1300,100 1330,100 1345,60 1355,140 1365,20 1375,160 1385,100 1420,100
+        1520,100 1550,100 1565,60 1575,140 1585,20 1595,160 1605,100 1640,100
+        1740,100 1770,100 1785,60 1795,140 1805,20 1815,160 1825,100 1860,100
+        1960,100 1990,100 2005,60 2015,140 2025,20 2035,160 2045,100 2080,100
+        2180,100 2210,100 2225,60 2235,140 2245,20 2255,160 2265,100 2300,100
+        2400,100
+    "/>
+        </svg>
+    </div>
+
     <div class="login-container">
 
         <!-- Logo -->
@@ -100,7 +122,7 @@
         </div>
 
         <p class="login-footer">
-            CardioRest &copy; 2026 · Metropolia Ammattikorkeakoulu
+            CardioRest &copy; 2026
         </p>
 
     </div>
