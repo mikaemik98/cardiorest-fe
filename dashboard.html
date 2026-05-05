@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="CardioRest – Seuraa unenlaatua ja palautumista HRV-mittausten avulla. Näe päivittäinen palautumispisteesi ja sykevälivaihtelu.">
     <title>CardioRest – Yhteenveto</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -48,6 +50,25 @@
         </div>
 
         <div class="content">
+
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:4px 0">
+                <div style="font-size:14px;color:var(--text);line-height:1.6">
+                    Tervetuloa <b>CardioRest</b> sovellukseen! <br>
+                    Alla näet viimeisimmän HRV-mittauksesi tulokset.
+                    Arvot perustuvat Kubios-analyysiin ja kuvaavat kehosi palautumistilaa.
+                </div>
+                <a href="/termisto.html"
+                    style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(16,212,160,0.08);border:1px solid rgba(16,212,160,0.2);border-radius:20px;font-size:12px;color:var(--teal);font-weight:600;text-decoration:none;white-space:nowrap;transition:all 0.15s"
+                    onmouseover="this.style.background='rgba(16,212,160,0.16)'"
+                    onmouseout="this.style.background='rgba(16,212,160,0.08)'">
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" />
+                        <line x1="5" y1="6" x2="11" y2="6" />
+                        <line x1="5" y1="9" x2="9" y2="9" />
+                    </svg>
+                    Mitä termit tarkoittavat?
+                </a>
+            </div>
 
             <!-- Score-kortti -->
             <section class="card" id="scoreCard" style="overflow:visible">
@@ -129,6 +150,7 @@
                                     <div class="tooltip-box">
                                         Kubios-algoritmin laskema kokonaisarvio palautumisesta asteikolla 0–100.
                                         Yli 70 = erinomainen, 40–70 = kohtalainen, alle 40 = heikko.
+                                        <a href="/termisto.html#readiness" style="color:var(--teal);display:block;margin-top:4px">Lue lisää →</a>
                                     </div>
                                 </div>
                                 <span id="meterReadiness" style="font-family:var(--mono);color:var(--teal)">–</span>
@@ -148,6 +170,7 @@
                                         Parasympaattisen hermoston aktiivisuus (PNS-indeksi).
                                         Positiivinen arvo = hyvä palautuminen.
                                         Negatiivinen arvo = keho on kuormittunut.
+                                        <a href="/termisto.html#pns" style="color:var(--teal);display:block;margin-top:4px">Lue lisää →</a>
                                     </div>
                                 </div>
                                 <span id="meterPns" style="font-family:var(--mono)">–</span>
@@ -167,6 +190,7 @@
                                         Sympaattisen hermoston aktiivisuus (stressiindeksi).
                                         Matala arvo on parempi — alle 10 on normaali lepoarvo.
                                         Korkea arvo viittaa kohonneeseen kuormitukseen.
+                                        <a href="/termisto.html#stress" style="color:var(--teal);display:block;margin-top:4px">Lue lisää →</a>
                                     </div>
                                 </div>
                                 <span id="meterStress" style="font-family:var(--mono)">–</span>

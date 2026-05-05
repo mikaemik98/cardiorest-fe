@@ -1,0 +1,236 @@
+/* css/pages/termisto.css */
+
+/* ── Osion otsikko ──────────────────────────────────────────────── */
+.term-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    margin-top: 4px;
+}
+
+/* ── Termistökortti ─────────────────────────────────────────────── */
+.term-card {
+    scroll-margin-top: 72px; /* offset topbarin alta */
+}
+
+.term-card:target {
+    border-color: rgba(16, 212, 160, 0.4);
+}
+
+.term-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.term-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.term-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 3px;
+}
+
+.term-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 14px;
+}
+
+.term-footnote {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 10px;
+    font-style: italic;
+}
+
+/* kaava */
+.term-formula {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--surface2);
+    border-left: 3px solid var(--teal);
+    border-radius: 0 6px 6px 0;
+    padding: 8px 12px;
+    margin-bottom: 14px;
+}
+
+/* ── Viiterajaosio ──────────────────────────────────────────────── */
+.range-section {
+    margin-top: 4px;
+}
+
+.range-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+}
+
+/* värikoodattu segmenttipalkin wrapper */
+.range-bar {
+    display: flex;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--surface2);
+    margin-bottom: 10px;
+}
+
+.range-seg {
+    height: 100%;
+}
+
+/* vyöhykkeet palkin alla */
+.zones-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.zone-pill {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    text-align: center;
+}
+
+.zone-val {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.zone-name {
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 500;
+}
+
+/* ── Mittauksen laatu -gauget ───────────────────────────────────── */
+.quality-gauge-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.quality-gauge-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.quality-gauge-label {
+    font-size: 12px;
+    font-weight: 500;
+    min-width: 88px;
+}
+
+.quality-gauge-range {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    min-width: 52px;
+    text-align: right;
+}
+
+/* ── Poincaré-ruudukko ──────────────────────────────────────────── */
+.poincare-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.poincare-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+}
+
+.poincare-key {
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.poincare-val {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+}
+
+.poincare-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+/* ── Lähdeluettelo ──────────────────────────────────────────────── */
+.sources-list {
+    list-style: none;
+    counter-reset: source-counter;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sources-list li {
+    counter-increment: source-counter;
+    display: flex;
+    gap: 10px;
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.55;
+}
+
+.sources-list li::before {
+    content: "[" counter(source-counter) "]";
+    color: var(--teal);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    min-width: 24px;
+    padding-top: 1px;
+    flex-shrink: 0;
+}
+
+/* ── Badge – sininen variantti (ANS / Uni) ──────────────────────── */
+.badge-blue {
+    background: rgba(96, 165, 250, 0.12);
+    color: var(--blue);
+}
+
+/* ── Responsiivisuus ────────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .zones-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .poincare-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .quality-gauge-label {
+        min-width: 72px;
+    }
+}

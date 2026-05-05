@@ -33,6 +33,16 @@ const navItems = [
              <line x1="5" y1="9" x2="9" y2="9"/>
            </svg>`,
   },
+  {
+  id: "termisto",
+  label: "Termistö",
+  href: "/termisto.html",
+  icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+             <path d="M4 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
+             <line x1="5" y1="6" x2="11" y2="6"/>
+             <line x1="5" y1="9" x2="9" y2="9"/>
+           </svg>`,   // asiakirja-ikoni
+},
 ];
 
 export function renderSidebar(activePage) {
