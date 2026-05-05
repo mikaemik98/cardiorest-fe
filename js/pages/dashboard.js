@@ -123,7 +123,7 @@ function renderMiniTrend(trendData) {
   if (!el) return;
 
   // Näytä viesti jos dataa liian vähän
-  if (!trendData || trendData.length < 3) {
+  if (!trendData || trendData.length < 2) {
     el.innerHTML = `
             <div style="
                 height:100%;
@@ -144,7 +144,7 @@ function renderMiniTrend(trendData) {
                     Ei tarpeeksi dataa
                 </div>
                 <div style="font-size:13px;opacity:0.5;line-height:1.5">
-                    Tee vähintään 3 mittausta<br>nähdäksesi kehityskaavion
+                    Tee vähintään 2 mittausta<br>nähdäksesi kehityskaavion
                 </div>
             </div>
         `;
