@@ -16,6 +16,8 @@
     flex-direction: column;
     align-items: center;
     gap: 24px;
+    position: relative;
+    z-index: 10;
 }
 
 /* ── Logo ── */
@@ -224,4 +226,15 @@
 /* ── Responsiivisuus ── */
 @media (max-width: 480px) {
     .login-card { padding: 24px 20px; }
+}
+
+#bg-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    filter: brightness(0.6);
 }
