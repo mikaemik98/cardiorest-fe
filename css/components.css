@@ -418,7 +418,7 @@
     }
 }
 
-@media (max-width: 964px) {
+@media (max-width: 1024px) {
     .hamburger {
         display: flex;
         align-items: center;
