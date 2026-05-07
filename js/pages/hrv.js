@@ -9,7 +9,7 @@ import { getRecoveryText } from "../utils/helpers.js";
 import { mockHrvParams } from "../data/mockData.js";
 import { USE_MOCK } from "../services/analysisService.js";
 
-/* ── Sivun alustus ─────────────────────────── */
+// sivun alustus
 renderSidebar("hrv");
 init();
 
@@ -62,7 +62,7 @@ function mapToHrvParams(analysis) {
   };
 }
 
-/* ── Score-kortti ─────────────────────────── */
+// score kortit
 function renderScoreCard(p) {
   const readiness = p.readiness ?? 0;
 
@@ -149,7 +149,7 @@ function renderParamCards(p) {
   }
 }
 
-/* ── Poincaré-analyysi ───────────────────── */
+// poincare analyysi
 function renderPoincareCard(p) {
   const sd1 = p.sd1_ms ?? 0;
   const sd2 = p.sd2_ms ?? 0;
@@ -160,7 +160,7 @@ function renderPoincareCard(p) {
   document.getElementById("paramSdRatio").textContent = ratio;
 }
 
-/* ── Mittauksen laatu ────────────────────── */
+// mittauksen laatu
 function renderQualityCard(p) {
   const level = p.artefact_level ?? "GOOD";
   const badge = document.getElementById("qualityBadge");
@@ -197,7 +197,7 @@ function renderQualityCard(p) {
   fill.style.width = info.pct + "%";
 }
 
-/* ── Autonomisen hermoston palkit ─────── */
+// autonomisen hermoston palkit
 function renderAnsBars(p) {
   const pns = p.pns_index ?? 0;
   const sns = Math.abs(p.sns_index ?? 0);
@@ -222,7 +222,7 @@ function renderAnsBars(p) {
   document.getElementById("ansStressVal").textContent = stress.toFixed(1);
 }
 
-/* ── HRV-aikasarjakaavio ─────────────────── */
+// HRV-aikasarjakaavio
 function renderTimeseries(analysis) {
   let timevarying = null;
 
@@ -256,7 +256,7 @@ function renderTimeseries(analysis) {
   });
 }
 
-/* ── Kahden sarjan kaavio (syke + RMSSD) ── */
+// Kahden sarjan kaavio (syke + RMSSD) ──
 let hrvRoot = null;
 
 function renderDualTimeseries(canvasId, timevarying) {
