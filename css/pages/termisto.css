@@ -233,4 +233,13 @@
     .quality-gauge-label {
         min-width: 72px;
     }
+
+    .sources-list li {
+        flex-wrap: wrap;
+    }
+
+    .sources-list li em,
+    .sources-list li a {
+        word-break: break-all;
+    }
 }
