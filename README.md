@@ -35,6 +35,17 @@ CardioRest on web-sovellus joka hyödyntää Polar H10 ja Polar Sense -sykesenso
 
 ![Päiväkirja](./public/img/cardiorest-päiväkirja.png)
 
+## Rautalankamallit
+
+Sovelluksen suunnitteluvaiheessa luodut rautalankamallit löytyvät kansiosta `public/img/wireframes/`:
+
+| Versio   | Linkki                                                          |
+| -------- | --------------------------------------------------------------- |
+| Versio 1 | [wireframe-v1.html](./public/img/wireframes/Cardio_Rest_1.html) |
+| Versio 2 | [wireframe-v2.html](./public/img/wireframes/Cardio_Rest_2.html) |
+| Versio 3 | [wireframe-v3.html](./public/img/wireframes/Cardio_Rest_3.html) |
+| Versio 4 | [wireframe-v4.html](./public/img/wireframes/Cardio_Rest_4.html) |
+
 ### Termistö
 
 ![Termistö](./public/img/cardiorest-termistö.png)
@@ -213,6 +224,14 @@ robot --pythonpath . --outputdir robot-tests/outputs robot-tests/tests
 | Iteraatio 3 — Regressiotestaus    | 10      | ✅ 10/10 | 5.5.2026   |
 
 ---
+
+## Referenssit
+
+- [amCharts 5](https://www.amcharts.com/) — kaaviokirjasto
+- [Kubios Cloud API](https://analysis.kubioscloud.com/) — HRV-analytiikka
+- [Robot Framework](https://robotframework.org/) — automaatiotestaus
+- [Vite](https://vitejs.dev/) — frontend build tool
+- [Express.js](https://expressjs.com/) — backend framework
 
 ## Ryhmä
 

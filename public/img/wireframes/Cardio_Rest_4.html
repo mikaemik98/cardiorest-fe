@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CardioRest – HRV-pohjainen unenlaadun seuranta</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0D1117; --surface: #161C26; --surface2: #1C2535;
+  --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.14);
+  --text: #E8EDF5; --muted: #8A9BB0;
+  --teal: #10D4A0; --teal-dim: #0A8A68; --teal-glow: rgba(16,212,160,0.12);
+  --amber: #F59E0B; --red: #F87171; --blue: #60A5FA;
+  --sidebar-w: 220px; --radius: 12px;
+  --font: 'Plus Jakarta Sans', sans-serif; --mono: 'DM Mono', monospace;
+}
+body { font-family: var(--font); background: var(--bg); color: var(--text); display: flex; min-height: 100vh; font-size: 14px; line-height: 1.5; }
+
+/* ── LOGIN ── */
+.login-screen {
+  position: fixed; inset: 0; background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999; transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+.login-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.login-bg { position: absolute; inset: 0; overflow: hidden; }
+.login-bg::before {
+  content: ''; position: absolute; width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(16,212,160,0.07) 0%, transparent 70%);
+  top: -200px; right: -100px; animation: float1 8s ease-in-out infinite;
+}
+.login-bg::after {
+  content: ''; position: absolute; width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(96,165,250,0.05) 0%, transparent 70%);
+  bottom: -100px; left: -50px; animation: float2 10s ease-in-out infinite;
+}
+@keyframes float1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,30px)} }
+@keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,-20px)} }
+.login-grid {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.login-card {
+  position: relative; z-index: 1; width: 400px;
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 20px;
+  padding: 40px; box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(16,212,160,0.06);
+  animation: slideUp 0.6s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes slideUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+.login-brand { text-align: center; margin-bottom: 32px; }
+.login-logo-icon {
+  width: 52px; height: 52px; background: var(--teal-glow); border: 1px solid rgba(16,212,160,0.25);
+  border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px;
+}
+.login-logo-name { font-size: 22px; font-weight: 700; color: var(--teal); letter-spacing: -0.4px; }
+.login-logo-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.login-divider {
+  height: 1px; background: var(--border); margin: 24px 0; position: relative;
+}
+.login-divider::after {
+  content: 'KIRJAUDU SISÄÄN'; position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%,-50%); background: var(--surface); padding: 0 12px;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.1em; color: var(--muted);
+}
+.form-group { margin-bottom: 14px; }
+.form-label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 7px; }
+.form-input {
+  width: 100%; background: var(--surface2); border: 1px solid var(--border2); border-radius: 9px;
+  padding: 11px 14px; font-size: 13px; font-family: var(--font); color: var(--text); outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-input::placeholder { color: var(--muted); opacity: 0.5; }
+.form-input:focus { border-color: rgba(16,212,160,0.4); box-shadow: 0 0 0 3px rgba(16,212,160,0.08); }
+.btn-login {
+  width: 100%; padding: 12px; background: var(--teal); color: #000; border: none; border-radius: 9px;
+  font-size: 13px; font-weight: 700; font-family: var(--font); cursor: pointer;
+  transition: background 0.15s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 6px;
+}
+.btn-login:hover { background: #0bbf90; }
+.btn-login:active { transform: scale(0.98); }
+.login-error { font-size: 11px; color: var(--red); margin-bottom: 10px; display: none; }
+.login-error.visible { display: block; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w); min-height: 100vh; background: var(--surface);
+  border-right: 1px solid var(--border); display: flex; flex-direction: column;
+  position: fixed; top: 0; left: 0; z-index: 100;
+}
+.logo { padding: 22px 20px 18px; border-bottom: 1px solid var(--border); }
+.logo-name { font-size: 18px; font-weight: 700; color: var(--teal); letter-spacing: -0.3px; }
+.logo-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.nav { padding: 16px 12px; display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.nav-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; padding: 10px 8px 4px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px;
+  color: var(--text); font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background 0.15s, color 0.15s; text-decoration: none; border: none; background: none; width: 100%; font-family: var(--font);
+}
+.nav-item:hover { background: rgba(255,255,255,0.05); }
+.nav-item.active { background: rgba(16,212,160,0.12); color: var(--teal); }
+.sidebar-footer { padding: 14px 12px; border-top: 1px solid var(--border); margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
+.user-chip { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 8px; overflow: hidden; }
+.user-chip .name { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-chip .role { font-size: 11px; color: var(--muted); }
+.user-chip .user-info { overflow: hidden; min-width: 0; }
+.avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #000; flex-shrink: 0; }
+.logout-btn {
+  display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 10px;
+  background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--muted);
+  font-family: var(--font); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s;
+}
+.logout-btn:hover { border-color: var(--red); color: var(--red); background: rgba(248,113,113,0.06); }
+
+/* ── MAIN ── */
+.main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+.topbar {
+  height: 56px; background: var(--surface); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 28px; position: sticky; top: 0; z-index: 50; gap: 12px;
+}
+.topbar-title { font-size: 15px; font-weight: 600; color: var(--text); flex: 1; }
+.signal { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--teal); animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.content { padding: 28px; display: flex; flex-direction: column; gap: 20px; }
+
+/* ── TABS ── */
+.view-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
+.view-tab {
+  display: flex; align-items: center; gap: 6px; padding: 8px 18px; font-size: 13px; font-weight: 500;
+  color: var(--muted); cursor: pointer; border: none; border-bottom: 2px solid transparent;
+  margin-bottom: -1px; background: none; font-family: var(--font); transition: all 0.15s;
+}
+.view-tab:hover { color: var(--text); }
+.view-tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+.sub-panel { display: none; }
+.sub-panel.active { display: contents; }
+
+/* ── CARDS ── */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; overflow: visible; }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.card-title { font-size: 13px; font-weight: 600; color: var(--text); text-transform: uppercase; letter-spacing: 0.08em; display: flex; align-items: center; gap: 6px; }
+.date-label { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+/* ── SCORE CARD ── */
+.score-grid { display: grid; grid-template-columns: auto 1fr 1fr 1fr; gap: 24px; align-items: center; }
+.score-circle { position: relative; width: 110px; height: 110px; flex-shrink: 0; }
+.score-circle svg { transform: rotate(-90deg); }
+.score-num { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; }
+.score-val { font-family: var(--mono); font-size: 32px; font-weight: 500; }
+.score-lbl { font-size: 14px; color: var(--muted); margin-top: 2px; }
+.score-rating { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.score-details { display: flex; align-items: center; gap: 16px; }
+.metric-sep { padding-left: 24px; border-left: 1px solid var(--border); }
+.metric-big { font-family: var(--mono); font-size: 24px; font-weight: 500; color: var(--text); }
+.metric-lbl { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* ── STAT CARDS ── */
+.stat-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.stat-lbl { font-size: 12px; color: var(--text); font-weight: 500; margin-bottom: 6px; }
+.stat-val { font-family: var(--mono); font-size: 26px; font-weight: 500; color: var(--text); margin-bottom: 8px; }
+.stat-delta { font-size: 11px; font-weight: 600; margin-top: 4px; margin-bottom: 10px; }
+.stat-delta.up { color: var(--teal); }
+.stat-delta.down { color: var(--red); }
+
+/* ── QUALITY BARS ── */
+.quality-bar { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.quality-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #0A8A68, var(--teal)); transition: width 0.6s ease; }
+
+/* ── METERS ── */
+.meter-row { margin-bottom: 14px; }
+.meter-header { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; }
+.meter-label { color: var(--text); }
+.meter-val { font-family: var(--mono); }
+
+/* ── RECOMMENDATIONS ── */
+.rec-list { display: flex; flex-direction: column; gap: 10px; }
+.rec-item { display: flex; gap: 12px; padding: 12px 14px; background: var(--surface2); border-radius: 8px; border-left: 3px solid transparent; }
+.rec-item.good { border-left-color: var(--teal); }
+.rec-item.warn { border-left-color: var(--amber); }
+.rec-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.rec-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+/* ── BADGES ── */
+.badge { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.badge-green { background: rgba(16,212,160,0.12); color: var(--teal); }
+.badge-amber { background: rgba(245,158,11,0.12); color: var(--amber); }
+.badge-red { background: rgba(248,113,113,0.12); color: var(--red); }
+
+/* ── CHART ── */
+.chart-wrap { position: relative; width: 100%; }
+.chart-legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; }
+.leg-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+.leg-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+/* ── TOOLTIPS ── */
+.tooltip-wrap { position: relative; display: inline-flex; align-items: center; gap: 5px; cursor: help; }
+.tooltip-icon { width: 14px; height: 14px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border); color: var(--muted); font-size: 9px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; line-height: 1; }
+.tooltip-box { display: none; position: absolute; bottom: calc(100% + 8px); left: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 12px; color: var(--text); width: 220px; line-height: 1.5; z-index: 999; box-shadow: 0 4px 16px rgba(0,0,0,0.4); pointer-events: none; }
+.tooltip-wrap:hover .tooltip-box { display: block; }
+
+/* ── POINCARÉ ── */
+.param-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.param-row:last-child { border-bottom: none; }
+.param-label { font-size: 13px; color: var(--text); }
+.param-sublabel { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.param-val { font-family: var(--mono); font-weight: 500; color: var(--teal); }
+
+/* ── QUALITY BADGE ── */
+.quality-badge { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 8px; }
+.quality-badge.good { background: rgba(16,212,160,0.12); color: var(--teal); }
+.quality-badge.moderate { background: rgba(245,158,11,0.12); color: var(--amber); }
+.quality-badge.poor { background: rgba(248,113,113,0.12); color: var(--red); }
+.quality-desc { font-size: 12px; color: var(--muted); }
+
+/* ── ANS BARS ── */
+.ans-row { display: grid; grid-template-columns: 140px 1fr 60px; align-items: center; gap: 12px; margin-bottom: 14px; }
+.ans-label { font-size: 12px; color: var(--text); }
+.ans-bar-track { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.ans-bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+.pns-fill { background: linear-gradient(90deg, #0A8A68, var(--teal)); }
+.sns-fill { background: linear-gradient(90deg, #B91C1C, var(--red)); }
+.stress-fill { background: linear-gradient(90deg, var(--amber), var(--red)); }
+.ans-val { font-family: var(--mono); font-size: 12px; color: var(--text); text-align: right; }
+
+
+
+/* ── VIEW PANELS ── */
+.view-panel { display: none; width: 100%; }
+.view-panel.active { display: block; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-bg"></div>
+  <div class="login-grid"></div>
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="login-logo-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#10D4A0" stroke-width="1.8">
+          <polyline points="2,12 5,12 7,6 9,18 11,10 13,14 15,12 22,12"/>
+        </svg>
+      </div>
+      <div class="login-logo-name">CardioRest</div>
+      <div class="login-logo-sub">HRV-pohjainen unenlaatuseuranta</div>
+    </div>
+    <div class="login-divider"></div>
+    <div id="loginError" class="login-error">Täytä sähköposti ja salasana.</div>
+    <div class="form-group">
+      <label class="form-label">Sähköposti</label>
+      <input class="form-input" id="loginEmail" type="email" placeholder="etunimi@esimerkki.fi">
+    </div>
+    <div class="form-group" style="margin-bottom:20px">
+      <label class="form-label">Salasana</label>
+      <input class="form-input" id="loginPass" type="password" placeholder="••••••••">
+    </div>
+    <button class="btn-login" onclick="doLogin()">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2h4v12h-4M6 11l4-3-4-3"/><line x1="2" y1="8" x2="10" y2="8"/></svg>
+      Kirjaudu sisään
+    </button>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="logo">
+    <div class="logo-name">CardioRest</div>
+    <div class="logo-sub">HRV-pohjainen unenlaatuseuranta</div>
+  </div>
+  <nav class="nav">
+  <span class="nav-label">Näkymät</span>
+    <button class="nav-item active" onclick="switchNav(this,'today')">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="12" rx="2"/></svg>
+      Yhteenveto
+    </button>
+    <button class="nav-item" onclick="switchNav(this,'trends')">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="2,11 5,7 9,9 14,4"/></svg>
+      Trendit
+    </button>
+    <button class="nav-item" onclick="switchNav(this,'hrv')">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="2,8 4,8 5,4 7,12 9,6 11,10 12,8 14,8"/></svg>
+      HRV-analyysi
+    </button>
+
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="avatar" id="sidebarAvatar">MM</div>
+      <div class="user-info">
+        <div class="name" id="sidebarName">Mikael Mikkola</div>
+        <div class="role" id="sidebarRole">Potilas</div>
+      </div>
+    </div>
+    <button class="logout-btn" onclick="doLogout()">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2H2v12h4"/><polyline points="11,5 14,8 11,11"/><line x1="14" y1="8" x2="6" y2="8"/></svg>
+      Kirjaudu ulos
+    </button>
+  </div>
+</nav>
+
+<main class="main">
+  <header class="topbar">
+    <span class="topbar-title" id="topbarTitle">Unen laatu ja palautuminen</span>
+    <span style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px">
+      <span class="signal"></span> Viimeksi synkronoitu 07:02
+    </span>
+  </header>
+
+  <!-- ═══ YHTEENVETO ═══ -->
+  <div id="view-today" class="view-panel active">
+    <div class="content">
+      <div class="view-tabs">
+        <button class="view-tab active" onclick="switchSub('today',this)">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6"/></svg>
+          Readiness
+        </button>
+        <button class="view-tab" onclick="switchSub('timevarying',this)">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="2,8 4,8 5,4 7,12 9,6 11,10 12,8 14,8"/></svg>
+          HRV-aikasarja
+        </button>
+      </div>
+
+      <div id="sub-today" class="sub-panel active" style="display:flex;flex-direction:column;gap:20px">
+
+        <!-- Score kortti -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Unen laatu ja palautuminen</span>
+            <span class="date-label">8.4.2026</span>
+          </div>
+          <div class="score-grid">
+            <div style="display:flex;align-items:center;gap:16px">
+              <div class="score-circle">
+                <svg viewBox="0 0 110 110" width="110" height="110">
+                  <circle cx="55" cy="55" r="46" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10"/>
+                  <circle cx="55" cy="55" r="46" fill="none" stroke="#10D4A0" stroke-width="10" stroke-dasharray="289" stroke-dashoffset="217" stroke-linecap="round" id="scoreArc"/>
+                </svg>
+                <div class="score-num">
+                  <span class="score-val" id="scoreVal" style="color:#10D4A0">26</span>
+                  <span class="score-lbl">/100</span>
+                </div>
+              </div>
+              <div>
+                <div style="font-size:11px;color:var(--muted);margin-bottom:2px">Palautumispistemäärä</div>
+                <div class="score-rating" style="color:var(--red)">Heikko</div>
+              </div>
+            </div>
+            <div class="metric-sep">
+              <div class="metric-big">8.5 ms</div>
+              <div class="metric-lbl">Sykevälivaihtelu</div>
+            </div>
+            <div class="metric-sep">
+              <div class="metric-big" style="color:var(--red)">26%</div>
+              <div class="metric-lbl">Palautuminen</div>
+            </div>
+            <div class="metric-sep">
+              <div class="metric-big">–</div>
+              <div class="metric-lbl">Unen kesto</div>
+              <div style="font-size:10px;color:var(--muted);opacity:0.5">Vain yömittauksessa</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <!-- Palautumiskehitys -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Palautumiskehitys (7 pv)</span>
+            </div>
+            <div class="chart-wrap" style="height:200px">
+              <canvas id="miniTrendChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Palautumisen mittarit -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Palautumisen mittarit</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:14px;padding:4px 0">
+              <div class="meter-row">
+                <div class="meter-header">
+                  <span class="meter-label tooltip-wrap">Palautumispistemäärä <span class="tooltip-icon">?</span><div class="tooltip-box">Kubios-algoritmin laskema kokonaisarvio palautumisesta asteikolla 0–100.</div></span>
+                  <span class="meter-val" style="color:var(--red)">26/100</span>
+                </div>
+                <div class="quality-bar"><div class="quality-fill" style="width:26%;background:linear-gradient(90deg,#B91C1C,#F87171)"></div></div>
+              </div>
+              <div class="meter-row">
+                <div class="meter-header">
+                  <span class="meter-label tooltip-wrap">Palautumistaso <span class="tooltip-icon">?</span><div class="tooltip-box">Parasympaattisen hermoston aktiivisuus (PNS-indeksi). Negatiivinen = keho kuormittunut.</div></span>
+                  <span class="meter-val" style="color:var(--red)">-2.62</span>
+                </div>
+                <div class="quality-bar"><div class="quality-fill" style="width:20%;background:linear-gradient(90deg,#B91C1C,#F87171)"></div></div>
+              </div>
+              <div class="meter-row">
+                <div class="meter-header">
+                  <span class="meter-label tooltip-wrap">Stressitaso <span class="tooltip-icon">?</span><div class="tooltip-box">Sympaattisen hermoston aktiivisuus. Matala arvo on parempi — alle 10 on normaali lepoarvo.</div></span>
+                  <span class="meter-val" style="color:var(--red)">28.5</span>
+                </div>
+                <div class="quality-bar"><div class="quality-fill" style="width:95%;background:linear-gradient(90deg,#F59E0B,#F87171)"></div></div>
+              </div>
+              <div class="meter-row">
+                <div class="meter-header">
+                  <span class="meter-label tooltip-wrap">Mittauksen laatu <span class="tooltip-icon">?</span><div class="tooltip-box">Hyvä = alle 2% virhelyöntejä.</div></span>
+                  <span class="meter-val" style="color:var(--teal)">Hyvä</span>
+                </div>
+                <div class="quality-bar"><div class="quality-fill" style="width:90%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Suositukset -->
+        <div class="card">
+          <div class="card-header"><span class="card-title">Suositukset</span></div>
+          <div class="rec-list">
+            <div class="rec-item warn">
+              <div>
+                <div class="rec-title">Kehosi tarvitsee lepoa</div>
+                <div class="rec-desc">Vältä raskasta kuormitusta tänään ja pyri nukkumaan aiemmin.</div>
+              </div>
+            </div>
+            <div class="rec-item warn">
+              <div>
+                <div class="rec-title">Stressitaso koholla</div>
+                <div class="rec-desc">Kokeile rentoutumisharjoituksia ennen nukkumaanmenoa.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HRV-aikasarja sub-panel -->
+      <div id="sub-timevarying" class="sub-panel" style="display:none;flex-direction:column;gap:20px">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Yönaikainen sykedata</span></div>
+          <div class="chart-wrap" style="height:200px"><canvas id="hrvNightChart"></canvas></div>
+          <div class="chart-legend">
+            <span class="leg-item"><span class="leg-dot" style="background:#10D4A0"></span>Syke (bpm)</span>
+            <span class="leg-item"><span class="leg-dot" style="background:#60A5FA"></span>RMSSD (ms)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TRENDIT ═══ -->
+  <div id="view-trends" class="view-panel">
+    <div class="content">
+      <div class="three-col">
+        <div class="stat-card">
+          <div class="stat-lbl tooltip-wrap">Readiness ka. <span class="tooltip-icon">?</span><div class="tooltip-box">Palautumispistemäärä asteikolla 0–100.</div></div>
+          <div class="stat-val" style="color:var(--red)">26</div>
+          <div class="stat-delta down">↓ -8 viime viikosta</div>
+          <div class="quality-bar"><div class="quality-fill" style="width:26%;background:linear-gradient(90deg,#B91C1C,#F87171)"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-lbl tooltip-wrap">RMSSD ka. <span class="tooltip-icon">?</span><div class="tooltip-box">Sykevälivaihtelu ms. Korkea = parempi palautuminen.</div></div>
+          <div class="stat-val" style="color:var(--red)">8.5 <span style="font-size:14px;color:var(--muted)">ms</span></div>
+          <div class="stat-delta down">↓ -12ms viime viikosta</div>
+          <div class="quality-bar"><div class="quality-fill" style="width:15%;background:linear-gradient(90deg,#B91C1C,#F87171)"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-lbl tooltip-wrap">Stress-indeksi ka. <span class="tooltip-icon">?</span><div class="tooltip-box">Matala arvo on parempi — alle 10 on normaali lepoarvo.</div></div>
+          <div class="stat-val" style="color:var(--red)">28.5</div>
+          <div class="stat-delta down">↑ +12 viime viikosta</div>
+          <div class="quality-bar"><div class="quality-fill" style="width:95%;background:linear-gradient(90deg,#F59E0B,#F87171)"></div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">HRV-kehitys</span>
+          <select class="period-select"><option>7 päivää</option><option>14 päivää</option><option>30 päivää</option></select>
+        </div>
+        <div class="chart-wrap" style="height:260px"><canvas id="trendChart"></canvas></div>
+        <div class="chart-legend">
+          <span class="leg-item"><span class="leg-dot" style="background:#10D4A0"></span>Readiness</span>
+          <span class="leg-item"><span class="leg-dot" style="background:#60A5FA"></span>RMSSD (ms)</span>
+          <span class="leg-item"><span class="leg-dot" style="background:#F59E0B"></span>Stress-indeksi</span>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header"><span class="card-title">PNS-indeksi (palautuminen) <span style="cursor:help;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:50%;width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;color:var(--muted)">?</span></span></div>
+          <div class="chart-wrap" style="height:180px"><canvas id="pnsChart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">SNS-indeksi (kuormitus) <span style="cursor:help;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:50%;width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;color:var(--muted)">?</span></span></div>
+          <div class="chart-wrap" style="height:180px"><canvas id="snsChart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Mittaushistoria</span></div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead><tr style="border-bottom:1px solid var(--border)">
+            <th style="padding:8px 0;text-align:left;font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.06em">Päivämäärä</th>
+            <th style="padding:8px 0;text-align:right;font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.06em">Readiness</th>
+            <th style="padding:8px 0;text-align:right;font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.06em">RMSSD</th>
+            <th style="padding:8px 0;text-align:right;font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.06em">Stress</th>
+            <th style="padding:8px 0;text-align:right;font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.06em">Tila</th>
+          </tr></thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:10px 0;font-family:var(--mono)">8.4.2026</td>
+              <td style="padding:10px 0;text-align:right;font-family:var(--mono);color:var(--red)">26</td>
+              <td style="padding:10px 0;text-align:right;font-family:var(--mono)">8.5 ms</td>
+              <td style="padding:10px 0;text-align:right;font-family:var(--mono)">28.5</td>
+              <td style="padding:10px 0;text-align:right"><span class="badge badge-red">Heikko</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:10px 0;font-family:var(--mono)">3.4.2026</td>
+              <td style="padding:10px 0;text-align:right;font-family:var(--mono);color:var(--amber)">54</td>
+              <td style="padding:10px 0;text-align:right;font-family:var(--mono)">32.1 ms</td>
+              <td style="padding:10px 0;text-align:right;font-family:var(--mono)">11.2</td>
+              <td style="padding:10px 0;text-align:right"><span class="badge badge-amber">Kohtalainen</span></td>
+            </tr>
+            <tr>
+              <td style="padding:10px 0;font-family:var(--mono)">28.3.2026</td>
+              <td style="padding:10px 0;text-align:right;font-family:var(--mono);color:var(--teal)">78</td>
+              <td style="padding:10px 0;text-align:right;font-family:var(--mono)">55.4 ms</td>
+              <td style="padding:10px 0;text-align:right;font-family:var(--mono)">6.1</td>
+              <td style="padding:10px 0;text-align:right"><span class="badge badge-green">Hyvä</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ HRV-ANALYYSI ═══ -->
+  <div id="view-hrv" class="view-panel">
+    <div class="content">
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">HRV-yhteenveto</span>
+          <span class="date-label">8.4.2026</span>
+        </div>
+        <div class="score-grid">
+          <div style="display:flex;align-items:center;gap:16px">
+            <div class="score-circle">
+              <svg viewBox="0 0 110 110" width="110" height="110">
+                <circle cx="55" cy="55" r="46" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10"/>
+                <circle cx="55" cy="55" r="46" fill="none" stroke="#F87171" stroke-width="10" stroke-dasharray="289" stroke-dashoffset="217" stroke-linecap="round"/>
+              </svg>
+              <div class="score-num">
+                <span class="score-val" style="color:var(--red)">26</span>
+                <span class="score-lbl">/100</span>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:2px">Readiness-pistemäärä</div>
+              <div style="font-size:15px;font-weight:600;color:var(--red)">Heikko</div>
+            </div>
+          </div>
+          <div class="metric-sep">
+            <div class="metric-big">8.5</div>
+            <div class="metric-lbl">RMSSD (ms)</div>
+          </div>
+          <div class="metric-sep">
+            <div class="metric-big">14.9</div>
+            <div class="metric-lbl">SDNN (ms)</div>
+          </div>
+          <div class="metric-sep">
+            <div class="metric-big">103.2</div>
+            <div class="metric-lbl">Keskisyke (bpm)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="three-col">
+        <div class="stat-card">
+          <div class="stat-lbl">PNS-indeksi</div>
+          <div class="stat-val" style="color:var(--red)">-2.62</div>
+          <div style="font-size:11px;color:var(--muted);margin:4px 0 10px">Palautuminen</div>
+          <div class="quality-bar"><div class="quality-fill" style="width:18%;background:linear-gradient(90deg,#B91C1C,#F87171)"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-lbl">SNS-indeksi</div>
+          <div class="stat-val" style="color:var(--red)">5.65</div>
+          <div style="font-size:11px;color:var(--muted);margin:4px 0 10px">Kuormitus</div>
+          <div class="quality-bar"><div class="quality-fill" style="width:85%;background:linear-gradient(90deg,#B91C1C,#F87171)"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-lbl">Stress-indeksi</div>
+          <div class="stat-val" style="color:var(--red)">28.5</div>
+          <div style="font-size:11px;color:var(--muted);margin:4px 0 10px">Stressitaso</div>
+          <div class="quality-bar"><div class="quality-fill" style="width:95%;background:linear-gradient(90deg,#F59E0B,#F87171)"></div></div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Poincaré-analyysi</span></div>
+          <div>
+            <div class="param-row">
+              <div><div class="param-label">SD1 (ms)</div><div class="param-sublabel">Lyhytaikainen sykevälivaihtelu</div></div>
+              <span class="param-val">6.0</span>
+            </div>
+            <div class="param-row">
+              <div><div class="param-label">SD2 (ms)</div><div class="param-sublabel">Pitkäaikainen sykevälivaihtelu</div></div>
+              <span class="param-val">20.2</span>
+            </div>
+            <div class="param-row">
+              <div><div class="param-label">SD2/SD1</div><div class="param-sublabel">Lyhyt- ja pitkäaikaisen vaihtelun suhde</div></div>
+              <span class="param-val">3.36</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Mittauksen laatu</span></div>
+          <div>
+            <div class="quality-badge good">Hyvä</div>
+            <div class="quality-desc">Mittauksen laatu on erinomainen.</div>
+            <div style="margin-top:14px">
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+                <span style="color:var(--muted)">Artefaktitaso</span>
+                <span style="font-family:var(--mono)">95%</span>
+              </div>
+              <div class="quality-bar"><div class="quality-fill" style="width:95%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Yönaikainen HRV-aikasarja</span></div>
+        <div class="chart-wrap" style="height:260px"><canvas id="hrvTimeseriesChart"></canvas></div>
+        <div class="chart-legend">
+          <span class="leg-item"><span class="leg-dot" style="background:#10D4A0"></span>Syke (bpm)</span>
+          <span class="leg-item"><span class="leg-dot" style="background:#60A5FA"></span>RMSSD (ms)</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Autonomisen hermoston tasapaino</span></div>
+        <div style="padding:4px 0">
+          <div class="ans-row">
+            <span class="ans-label">PNS (palautuminen)</span>
+            <div class="ans-bar-track"><div class="ans-bar-fill pns-fill" style="width:18%"></div></div>
+            <span class="ans-val">-2.62</span>
+          </div>
+          <div class="ans-row">
+            <span class="ans-label">SNS (kuormitus)</span>
+            <div class="ans-bar-track"><div class="ans-bar-fill sns-fill" style="width:85%"></div></div>
+            <span class="ans-val">5.65</span>
+          </div>
+          <div class="ans-row">
+            <span class="ans-label">Stressi</span>
+            <div class="ans-bar-track"><div class="ans-bar-fill stress-fill" style="width:95%"></div></div>
+            <span class="ans-val">28.5</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+</main>
+
+<script>
+/* ═══ LOGIN ═══ */
+function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('loginError');
+  if (!email || !pass) { errEl.classList.add('visible'); return; }
+  errEl.classList.remove('visible');
+  document.getElementById('loginScreen').classList.add('hidden');
+}
+
+/* ═══ NAVIGATION ═══ */
+function switchNav(btn, target) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  btn.classList.add('active');
+  const viewMap = { today:'today', trends:'trends', hrv:'hrv' };
+  document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('view-' + (viewMap[target] || 'today')).classList.add('active');
+  const titles = { today:'Unen laatu ja palautuminen', trends:'Trendit', hrv:'HRV-analyysi' };
+  document.getElementById('topbarTitle').textContent = titles[target] || 'Yhteenveto';
+}
+
+function switchSub(id, btn) {
+  document.querySelectorAll('.view-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.sub-panel').forEach(p => { p.style.display = 'none'; });
+  const el = document.getElementById('sub-' + id);
+  if (el) el.style.display = 'flex';
+}
+
+function doLogout() {
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginScreen').classList.remove('hidden');
+}
+
+/* ═══ CHARTS ═══ */
+const C = window.Chart;
+C.defaults.color = '#8A9BB0';
+C.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+C.defaults.font.size = 11;
+
+// Mini trend
+new C(document.getElementById('miniTrendChart'), {
+  type: 'bar',
+  data: {
+    labels: ['2.4','3.4','4.4','5.4','6.4','7.4','8.4'],
+    datasets: [{ data: [54,48,62,39,71,44,26], backgroundColor: '#10D4A0', borderRadius: 4 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => 'Palautuminen: ' + ctx.parsed.y + '/100' } } },
+    scales: {
+      x: { grid: { color: 'rgba(255,255,255,0.04)' } },
+      y: { grid: { color: 'rgba(255,255,255,0.04)' }, min: 0, max: 100 }
+    }
+  }
+});
+
+// HRV night
+new C(document.getElementById('hrvNightChart'), {
+  type: 'line',
+  data: {
+    labels: ['22:00','23:00','00:00','01:00','02:00','03:00','04:00','05:00','06:00'],
+    datasets: [{ data: [44,52,61,70,78,75,68,60,55], borderColor: '#10D4A0', borderWidth: 2, pointRadius: 0, fill: true, backgroundColor: (ctx) => { const g = ctx.chart.ctx.createLinearGradient(0,0,0,200); g.addColorStop(0,'rgba(16,212,160,0.2)'); g.addColorStop(1,'rgba(16,212,160,0)'); return g; }, tension: 0.45 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: { x: { grid: { color: 'rgba(255,255,255,0.04)' } }, y: { grid: { color: 'rgba(255,255,255,0.04)' } } }
+  }
+});
+
+// Trend chart
+new C(document.getElementById('trendChart'), {
+  type: 'line',
+  data: {
+    labels: ['2.4','3.4','4.4','5.4','6.4','7.4','8.4'],
+    datasets: [
+      { label:'Readiness', data: [54,48,62,39,71,44,26], borderColor:'#10D4A0', borderWidth:2, pointRadius:4, tension:0.3, fill:false },
+      { label:'RMSSD', data: [32,28,41,21,48,31,8.5], borderColor:'#60A5FA', borderWidth:2, pointRadius:4, tension:0.3, fill:false },
+      { label:'Stress', data: [10,12,8,18,7,14,28.5], borderColor:'#F59E0B', borderWidth:2, pointRadius:4, tension:0.3, fill:false }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { mode:'index', intersect:false } },
+    scales: { x: { grid: { color: 'rgba(255,255,255,0.04)' } }, y: { grid: { color: 'rgba(255,255,255,0.04)' }, min: 0 } }
+  }
+});
+
+// PNS chart
+new C(document.getElementById('pnsChart'), {
+  type: 'bar',
+  data: {
+    labels: ['2.4','3.4','4.4','5.4','6.4','7.4','8.4'],
+    datasets: [{ data: [-1.2,-1.8,-0.6,-2.4,0.4,-1.1,-2.62], backgroundColor: (ctx) => ctx.parsed.y >= 0 ? '#10D4A0' : '#F87171', borderRadius: 4 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: { x: { grid: { color: 'rgba(255,255,255,0.04)' } }, y: { grid: { color: 'rgba(255,255,255,0.04)' } } }
+  }
+});
+
+// SNS chart
+new C(document.getElementById('snsChart'), {
+  type: 'bar',
+  data: {
+    labels: ['2.4','3.4','4.4','5.4','6.4','7.4','8.4'],
+    datasets: [{ data: [1.8,2.4,1.1,3.2,0.6,2.1,5.65], backgroundColor: (ctx) => ctx.parsed.y <= 0 ? '#10D4A0' : '#F87171', borderRadius: 4 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: { x: { grid: { color: 'rgba(255,255,255,0.04)' } }, y: { grid: { color: 'rgba(255,255,255,0.04)' }, min: 0 } }
+  }
+});
+
+// HRV timeseries
+function wave(base, amp, phase, len) {
+  return Array.from({length:len}, (_,i) => Math.max(10, base + amp * Math.sin((i+phase)/len*2*Math.PI*2.5) + Math.sin(i*1.7+phase)*2));
+}
+const tvLen = 60;
+new C(document.getElementById('hrvTimeseriesChart'), {
+  type: 'line',
+  data: {
+    labels: Array.from({length:tvLen}, (_,i) => { const m=Math.floor(i*9/60)*60+22*60; return (Math.floor(m/60)%24)+':'+(m%60<10?'0':'')+m%60; }),
+    datasets: [
+      { label:'Syke', data: wave(70,12,0,tvLen), borderColor:'#10D4A0', borderWidth:2, pointRadius:0, tension:0.4, fill:true, backgroundColor:(ctx)=>{ const g=ctx.chart.ctx.createLinearGradient(0,0,0,260); g.addColorStop(0,'rgba(16,212,160,0.15)'); g.addColorStop(1,'rgba(16,212,160,0)'); return g; } },
+      { label:'RMSSD', data: wave(25,12,3,tvLen), borderColor:'#60A5FA', borderWidth:2, pointRadius:0, tension:0.4, fill:false }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { mode:'index', intersect:false } },
+    scales: { x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { maxTicksLimit: 8 } }, y: { grid: { color: 'rgba(255,255,255,0.04)' } } }
+  }
+});
+
+
+</script>
+</body>
+</html>
