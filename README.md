@@ -194,7 +194,7 @@ API-dokumentaatio löytyy backendistä: [cardiorest-be](https://github.com/mikae
 
 ## Testaus
 
-Katso testausdokumentaatio: **[testaukset.md](./testaukset.md)**
+Katso testausdokumentaatio: **[testaukset.md](./robot-tests/testaukset.md)**
 
 Testiraportit GitHub Pagesilla: **[mikaemik98.github.io/cardiorest-fe](https://mikaemik98.github.io/cardiorest-fe)**
 
