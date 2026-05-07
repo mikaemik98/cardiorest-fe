@@ -9,6 +9,36 @@ Metropolia Ammattikorkeakoulu | Ohjelmistotestaus | Projektiryhmä 1
 
 CardioRest on web-sovellus joka hyödyntää Polar H10 ja Polar Sense -sykesensoreilla kerättävää HRV-dataa (sykevälivaihtelu) unen laadun ja palautumisen seurantaan. Sovellus integroi Kubios Cloud -analytiikkapalvelun readiness- ja time-varying-analyyseihin.
 
+## Kuvakaappaukset
+
+### Kirjautuminen
+
+![Kirjautuminen](./public/img/cardiorest-kirjautuminen.png)
+
+### Dashboard — Readiness
+
+![Dashboard](./public/img/cardiorest-etusivu.png)
+
+### HRV-aikasarja
+
+![HRV-aikasarja](./public/img/cardiorest-etusivu-hrv-aikasarja.png)
+
+### Trendit
+
+![Trendit](./public/img/cardiorest-trendit.png)
+
+### HRV-analyysi
+
+![HRV-analyysi](./public/img/cardiorest-hrv.png)
+
+### Päiväkirja
+
+![Päiväkirja](./public/img/cardiorest-päiväkirja.png)
+
+### Termistö
+
+![Termistö](./public/img/cardiorest-termistö.png)
+
 **Live-demo:** [cardiorest.swedencentral.cloudapp.azure.com](https://cardiorest.swedencentral.cloudapp.azure.com)
 
 ---

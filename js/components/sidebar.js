@@ -1,3 +1,9 @@
+// js/components/sidebar.js
+
+/**
+ * Navigaatiolinkit sivupalkissa.
+ * id vastaa renderSidebar-funktion activePage-parametria.
+ */
 const navItems = [
   {
     id: "dashboard",
@@ -34,122 +40,123 @@ const navItems = [
            </svg>`,
   },
   {
-  id: "termisto",
-  label: "Termistö",
-  href: "/termisto.html",
-  icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+    id: "termisto",
+    label: "Termistö",
+    href: "/termisto.html",
+    icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
              <path d="M4 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
              <line x1="5" y1="6" x2="11" y2="6"/>
              <line x1="5" y1="9" x2="9" y2="9"/>
-           </svg>`,   // asiakirja-ikoni
-},
+           </svg>`,
+  },
 ];
 
+/**
+ * Renderöi sivupalkin HTML:n ja liittää tapahtumakuuntelijat.
+ * Hakee käyttäjätiedot localStoragesta ja näyttää nimen/initiaalit footerissa.
+ * Sisältää hamburger-logiikan mobiilinavigaatiota varten.
+ *
+ * @param {string} activePage - Aktiivisen sivun id (esim. "dashboard", "trends")
+ */
 export function renderSidebar(activePage) {
   const sidebar = document.getElementById("sidebar");
   if (!sidebar) return;
 
-  // Hae käyttäjän tiedot localStoragesta
-  const userRaw = localStorage.getItem("user");
-  const user = userRaw ? JSON.parse(userRaw) : null;
-
-  // Kubios palauttaa: { email, first_name, last_name, ... }
+  // Hae käyttäjätiedot localStoragesta
+  // Kubios palauttaa: { given_name, family_name, email, ... }
+  const user = JSON.parse(localStorage.getItem("user") ?? "null");
   const firstName = user?.given_name ?? "";
   const lastName = user?.family_name ?? "";
   const displayName =
     firstName && lastName
       ? `${firstName} ${lastName}`
       : (user?.email ?? "Käyttäjä");
-
   const initials =
     firstName && lastName
       ? `${firstName[0]}${lastName[0]}`.toUpperCase()
       : (user?.email ?? "KK").substring(0, 2).toUpperCase();
 
   sidebar.innerHTML = `
-        <div class="logo">
-            <div class="logo-name">CardioRest</div>
-            <div class="logo-sub">HRV-pohjainen unenlaatuseuranta</div>
+    <div class="logo">
+      <div class="logo-name">CardioRest</div>
+      <div class="logo-sub">HRV-pohjainen unenlaatuseuranta</div>
+    </div>
+    <nav class="nav">
+      <span class="nav-label">Potilas</span>
+      ${navItems
+        .map(
+          (item) => `
+        <a href="${item.href}" class="nav-item ${activePage === item.id ? "active" : ""}">
+          ${item.icon}
+          ${item.label}
+        </a>
+      `,
+        )
+        .join("")}
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="avatar">${initials}</div>
+        <div class="user-info">
+          <div class="name">${displayName}</div>
+          <div class="role">Potilas</div>
         </div>
-        <nav class="nav">
-            <span class="nav-label">Potilas</span>
-            ${navItems
-              .map(
-                (item) => `
-                <a href="${item.href}" class="nav-item ${activePage === item.id ? "active" : ""}">
-                    ${item.icon}
-                    ${item.label}
-                </a>
-            `,
-              )
-              .join("")}
-        </nav>
-        <div class="sidebar-footer">
-            <div class="user-chip">
-                <div class="avatar">${initials}</div>
-                <div class="user-info">
-                    <div class="name">${displayName}</div>
-                    <div class="role">Potilas</div>
-                </div>
-            </div>
-            <button class="logout-btn" id="logoutBtn">
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none"
-                     stroke="currentColor" stroke-width="1.5">
-                    <path d="M6 2H2v12h4"/>
-                    <polyline points="11,5 14,8 11,11"/>
-                    <line x1="14" y1="8" x2="6" y2="8"/>
-                </svg>
-                Kirjaudu ulos
-            </button>
-        </div>
-    `;
+      </div>
+      <button class="logout-btn" id="logoutBtn">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M6 2H2v12h4"/>
+          <polyline points="11,5 14,8 11,11"/>
+          <line x1="14" y1="8" x2="6" y2="8"/>
+        </svg>
+        Kirjaudu ulos
+      </button>
+    </div>
+  `;
 
-  // logout-toiminto
+  // Uloskirjautuminen — poistaa tokenin ja käyttäjätiedot localStoragesta
   document.getElementById("logoutBtn")?.addEventListener("click", () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     window.location.href = "/index.html";
   });
 
-  // Hamburger-logiikka
+  // ── Hamburger-navigaatio (mobiili) ──
   const hamburger = document.getElementById("hamburger");
   const overlay = document.getElementById("sidebarOverlay");
 
+  /** Avaa sivupalkin mobiililla ja vaihtaa hampurilaisikoni X:ksi */
   function openSidebar() {
     sidebar.classList.add("open");
     overlay.classList.add("visible");
-    document.body.style.overflow = "hidden";
-    // Vaihda hamburger → X
+    document.body.style.overflow = "hidden"; // estää taustan scrollauksen
     hamburger.innerHTML = `
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
-            <line x1="4" y1="4" x2="16" y2="16"/>
-            <line x1="16" y1="4" x2="4" y2="16"/>
-        </svg>`;
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+        <line x1="4" y1="4" x2="16" y2="16"/>
+        <line x1="16" y1="4" x2="4" y2="16"/>
+      </svg>`;
   }
 
+  /** Sulkee sivupalkin mobiililla ja vaihtaa X-ikoni hampurilaiseksi */
   function closeSidebar() {
     sidebar.classList.remove("open");
     overlay.classList.remove("visible");
     document.body.style.overflow = "";
-    // Vaihda X → hamburger
     hamburger.innerHTML = `
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
-            <line x1="3" y1="6" x2="17" y2="6"/>
-            <line x1="3" y1="10" x2="17" y2="10"/>
-            <line x1="3" y1="14" x2="17" y2="14"/>
-        </svg>`;
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+        <line x1="3" y1="6" x2="17" y2="6"/>
+        <line x1="3" y1="10" x2="17" y2="10"/>
+        <line x1="3" y1="14" x2="17" y2="14"/>
+      </svg>`;
   }
 
   hamburger?.addEventListener("click", () => {
-    if (sidebar.classList.contains('open')) {
-      closeSidebar();
-    } else {
-      openSidebar();
-    }
+    sidebar.classList.contains("open") ? closeSidebar() : openSidebar();
   });
+
+  // Sulje sidebar kun tummennettu tausta klikataan
   overlay?.addEventListener("click", closeSidebar);
 
-  // Sulje sidebar kun linkkiä klikataan mobiililla
+  // Sulje sidebar automaattisesti kun navigaatiolinkki klikataan mobiililla
   sidebar.querySelectorAll(".nav-item").forEach((item) => {
     item.addEventListener("click", closeSidebar);
   });

@@ -1,5 +1,8 @@
 // js/pages/hrv.js
-import { getLatestAnalysis, getTimevaryingData } from "../services/analysisService.js";
+import {
+  getLatestAnalysis,
+  getTimevaryingData,
+} from "../services/analysisService.js";
 import { renderHrvNightChart } from "../components/hrvChart.js";
 import { renderSidebar } from "../components/sidebar.js";
 import { getRecoveryText } from "../utils/helpers.js";
@@ -11,34 +14,36 @@ renderSidebar("hrv");
 init();
 
 async function init() {
-    try {
-        const [analysis, tvData] = await Promise.all([
-            getLatestAnalysis(),
-            getTimevaryingData()
-        ]);
+  try {
+    const [analysis, tvData] = await Promise.all([
+      getLatestAnalysis(),
+      getTimevaryingData(),
+    ]);
 
-        const params = USE_MOCK ? mockHrvParams : mapToHrvParams(analysis);
-        renderScoreCard(params);
-        renderParamCards(params);
-        renderPoincareCard(params);
-        renderQualityCard(params);
-        renderAnsBars(params);
+    const params = USE_MOCK ? mockHrvParams : mapToHrvParams(analysis);
+    renderScoreCard(params);
+    renderParamCards(params);
+    renderPoincareCard(params);
+    renderQualityCard(params);
+    renderAnsBars(params);
 
-        // Käytä oikeaa timevarying-dataa jos saatavilla
-        if (tvData?.timevarying) {
-            renderTimeseries({ timevarying_data: tvData.timevarying });
-        } else {
-            renderTimeseries(analysis);
-        }
-
-    } catch (err) {
-        console.error('HRV-sivun alustus epäonnistui:', err);
-        renderScoreCard(mockHrvParams);
-        renderParamCards(mockHrvParams);
-        renderPoincareCard(mockHrvParams);
-        renderQualityCard(mockHrvParams);
-        renderAnsBars(mockHrvParams);
+    // Käytä oikeaa timevarying-dataa jos saatavilla
+    if (tvData?.timevarying) {
+      renderTimeseries({
+        timevarying_data: tvData.timevarying,
+        recorded_at: tvData.recorded_at,
+      });
+    } else {
+      renderTimeseries(analysis);
     }
+  } catch (err) {
+    console.error("HRV-sivun alustus epäonnistui:", err);
+    renderScoreCard(mockHrvParams);
+    renderParamCards(mockHrvParams);
+    renderPoincareCard(mockHrvParams);
+    renderQualityCard(mockHrvParams);
+    renderAnsBars(mockHrvParams);
+  }
 }
 
 function mapToHrvParams(analysis) {
@@ -219,30 +224,36 @@ function renderAnsBars(p) {
 
 /* ── HRV-aikasarjakaavio ─────────────────── */
 function renderTimeseries(analysis) {
-    let timevarying = null;
+  let timevarying = null;
 
-    // Jos saadaan suoraan timevarying-objekti
-    if (analysis?.labels && analysis?.hr) {
-        timevarying = analysis;
+  // Jos saadaan suoraan timevarying-objekti
+  if (analysis?.labels && analysis?.hr) {
+    timevarying = analysis;
     // Jos saadaan analysis-objekti jossa timevarying_data
-    } else if (analysis?.timevarying_data) {
-        try {
-            timevarying = typeof analysis.timevarying_data === 'string'
-                ? JSON.parse(analysis.timevarying_data)
-                : analysis.timevarying_data;
-        } catch (_) { /* ignore */ }
+  } else if (analysis?.timevarying_data) {
+    try {
+      timevarying =
+        typeof analysis.timevarying_data === "string"
+          ? JSON.parse(analysis.timevarying_data)
+          : analysis.timevarying_data;
+    } catch (_) {
+      /* ignore */
     }
+  }
 
-    if (!timevarying) {
-        // Mock-data fallback
-        timevarying = {
-            labels: Array.from({ length: 60 }, (_, i) => i * 5),
-            hr:     Array.from({ length: 60 }, () => 55 + Math.random() * 25),
-            rmssd:  Array.from({ length: 60 }, () => 40 + Math.random() * 40),
-        };
-    }
+  if (!timevarying) {
+    // Mock-data fallback
+    timevarying = {
+      labels: Array.from({ length: 60 }, (_, i) => i * 5),
+      hr: Array.from({ length: 60 }, () => 55 + Math.random() * 25),
+      rmssd: Array.from({ length: 60 }, () => 40 + Math.random() * 40),
+    };
+  }
 
-    renderDualTimeseries('hrvTimeseriesChart', timevarying);
+  renderDualTimeseries("hrvTimeseriesChart", {
+    ...timevarying,
+    recorded_at: analysis.recorded_at,
+  });
 }
 
 /* ── Kahden sarjan kaavio (syke + RMSSD) ── */
@@ -259,16 +270,38 @@ function renderDualTimeseries(canvasId, timevarying) {
 
   const rawLabels = timevarying.labels ?? [];
   const hrData = timevarying.hr ?? [];
-  const rmssdData = timevarying.rmssd ?? [];
 
-  const data = rawLabels.map((t, i) => {
-    const totalSec = Math.round(t);
-    const min = Math.floor(totalSec / 60);
-    const sec = totalSec % 60;
+  // Näytteistä data
+  const MAX_POINTS = 600;
+  const step =
+    rawLabels.length > MAX_POINTS
+      ? Math.floor(rawLabels.length / MAX_POINTS)
+      : 1;
+
+  const sampledLabels = rawLabels.filter((_, i) => i % step === 0);
+  const sampledHr = hrData.filter((_, i) => i % step === 0);
+
+  const startTime = timevarying.recorded_at
+    ? new Date(timevarying.recorded_at).getTime()
+    : null;
+
+  const data = sampledLabels.map((t, i) => {
+    let timeStr;
+    if (startTime) {
+      const ms = startTime + Math.round(t) * 1000;
+      const d = new Date(ms);
+      const h = String(d.getHours()).padStart(2, "0");
+      const m = String(d.getMinutes()).padStart(2, "0");
+      timeStr = `${h}:${m}`;
+    } else {
+      const totalSec = Math.round(t);
+      const hours = Math.floor(totalSec / 3600);
+      const mins = Math.floor((totalSec % 3600) / 60);
+      timeStr = `${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
+    }
     return {
-      time: `${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`,
-      hr: hrData[i] ?? 0,
-      rmssd: rmssdData[i] ?? 0,
+      time: timeStr,
+      hr: sampledHr[i] ?? 0,
     };
   });
 
@@ -295,24 +328,46 @@ function renderDualTimeseries(canvasId, timevarying) {
   );
   cursor.lineY.set("visible", false);
 
-  // X-akseli
   const xAxis = chart.xAxes.push(
     am5xy.CategoryAxis.new(root, {
       categoryField: "time",
-      renderer: am5xy.AxisRendererX.new(root, { minGridDistance: 60 }),
+      renderer: am5xy.AxisRendererX.new(root, { minGridDistance: 80 }),
       tooltip: am5.Tooltip.new(root, {}),
     }),
   );
 
-  // Y-akseli
+  xAxis.children.push(
+    am5.Label.new(root, {
+      text: "Aika (hh:mm)",
+      x: am5.percent(50),
+      centerX: am5.percent(50),
+      fontSize: 11,
+      fill: am5.color("#8A9BB0"),
+      paddingTop: 8,
+    }),
+  );
+
+  const minHrVal = Math.min(...sampledHr.filter((v) => v > 0));
+
   const yAxis = chart.yAxes.push(
     am5xy.ValueAxis.new(root, {
       renderer: am5xy.AxisRendererY.new(root, {}),
+      min: Math.floor(minHrVal * 0.95),
+      strictMinMax: true,
       extraMax: 0.1,
     }),
   );
 
-  // Syke-sarja
+  yAxis.children.unshift(
+    am5.Label.new(root, {
+      text: "Syke (bpm)",
+      rotation: -90,
+      y: am5.percent(50),
+      centerX: am5.percent(50),
+      fontSize: 11,
+      fill: am5.color("#8A9BB0"),
+    }),
+  );
   const hrSeries = chart.series.push(
     am5xy.LineSeries.new(root, {
       xAxis,
@@ -325,28 +380,11 @@ function renderDualTimeseries(canvasId, timevarying) {
     }),
   );
   hrSeries.strokes.template.setAll({ strokeWidth: 2 });
-  hrSeries.fills.template.setAll({ fillOpacity: 0.08, visible: true });
-
-  // RMSSD-sarja
-  const rmssdSeries = chart.series.push(
-    am5xy.LineSeries.new(root, {
-      xAxis,
-      yAxis,
-      valueYField: "rmssd",
-      categoryXField: "time",
-      stroke: am5.color("#60A5FA"),
-      fill: am5.color("#60A5FA"),
-      tooltip: am5.Tooltip.new(root, { labelText: "RMSSD: {valueY} ms" }),
-    }),
-  );
-  rmssdSeries.strokes.template.setAll({ strokeWidth: 2 });
-  rmssdSeries.fills.template.setAll({ fillOpacity: 0.08, visible: true });
+  hrSeries.fills.template.setAll({ fillOpacity: 0.1, visible: true });
+  hrSeries.bullets.clear();
 
   xAxis.data.setAll(data);
   hrSeries.data.setAll(data);
-  rmssdSeries.data.setAll(data);
-
   hrSeries.appear(1000);
-  rmssdSeries.appear(1000);
   chart.appear(1000, 100);
 }

@@ -1,108 +1,86 @@
 <!DOCTYPE html>
 <html lang="fi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="CardioRest – Kirjaudu sisään Kubios-tunnuksillasi ja seuraa unenlaatua sekä palautumista HRV-analyysin avulla.">
     <title>CardioRest — Kirjaudu sisään</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/css/base.css">
     <link rel="stylesheet" href="/css/pages/login.css">
 </head>
-<body class="login-body">
 
-    <!-- Taustaanimaatio -->
-    <div class="ecg-bg" aria-hidden="true">
-        <svg class="ecg-svg" viewBox="0 0 1200 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <polyline class="ecg-line" points="
-                0,100 100,100 130,100 145,60 155,140 165,20 175,160 185,100 220,100
-        320,100 350,100 365,60 375,140 385,20 395,160 405,100 440,100
-        540,100 570,100 585,60 595,140 605,20 615,160 625,100 660,100
-        760,100 790,100 805,60 815,140 825,20 835,160 845,100 880,100
-        980,100 1010,100 1025,60 1035,140 1045,20 1055,160 1065,100 1100,100
-        1200,100 1300,100 1330,100 1345,60 1355,140 1365,20 1375,160 1385,100 1420,100
-        1520,100 1550,100 1565,60 1575,140 1585,20 1595,160 1605,100 1640,100
-        1740,100 1770,100 1785,60 1795,140 1805,20 1815,160 1825,100 1860,100
-        1960,100 1990,100 2005,60 2015,140 2025,20 2035,160 2045,100 2080,100
-        2180,100 2210,100 2225,60 2235,140 2245,20 2255,160 2265,100 2300,100
-        2400,100
-    "/>
-        </svg>
-    </div>
+<body class="login-body">
+    <!-- Taustavideo -->
+    <video autoplay muted loop id="bg-video"
+        aria-label="Video, jossa henkilö nukkuu sängyssä ja herätyskello loistaa yöpöydällä.">
+        <source src="videos/tausta.mp4" type="video/mp4">
+    </video>
 
     <div class="login-container">
 
         <!-- Logo -->
-         <div class="login-logo">
+        <div class="login-logo">
             <div class="login-logo-name">CardioRest</div>
             <div class="login-logo-sub">HRV-pohjainen unenlaadun seuranta</div>
-         </div>
+        </div>
 
-         <!-- Kortti -->
-          <div class="login-card">
+        <!-- Kortti -->
+        <div class="login-card">
             <h1 class="login-title">Kirjaudu sisään</h1>
             <p class="login-desc">Syötä tunnuksesi jatkaaksesi</p>
 
             <div class="login-form">
 
                 <!-- sähköposti -->
-                 <div class="form-group">
+                <div class="form-group">
                     <label class="form-label" for="email">Sähköposti</label>
                     <div class="input-wrap">
-                        <svg class="input-icon" width="16" height="16" viewBox="0 0 16 16"
-                        fill="none" stroke="currentColor" stroke-width="1.5">
-                        <rect x="1" y="3" width="14" height="10" rx="2"/>
-                    </svg>
-                    <input 
-                        type="email"
-                        id="email"
-                        class="form-input"
-                        placeholder="matti@esimerkki.fi"
-                        autocomplete="email"
-                        >
+                        <svg class="input-icon" width="16" height="16" viewBox="0 0 16 16" fill="none"
+                            stroke="currentColor" stroke-width="1.5">
+                            <rect x="1" y="3" width="14" height="10" rx="2" />
+                        </svg>
+                        <input type="email" id="email" class="form-input" placeholder="matti@esimerkki.fi"
+                            autocomplete="email">
                     </div>
-                 </div>
+                </div>
 
-                 <!-- Salasana -->
-                  <div class="form-group">
+                <!-- Salasana -->
+                <div class="form-group">
                     <label class="form-label" for="password">Salasana</label>
                     <div class="input-wrap">
-                        <svg class="input-icon" width="16" height="16" viewBox="0 0 16 16"
-                             fill="none" stroke="currentColor" stroke-width="1.5">
-                            <rect x="2" y="7" width="12" height="8" rx="2"/>
-                            <path d="M5 7V5a3 3 0 016 0v2"/>
+                        <svg class="input-icon" width="16" height="16" viewBox="0 0 16 16" fill="none"
+                            stroke="currentColor" stroke-width="1.5">
+                            <rect x="2" y="7" width="12" height="8" rx="2" />
+                            <path d="M5 7V5a3 3 0 016 0v2" />
                         </svg>
-                        <input
-                            type="password"
-                            id="password"
-                            class="form-input"
-                            placeholder="••••••••"
-                            autocomplete="current-password"
-                        >
+                        <input type="password" id="password" class="form-input" placeholder="••••••••"
+                            autocomplete="current-password">
                         <button class="password-toggle" id="passwordToggle" type="button">
-                            <svg width="16" height="16" viewBox="0 0 16 16"
-                                 fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/>
-                                <circle cx="8" cy="8" r="2"/>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor"
+                                stroke-width="1.5">
+                                <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" />
+                                <circle cx="8" cy="8" r="2" />
                             </svg>
                         </button>
                     </div>
-                  </div>
+                </div>
 
-                  <!-- Virheviesti -->
-                   <div class="login-error" id="loginError" style="display:none">
-                    <svg width="14" height="14" viewBox="0 0 16 16"
-                         fill="none" stroke="currentColor" stroke-width="1.8">
-                        <circle cx="8" cy="8" r="6"/>
-                        <path d="M8 5v3M8 11h.01"/>
+                <!-- Virheviesti -->
+                <div class="login-error" id="loginError" style="display:none">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor"
+                        stroke-width="1.8">
+                        <circle cx="8" cy="8" r="6" />
+                        <path d="M8 5v3M8 11h.01" />
                     </svg>
                     <span id="loginErrorText">Väärä sähköposti tai salasana</span>
                 </div>
 
-   <!-- Kirjaudu nappi -->
+                <!-- Kirjaudu nappi -->
                 <button class="login-btn" id="loginBtn" type="button">
                     <span id="loginBtnText">Kirjaudu sisään</span>
                     <div class="login-spinner" id="loginSpinner" style="display:none"></div>
@@ -115,18 +93,18 @@
         <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--muted)">
             Ei Kubios-tunnuksia?
             <a href="https://kubioscloud.auth.eu-west-1.amazoncognito.com/signup?response_type=code&client_id=1h4rmoi5s66u2cliaqcpuejgpg&redirect_uri=https://analysis.kubioscloud.com/v2/portal/login&scope=openid%20profile%20email%20phone"
-            target="_blank"
-            style="color:var(--teal);font-weight:600;text-decoration: none;">
-            Rekisteröidy Kubios Cloudiin ->
+                target="_blank" style="color:var(--teal);font-weight:600;text-decoration: none;">
+                Rekisteröidy Kubios Cloudiin ->
             </a>
         </div>
 
         <p class="login-footer">
-            CardioRest &copy; 2026
+            CardioRest &copy; 2026 · Metropolia Ammattikorkeakoulu
         </p>
 
     </div>
 
     <script type="module" src="/js/pages/login.js"></script>
 </body>
+
 </html>

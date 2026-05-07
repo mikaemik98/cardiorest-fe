@@ -1,10 +1,21 @@
 // js/services/analysisService.js
+// Vastaa kaiken HRV- ja päiväkirjadatan hakemisesta backendiltä.
+// Kaikki Kubios-data haetaan suoraan Kubios Cloud -pilvestä backendin kautta.
+
 import api from "../api/client.js";
 import { mockAnalysis, mockTrend } from "../data/mockData.js";
 
+// Aseta true käyttääksesi mock-dataa ilman backendiä
 export const USE_MOCK = false;
 
-// Muunna Kubios-data dashboard-formaattiin
+/**
+ * Muuntaa Kubios Cloud -tuloksen sovelluksen sisäiseen formaattiin.
+ * Kubios palauttaa tulokset result-objektin sisällä — tämä funktio
+ * litistää rakenteen ja asettaa oletusarvot puuttuville kentille.
+ *
+ * @param {Object} result - Kubios-tuloksen yksittäinen rivi (results[])
+ * @returns {Object} Sovelluksen käyttämä analyysi-objekti
+ */
 function mapKubiosResult(result) {
   const r = result.result;
   return {
@@ -18,21 +29,23 @@ function mapKubiosResult(result) {
     artefact_level: r.artefact_level ?? "GOOD",
     sd1_ms: r.sd1_ms ?? 0,
     sd2_ms: r.sd2_ms ?? 0,
-    sleep_duration_h: null,
+    sleep_duration_h: null, // lasketaan timevarying-datasta dashboard.js:ssä
     recorded_at: result.create_timestamp,
-    timevarying_data: null,
-    sleep_stages: null,
+    timevarying_data: null, // haetaan erikseen getTimevaryingData():lla
+    sleep_stages: null, // vaatii kiihtyvyysanturidatan — ei toteutettu
   };
 }
 
-export async function syncFromKubios() {
-  // Ei tarvita — haetaan suoraan Kubios-reitistä
-}
+// Tyhjät stub-funktiot — synkronointi tapahtuu automaattisesti backendillä
+export async function syncFromKubios() {}
+export async function syncTimevarying() {}
 
-export async function syncTimevarying() {
-  // Ei tarvita vielä
-}
-
+/**
+ * Hakee viimeisimmän time-varying HRV-analyysin omasta tietokannasta.
+ * Data on tallennettu sinne kun Elsi on kirjautunut sovellukseen.
+ *
+ * @returns {Object|null} Time-varying data tai null jos ei saatavilla
+ */
 export async function getTimevaryingData() {
   if (USE_MOCK) return null;
   try {
@@ -44,15 +57,19 @@ export async function getTimevaryingData() {
   }
 }
 
+/**
+ * Hakee viimeisimmän HRV-analyysin suoraan Kubios Cloud -pilvestä.
+ * Järjestää tulokset uusimmasta vanhimpaan ja palauttaa ensimmäisen.
+ *
+ * @returns {Object} Analyysi-objekti tai mock-data jos haku epäonnistuu
+ */
 export async function getLatestAnalysis() {
   if (USE_MOCK) return mockAnalysis;
-  // haetaan suoraan Kubios-pilvestä, ei omaa DB:tä
   try {
     const res = await api.get("/api/kubios/user-data");
     const results = res.data.results ?? [];
     if (results.length === 0) return mockAnalysis;
 
-    // Järjestä uusimmasta vanhimpaan ja ota ensimmäinen
     results.sort(
       (a, b) => new Date(b.create_timestamp) - new Date(a.create_timestamp),
     );
@@ -63,6 +80,13 @@ export async function getLatestAnalysis() {
   }
 }
 
+/**
+ * Hakee HRV-trendidata viimeiseltä N päivältä Kubios Cloud -pilvestä.
+ * Käytetään trendit-sivun kaavioissa ja tilastokorteissa.
+ *
+ * @param {number} days - Haettava aikaväli päivinä (7, 14 tai 30)
+ * @returns {Array} Lista analyysi-objekteista vanhimmasta uusimpaan
+ */
 export async function getAnalysisTrend(days = 7) {
   if (USE_MOCK) return mockTrend;
   try {
@@ -70,12 +94,12 @@ export async function getAnalysisTrend(days = 7) {
     const results = res.data.results ?? [];
     if (results.length === 0) return mockTrend;
 
-    // Järjestä vanhimmasta uusimpaan trendiä varten
+    // Järjestä vanhimmasta uusimpaan trendikaavioita varten
     results.sort(
       (a, b) => new Date(a.create_timestamp) - new Date(b.create_timestamp),
     );
 
-    // Suodata viimeisen N päivän tulokset
+    // Suodata valitun aikavälin ulkopuoliset tulokset pois
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - days);
 
@@ -98,15 +122,20 @@ export async function getAnalysisTrend(days = 7) {
   }
 }
 
+/**
+ * Hakee viimeisimmän päiväkirjamerkinnän omasta tietokannasta.
+ * Näytetään dashboardin "Viimeisin merkintä" -kortissa.
+ *
+ * @returns {Object|null} Päiväkirjamerkintä tai null jos ei merkintöjä
+ */
 export async function getLatestDiaryEntry() {
   if (USE_MOCK) return null;
   try {
     const res = await api.get("/api/diary");
     const entries = res.data.entries ?? [];
-    if (entries.length === 0) return null;
-    return entries[0]; // uusin ensin
+    return entries.length > 0 ? entries[0] : null; // backend palauttaa uusimman ensin
   } catch (err) {
-    console.warn("Päiväkirja haku epäonnistui", err.message);
+    console.warn("Päiväkirja haku epäonnistui:", err.message);
     return null;
   }
 }

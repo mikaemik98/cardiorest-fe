@@ -1,3 +1,4 @@
+// js/pages/trends.js
 import { getAnalysisTrend } from "../services/analysisService.js";
 import { renderSidebar } from "../components/sidebar.js";
 import {
@@ -8,11 +9,12 @@ import {
   average,
 } from "../utils/helpers.js";
 
-// ── Vaihdettu Chart.js → amCharts root-objektit ──
+// amCharts root-objektit — tallennetaan jotta voidaan tuhota ennen uudelleenrenderöintiä
 let trendRoot = null;
 let pnsRoot = null;
 let snsRoot = null;
 
+/** Tuhoaa kaikki aktiiviset kaaviot ennen uuden datan renderöintiä */
 function destroyCharts() {
   if (trendRoot) {
     trendRoot.dispose();
@@ -33,15 +35,16 @@ const COLORS = {
   blue: "#60A5FA",
   amber: "#F59E0B",
   red: "#F87171",
-  grid: "rgba(255,255,255,0.04)",
 };
 
-// ── Apufunktiot ensin ──
-
-function buildLabels(data) {
-  return data.map((d) => formatDate(d.created_at));
-}
-
+/**
+ * Laskee trendinuolen kahden aikavälin välille.
+ * Vertaa jakson jälkipuoliskon keskiarvoa alkupuoliskoon.
+ * @param {string} elId - Elementin ID johon tulos kirjoitetaan
+ * @param {number} current - Jakson loppupuoliskon keskiarvo
+ * @param {number} previous - Jakson alkupuoliskon keskiarvo
+ * @param {boolean} higherIsBetter - true = korkeampi arvo on parempi (readiness, RMSSD)
+ */
 function setDelta(elId, current, previous, higherIsBetter = true) {
   const el = document.getElementById(elId);
   if (!el || !previous) return;
@@ -52,8 +55,10 @@ function setDelta(elId, current, previous, higherIsBetter = true) {
   el.className = "stat-delta " + (good ? "up" : "down");
 }
 
-// ── Render-funktiot ──
-
+/**
+ * Renderöi tilastokortit (readiness ka., RMSSD ka., stress-indeksi ka.)
+ * edistymispalkkeineen ja trendinuoleineen
+ */
 function renderStatCards(data) {
   if (!data.length) return;
 
@@ -73,42 +78,51 @@ function renderStatCards(data) {
   // Värikoodaus
   document.getElementById("statReadiness").style.color =
     avgReadiness >= 70 ? "#10D4A0" : avgReadiness >= 40 ? "#F59E0B" : "#F87171";
-
   document.getElementById("statRmssd").style.color =
     avgRmssd >= 50 ? "#10D4A0" : avgRmssd >= 30 ? "#F59E0B" : "#F87171";
-
   document.getElementById("statStress").style.color =
     avgStress < 10 ? "#10D4A0" : avgStress < 15 ? "#F59E0B" : "#F87171";
 
-  // Palkit
-  const readinessFill = document.getElementById("statReadinessFill");
-  if (readinessFill) {
-    readinessFill.style.width = avgReadiness + "%";
-    readinessFill.style.background =
-      avgReadiness >= 70
-        ? "linear-gradient(90deg, #0A8A68, #10D4A0)"
-        : avgReadiness >= 40
-          ? "linear-gradient(90deg, #B45309, #F59E0B)"
-          : "linear-gradient(90deg, #B91C1C, #F87171)";
-  }
+  // Edistymispalkit
+  const setBar = (id, width, bg) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.width = width;
+      el.style.background = bg;
+    }
+  };
 
-  const rmssdFill = document.getElementById("statRmssdFill");
-  if (rmssdFill) {
-    rmssdFill.style.width = Math.min(avgRmssd, 100) + "%";
-    rmssdFill.style.background =
-      avgRmssd >= 50
-        ? "linear-gradient(90deg, #0A8A68, #10D4A0)"
-        : avgRmssd >= 30
-          ? "linear-gradient(90deg, #B45309, #F59E0B)"
-          : "linear-gradient(90deg, #B91C1C, #F87171)";
-  }
+  setBar(
+    "statReadinessFill",
+    avgReadiness + "%",
+    avgReadiness >= 70
+      ? "linear-gradient(90deg,#0A8A68,#10D4A0)"
+      : avgReadiness >= 40
+        ? "linear-gradient(90deg,#B45309,#F59E0B)"
+        : "linear-gradient(90deg,#B91C1C,#F87171)",
+  );
 
-  const stressFill = document.getElementById("statStressFill");
-  if (stressFill) {
-    stressFill.style.width = Math.min((avgStress / 20) * 100, 100) + "%";
-  }
+  setBar(
+    "statRmssdFill",
+    Math.min(avgRmssd, 100) + "%",
+    avgRmssd >= 50
+      ? "linear-gradient(90deg,#0A8A68,#10D4A0)"
+      : avgRmssd >= 30
+        ? "linear-gradient(90deg,#B45309,#F59E0B)"
+        : "linear-gradient(90deg,#B91C1C,#F87171)",
+  );
 
-  // Trendinuolet
+  setBar(
+    "statStressFill",
+    Math.min((avgStress / 20) * 100, 100) + "%",
+    avgStress < 10
+      ? "linear-gradient(90deg,#0A8A68,#10D4A0)"
+      : avgStress < 15
+        ? "linear-gradient(90deg,#B45309,#F59E0B)"
+        : "linear-gradient(90deg,#B91C1C,#F87171)",
+  );
+
+  // Trendinuolet — vertaa jakson loppupuolta alkupuoleen
   setDelta(
     "statReadinessDelta",
     average(recent.map((d) => d.readiness ?? 0)),
@@ -129,6 +143,10 @@ function renderStatCards(data) {
   );
 }
 
+/**
+ * Renderöi päätrendi-kaavion (readiness, RMSSD, stress-indeksi)
+ * amCharts 5 -viivakaaviona
+ */
 function renderTrendChart(data) {
   const el = document.getElementById("trendChart");
   if (!el) return;
@@ -142,7 +160,6 @@ function renderTrendChart(data) {
 
   const root = am5.Root.new("trendChart");
   trendRoot = root;
-
   root.setThemes([am5themes_Animated.new(root), am5themes_Dark.new(root)]);
 
   const chart = root.container.children.push(
@@ -155,23 +172,18 @@ function renderTrendChart(data) {
       paddingRight: 0,
     }),
   );
-
   chart.zoomOutButton.set("forceHidden", true);
 
   const cursor = chart.set(
     "cursor",
-    am5xy.XYCursor.new(root, {
-      behavior: "none",
-    }),
+    am5xy.XYCursor.new(root, { behavior: "none" }),
   );
   cursor.lineY.set("visible", false);
 
   const xAxis = chart.xAxes.push(
     am5xy.CategoryAxis.new(root, {
       categoryField: "date",
-      renderer: am5xy.AxisRendererX.new(root, {
-        minGridDistance: 40,
-      }),
+      renderer: am5xy.AxisRendererX.new(root, { minGridDistance: 40 }),
       tooltip: am5.Tooltip.new(root, {}),
     }),
   );
@@ -184,6 +196,7 @@ function renderTrendChart(data) {
 
   xAxis.data.setAll(chartData);
 
+  // Apufunktio sarjan luontiin
   function createSeries(name, field, color) {
     const series = chart.series.push(
       am5xy.LineSeries.new(root, {
@@ -199,9 +212,7 @@ function renderTrendChart(data) {
         }),
       }),
     );
-
     series.strokes.template.setAll({ strokeWidth: 2.5 });
-
     series.bullets.push(() =>
       am5.Bullet.new(root, {
         sprite: am5.Circle.new(root, {
@@ -212,7 +223,6 @@ function renderTrendChart(data) {
         }),
       }),
     );
-
     series.data.setAll(chartData);
     series.appear(1000);
     return series;
@@ -223,21 +233,22 @@ function renderTrendChart(data) {
   createSeries("Stress", "stress", "#F59E0B");
 
   const legend = chart.children.push(
-    am5.Legend.new(root, {
-      centerX: am5.p50,
-      x: am5.p50,
-    }),
+    am5.Legend.new(root, { centerX: am5.p50, x: am5.p50 }),
   );
   legend.data.setAll(chart.series.values);
-
   chart.appear(1000, 100);
 }
 
+/**
+ * Renderöi PNS-indeksin pylväskaavion.
+ * Positiiviset arvot (vihreä) = parasympaattinen hermosto aktiivinen = hyvä palautuminen.
+ * Negatiiviset arvot (punainen) = kehon kuormitus koholla.
+ */
 function renderPnsChart(data) {
   const el = document.getElementById("pnsChart");
   if (!el) return;
 
-  // Lyhennä päivämäärä jos paljon dataa
+  // Lyhennä päivämäärä jos dataa paljon (yli 14 pistettä)
   const chartData = data.map((d) => ({
     date:
       data.length > 14
@@ -249,7 +260,6 @@ function renderPnsChart(data) {
   const root = am5.Root.new("pnsChart");
   pnsRoot = root;
   root._logo?.dispose();
-
   root.setThemes([am5themes_Animated.new(root), am5themes_Dark.new(root)]);
 
   const chart = root.container.children.push(
@@ -260,9 +270,7 @@ function renderPnsChart(data) {
     }),
   );
 
-  const xRenderer = am5xy.AxisRendererX.new(root, { minGridDistance: 60 }); // ← kasvata 40 → 60
-
-  // Rotaa labelit viistoon kun paljon dataa
+  const xRenderer = am5xy.AxisRendererX.new(root, { minGridDistance: 60 });
   if (data.length > 10) {
     xRenderer.labels.template.setAll({
       rotation: -45,
@@ -271,7 +279,7 @@ function renderPnsChart(data) {
       fontSize: 10,
       paddingRight: 15,
       maxWidth: 60,
-      oversizedBehavior: "truncate", // ← leikkaa liian pitkät
+      oversizedBehavior: "truncate",
     });
   }
 
@@ -281,11 +289,8 @@ function renderPnsChart(data) {
       renderer: xRenderer,
     }),
   );
-
   const yAxis = chart.yAxes.push(
-    am5xy.ValueAxis.new(root, {
-      renderer: am5xy.AxisRendererY.new(root, {}),
-    }),
+    am5xy.ValueAxis.new(root, { renderer: am5xy.AxisRendererY.new(root, {}) }),
   );
 
   const series = chart.series.push(
@@ -297,23 +302,23 @@ function renderPnsChart(data) {
       tooltip: am5.Tooltip.new(root, { labelText: "PNS: {valueY}" }),
     }),
   );
-
   series.columns.template.setAll({
     cornerRadiusTL: 4,
     cornerRadiusTR: 4,
     strokeOpacity: 0,
   });
 
-  // värikoodaus positiivinen/negatiivinen arvo
-  series.columns.template.adapters.add("fill", (fill, target) => {
-    const val = target.dataItem?.get("valueY") ?? 0;
-    return am5.color(val >= 0 ? "#10D4A0" : "#F87171");
-  });
-
-  series.columns.template.adapters.add("stroke", (stroke, target) => {
-    const val = target.dataItem?.get("valueY") ?? 0;
-    return am5.color(val >= 0 ? "#10D4A0" : "#F87171");
-  });
+  // Värikoodaus: positiivinen = vihreä, negatiivinen = punainen
+  series.columns.template.adapters.add("fill", (fill, target) =>
+    am5.color(
+      (target.dataItem?.get("valueY") ?? 0) >= 0 ? "#10D4A0" : "#F87171",
+    ),
+  );
+  series.columns.template.adapters.add("stroke", (stroke, target) =>
+    am5.color(
+      (target.dataItem?.get("valueY") ?? 0) >= 0 ? "#10D4A0" : "#F87171",
+    ),
+  );
 
   xAxis.data.setAll(chartData);
   series.data.setAll(chartData);
@@ -321,6 +326,11 @@ function renderPnsChart(data) {
   chart.appear(1000, 100);
 }
 
+/**
+ * Renderöi SNS-indeksin pylväskaavion.
+ * Negatiiviset arvot (vihreä) = sympaattinen hermosto matala = hyvä palautuminen.
+ * Positiiviset arvot (punainen) = stressitaso koholla.
+ */
 function renderSnsChart(data) {
   const el = document.getElementById("snsChart");
   if (!el) return;
@@ -336,7 +346,6 @@ function renderSnsChart(data) {
   const root = am5.Root.new("snsChart");
   snsRoot = root;
   root._logo?.dispose();
-
   root.setThemes([am5themes_Animated.new(root), am5themes_Dark.new(root)]);
 
   const chart = root.container.children.push(
@@ -348,7 +357,6 @@ function renderSnsChart(data) {
   );
 
   const xRenderer = am5xy.AxisRendererX.new(root, { minGridDistance: 60 });
-
   if (data.length > 10) {
     xRenderer.labels.template.setAll({
       rotation: -45,
@@ -357,7 +365,7 @@ function renderSnsChart(data) {
       fontSize: 10,
       paddingRight: 15,
       maxWidth: 60,
-      oversizedBehavior: "truncate", // ← leikkaa liian pitkät
+      oversizedBehavior: "truncate",
     });
   }
 
@@ -367,11 +375,8 @@ function renderSnsChart(data) {
       renderer: xRenderer,
     }),
   );
-
   const yAxis = chart.yAxes.push(
-    am5xy.ValueAxis.new(root, {
-      renderer: am5xy.AxisRendererY.new(root, {}),
-    }),
+    am5xy.ValueAxis.new(root, { renderer: am5xy.AxisRendererY.new(root, {}) }),
   );
 
   const series = chart.series.push(
@@ -383,22 +388,23 @@ function renderSnsChart(data) {
       tooltip: am5.Tooltip.new(root, { labelText: "SNS: {valueY}" }),
     }),
   );
-
   series.columns.template.setAll({
     cornerRadiusTL: 4,
     cornerRadiusTR: 4,
     strokeOpacity: 0,
   });
 
-  series.columns.template.adapters.add("fill", (fill, target) => {
-    const val = target.dataItem?.get("valueY") ?? 0;
-    return am5.color(val <= 0 ? "#10D4A0" : "#F87171");
-  });
-
-  series.columns.template.adapters.add("stroke", (stroke, target) => {
-    const val = target.dataItem?.get("valueY") ?? 0;
-    return am5.color(val <= 0 ? "#10D4A0" : "#F87171");
-  });
+  // Värikoodaus: negatiivinen = vihreä (matala SNS = hyvä), positiivinen = punainen
+  series.columns.template.adapters.add("fill", (fill, target) =>
+    am5.color(
+      (target.dataItem?.get("valueY") ?? 0) <= 0 ? "#10D4A0" : "#F87171",
+    ),
+  );
+  series.columns.template.adapters.add("stroke", (stroke, target) =>
+    am5.color(
+      (target.dataItem?.get("valueY") ?? 0) <= 0 ? "#10D4A0" : "#F87171",
+    ),
+  );
 
   xAxis.data.setAll(chartData);
   series.data.setAll(chartData);
@@ -406,6 +412,7 @@ function renderSnsChart(data) {
   chart.appear(1000, 100);
 }
 
+/** Renderöi mittaushistoria-taulukon uusimmasta vanhimpaan */
 function renderHistoryTable(data) {
   const tbody = document.getElementById("historyTableBody");
   if (!tbody) return;
@@ -415,44 +422,35 @@ function renderHistoryTable(data) {
     const level = getRecoveryLevel(row.readiness ?? 0);
     const text = getRecoveryText(row.readiness ?? 0);
     tbody.innerHTML += `
-            <tr>
-                <td>${formatDate(row.created_at)}</td>
-                <td>${round(row.readiness ?? 0, 0)}</td>
-                <td>${round(row.rmssd_ms ?? 0, 1)} ms</td>
-                <td>${round(row.stress_index ?? 0, 1)}</td>
-                <td>
-                    <span class="status-badge status-${level}">
-                        ${text}
-                    </span>
-                </td>
-            </tr>`;
+      <tr>
+        <td>${formatDate(row.created_at)}</td>
+        <td>${round(row.readiness ?? 0, 0)}</td>
+        <td>${round(row.rmssd_ms ?? 0, 1)} ms</td>
+        <td>${round(row.stress_index ?? 0, 1)}</td>
+        <td><span class="status-badge status-${level}">${text}</span></td>
+      </tr>`;
   });
 }
 
+/**
+ * Vaihtaa aikavälin (7/14/30 päivää) ja lataa trendit uudelleen.
+ * Kutsutaan suoraan HTML:stä onclick-attribuutilla.
+ */
 function selectPeriod(days, btn) {
-  // Poista active kaikilta napeilta
   document
     .querySelectorAll(".period-btn")
     .forEach((b) => b.classList.remove("active"));
-  // Lisää active klikatulle
   btn.classList.add("active");
-  // Lataa data
   loadTrends(days);
 }
 window.selectPeriod = selectPeriod;
 
-// ── Päälogiikka ──
-
+/** Hakee trendidata ja renderöi kaikki kaaviot ja tilastot */
 async function loadTrends(days) {
   try {
     destroyCharts();
-
     const data = await getAnalysisTrend(days);
-
-    if (!data?.length) {
-      console.log("Ei trenditietoja");
-      return;
-    }
+    if (!data?.length) return;
 
     renderStatCards(data);
     renderTrendChart(data);
@@ -464,23 +462,16 @@ async function loadTrends(days) {
   }
 }
 
-// Tarkista että käyttäjä on kirjautunut
+/** Tarkistaa kirjautumisen — ohjaa kirjautumissivulle jos token puuttuu */
 function checkAuth() {
   const token = localStorage.getItem("token");
-  if (!token) {
-    window.location.href = "/index.html";
-  }
+  if (!token) window.location.href = "/index.html";
 }
 
+/** Alustaa trendit-sivun */
 async function init() {
   checkAuth();
   renderSidebar("trends");
-
-  const periodSelect = document.getElementById("periodSelect");
-  periodSelect?.addEventListener("change", (e) => {
-    loadTrends(parseInt(e.target.value));
-  });
-
   await loadTrends(7);
 }
 

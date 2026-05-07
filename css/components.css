@@ -137,6 +137,8 @@
     fill: none;
     stroke-width: 10;
     stroke-linecap: round;
+    stroke-dasharray: 289.03;
+    /* 2 * PI * 46 */
     transition: stroke-dashoffset 0.8s ease, stroke 0.5s ease;
 }
 
@@ -456,26 +458,3 @@
     visibility: visible;
     opacity: 1;
 }
-
-/* Poistetaan pointer-events:none oletuksesta —
-   se asetetaan nyt JS:ssä vain niille tooltip-boxeille
-   joilla on data-term-id (eli "lue lisää" -linkki) */
-
-/* ────────────────────────────────────────────────────────────────────
-   SIDEBAR-NAV: lisää Termistö-kohta sidebar.js:ssä tai -templatessa
-   ──────────────────────────────────────────────────────────────────── */
-/*
-   Etsi sivupalkistasi koodi joka rakentaa nav-itemit ja lisää:
-
-   { id: 'termisto', label: 'Termistö', path: '/termisto.html', icon: bookIcon }
-
-   Päiväkirjan JÄLKEEN. Ikonin SVG alla:
-
-   const bookIcon = `<svg width="16" height="16" viewBox="0 0 16 16"
-     fill="none" stroke="currentColor" stroke-width="1.6">
-     <path d="M3 2h8a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3"/>
-     <path d="M3 2a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1"/>
-     <line x1="6" y1="6" x2="10" y2="6"/>
-     <line x1="6" y1="9" x2="10" y2="9"/>
-   </svg>`;
-*/

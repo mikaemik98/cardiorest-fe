@@ -1,19 +1,7 @@
 // js/pages/login.js
 import { USE_MOCK } from "../services/analysisService.js";
 
-/* const MOCK_USERS = {
-  "matti@test.fi": {
-    password: "test1234",
-    role: "patient",
-    name: "Matti Meikäläinen",
-  },
-  "anna@test.fi": {
-    password: "test1234",
-    role: "professional",
-    name: "Anna Virtanen",
-  },
-}; */
-
+/** Näyttää virheviestin kirjautumislomakkeessa */
 function showError(message) {
   const error = document.getElementById("loginError");
   const text = document.getElementById("loginErrorText");
@@ -23,11 +11,13 @@ function showError(message) {
   }
 }
 
+/** Piilottaa virheviestin */
 function hideError() {
   const error = document.getElementById("loginError");
   if (error) error.style.display = "none";
 }
 
+/** Asettaa kirjautumisnapin lataus-tilan — näyttää spinnerin ja estää tuplapainalluksen */
 function setLoading(loading) {
   const btn = document.getElementById("loginBtn");
   const btnText = document.getElementById("loginBtnText");
@@ -37,14 +27,11 @@ function setLoading(loading) {
   if (spinner) spinner.style.display = loading ? "block" : "none";
 }
 
-/* function redirectByRole(role) {
-  if (role === "professional") {
-    window.location.href = "/professional.html";
-  } else {
-    window.location.href = "/dashboard.html";
-  }
-} */
-
+/**
+ * Käsittelee kirjautumisen — lähettää Kubios-tunnukset backendille.
+ * Onnistuneen kirjautumisen jälkeen tallentaa JWT-tokenin ja
+ * käyttäjätiedot localStorageen ja ohjaa dashboardille.
+ */
 async function handleLogin() {
   const emailInput = document.getElementById("email");
   const passwordInput = document.getElementById("password");
@@ -66,7 +53,6 @@ async function handleLogin() {
 
   setLoading(true);
 
-  // POST /api/auth/login - lähettää Kubios-tunnukset backendille
   try {
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
       method: "POST",
@@ -81,6 +67,7 @@ async function handleLogin() {
     }
 
     const data = await res.json();
+    // Tallennetaan token ja käyttäjätiedot selaimen localStorageen
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data.user));
 
@@ -92,16 +79,20 @@ async function handleLogin() {
   }
 }
 
+// Tapahtumakuuntelijat
 document.getElementById("loginBtn")?.addEventListener("click", handleLogin);
 
+// Enter-näppäin lähettää lomakkeen salasanakentässä
 document.getElementById("password")?.addEventListener("keydown", (e) => {
   if (e.key === "Enter") handleLogin();
 });
 
+// Enter-näppäin siirtää fokuksen sähköpostista salasanaan
 document.getElementById("email")?.addEventListener("keydown", (e) => {
   if (e.key === "Enter") document.getElementById("password")?.focus();
 });
 
+// Salasanan näyttäminen/piilottaminen silmäikonilla
 document.getElementById("passwordToggle")?.addEventListener("click", () => {
   const input = document.getElementById("password");
   if (input) input.type = input.type === "password" ? "text" : "password";

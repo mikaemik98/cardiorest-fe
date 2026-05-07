@@ -230,38 +230,38 @@
                 <div class="card-header">
                     <span class="card-title">Yönaikainen sykedata</span>
                 </div>
-                <div class="chart-wrap" style="height:200px">
+                <div class="chart-wrap" style="height:220px">
                     <div id="hrvNightChart" style="width:100%;height:100%"></div>
                 </div>
-            </div>
-
-            <!-- Univaiheet — näkyy vain timevarying-välilehdellä -->
-            <div class="card" id="sleepChartCard" style="display:none">
-                <div class="card-header">
-                    <span class="card-title">Univaiheet</span>
+                <!-- Tilastokortit — näkyy HRV-aikasarja-välilehdellä -->
+                <div
+                    style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+                    <!-- Keskisyke -->
+                    <div style="text-align:center">
+                        <div style="font-family:var(--mono);font-size:18px;font-weight:500;color:var(--teal)" id="statAvgHr">–</div>
+                        <div style="font-size:11px;color:var(--muted);margin-top:2px">Keskisyke</div>
+                    </div>
+                    <!-- Alin syke -->
+                    <div style="text-align:center">
+                        <div style="font-family:var(--mono);font-size:18px;font-weight:500;color:#60A5FA" id="statMinHr">–</div>
+                        <div style="font-size:11px;color:var(--muted);margin-top:2px">Alin syke</div>
+                    </div>
+                    <!-- Korkein syke -->
+                    <div style="text-align:center">
+                        <div style="font-family:var(--mono);font-size:18px;font-weight:500;color:#F87171" id="statMaxHr">–</div>
+                        <div style="font-size:11px;color:var(--muted);margin-top:2px">Korkein syke</div>
+                    </div>
+                    <!-- RMSSD keskiarvo -->
+                    <div style="text-align:center">
+                        <div style="font-family:var(--mono);font-size:18px;font-weight:500;color:#60A5FA" id="statAvgRmssd">–</div>
+                        <div style="font-size:11px;color:var(--muted);margin-top:2px">RMSSD ka.</div>
+                    </div>
                 </div>
-                <div class="chart-wrap" style="height:200px">
-                    <div id="sleepStagesChart" style="width:100%;height:100%"></div>
-                </div>
-                <div class="chart-legend" style="margin-top:10px">
-                    <span class="legend-item">
-                        <span class="legend-dot" style="background:#1a5fb4"></span>
-                        Syvä uni
-                    </span>
-                    <span class="legend-item">
-                        <span class="legend-dot" style="background:#4a90d9"></span>
-                        Kevyt uni
-                    </span>
-                    <span class="legend-item">
-                        <span class="legend-dot" style="background:#c061cb"></span>
-                        REM-uni
-                    </span>
-                    <span class="legend-item">
-                        <span class="legend-dot" style="background:#e66100"></span>
-                        Hereillä
+                <!-- Legenda -->
+                <div style="display:flex;gap:16px;margin-top:12px;font-size:12px;color:var(--muted)">
+                    <span style="display:flex;align-items:center;gap:6px">
                     </span>
                 </div>
-            </div>
 
             <!-- Suositukset -->
             <div class="card">
