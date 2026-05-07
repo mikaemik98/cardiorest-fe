@@ -20,6 +20,7 @@ Testiraportit löytyvät GitHub Pages -sivulta sekä kansiosta `robot-tests/outp
 | Iteraatio 1 | [Avaa raportti](https://mikaemik98.github.io/cardiorest-fe/report_iteraatio1.html) | 7       | ✅ 7/7   |
 | Iteraatio 2 | [Avaa raportti](https://mikaemik98.github.io/cardiorest-fe/report_iteraatio2.html) | 10      | ✅ 10/10 |
 | Iteraatio 3 | [Avaa raportti](https://mikaemik98.github.io/cardiorest-fe/report_iteraatio3.html) | 10      | ✅ 10/10 |
+| Iteraatio 3 | [Avaa raportti](https://mikaemik98.github.io/cardiorest-fe/report_iteraatio4.html) | 10      | ✅ 10/10 |
 
 Päivitä tulokset ajamalla:
 
