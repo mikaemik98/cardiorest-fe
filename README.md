@@ -225,6 +225,20 @@ robot --pythonpath . --outputdir robot-tests/outputs robot-tests/tests
 
 ---
 
+## Toteutetut toiminnallisuudet
+
+| Toiminnallisuus           | Kuvaus                                                                 |
+| ------------------------- | ---------------------------------------------------------------------- |
+| Kirjautuminen             | Kubios Cloud -tunnuksilla kirjautuminen JWT-tokenilla                  |
+| Dashboard — Readiness     | Palautumispistemäärä, RMSSD, PNS/SNS-mittarit, minitrendi, suositukset |
+| Dashboard — HRV-aikasarja | Yönaikainen sykekäyrä kellonajan mukaan, tilastokortit                 |
+| Trendit                   | 7/14/30 päivän HRV-kehitys kaavioilla, tilastokortit, mittaushistoria  |
+| HRV-analyysi              | Poincaré-analyysi, ANS-palkit, HRV-aikasarjakaavio                     |
+| Päiväkirja                | Päiväkirjamerkintöjen luonti, muokkaus ja poisto                       |
+| Termistö                  | HRV-termien selitykset viitearvoilla ja lähdeviitteillä                |
+| Responsiivisuus           | Toimii mobiililla ja tabletilla                                        |
+| Automaatiotestaus         | 10 Robot Framework -testiä, 4 iteraatiota                              |
+
 ## Referenssit
 
 - [amCharts 5](https://www.amcharts.com/) — kaaviokirjasto
@@ -232,6 +246,7 @@ robot --pythonpath . --outputdir robot-tests/outputs robot-tests/tests
 - [Robot Framework](https://robotframework.org/) — automaatiotestaus
 - [Vite](https://vitejs.dev/) — frontend build tool
 - [Express.js](https://expressjs.com/) — backend framework
+- [Claude (Anthropic)](https://claude.ai/) — käytetty UI-suunnittelussa, koodin debuggauksessa ja dokumentaation kirjoittamisen apuna
 
 ## Ryhmä
 
