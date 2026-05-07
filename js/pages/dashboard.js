@@ -467,6 +467,10 @@ async function init() {
       getTimevaryingData(),
     ]);
 
+    console.log("data:", data);
+    console.log("diaryEntry:", diaryEntry);
+    console.log("trendData:", trendData);
+
     currentData = data;
 
     // Laske unen kesto timevarying-datan viimeisestä labels-arvosta
