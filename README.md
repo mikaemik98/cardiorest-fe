@@ -35,6 +35,10 @@ CardioRest on web-sovellus joka hyödyntää Polar H10 ja Polar Sense -sykesenso
 
 ![Päiväkirja](./public/img/cardiorest-päiväkirja.png)
 
+### Termistö
+
+![Termistö](./public/img/cardiorest-termistö.png)
+
 ## Rautalankamallit
 
 Sovelluksen suunnitteluvaiheessa luodut rautalankamallit löytyvät kansiosta `public/img/wireframes/`:
@@ -45,10 +49,6 @@ Sovelluksen suunnitteluvaiheessa luodut rautalankamallit löytyvät kansiosta `p
 | Versio 2 | [wireframe-v2.html](./public/img/wireframes/Cardio_Rest_2.html) |
 | Versio 3 | [wireframe-v3.html](./public/img/wireframes/Cardio_Rest_3.html) |
 | Versio 4 | [wireframe-v4.html](./public/img/wireframes/Cardio_Rest_4.html) |
-
-### Termistö
-
-![Termistö](./public/img/cardiorest-termistö.png)
 
 **Live-demo:** [cardiorest.swedencentral.cloudapp.azure.com](https://cardiorest.swedencentral.cloudapp.azure.com)
 
